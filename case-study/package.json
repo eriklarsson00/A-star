@@ -1,0 +1,27 @@
+{
+  "name": "case-study",
+  "version": "1.0.0",
+  "description": "Case study",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/eriklarsson00/A-star.git"
+  },
+  "author": "A-star",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eriklarsson00/A-star/issues"
+  },
+  "homepage": "https://github.com/eriklarsson00/A-star#readme",
+  "dependencies": {
+    "aws-sdk": "latest",
+    "body-parser": "latest",
+    "crypto": "^1.0.1",
+    "ejs": "latest",
+    "express": "latest",
+    "mysql": "latest"
+  }
+}

@@ -1,0 +1,54 @@
+ATT GÖRA
+
+USER
+- Göra en order på en specifik vara, specfikt antal (måste finnas av den för att det ska gå ingeom, och det ska tas bort ur quuantity)
+- Man ska enbart ha info om produkterna
+
+SUPPLIER
+- Kunna lägga till varor (detta ska uppdatera quantitiy i product)
+
+
+UPPLÄGG
+
+- ska finnas produkter i ett table
+- finns många olika suppliers, som har olika varor
+
+
+VI HAR 10 suppliers, som har 10 EGNA varor
+- Lars 0 - Apelsin
+- Patrik 1 - Päron  
+- Karl 2 - Banan
+- Seidon 3- Äpple
+- Aletta 4 - Kiwi
+- Elias 5 - Mango
+- Erik 6 - Vindruvor
+- Julian 7 - Passionsfrukt
+- Amanda 8 - Vattenmelon
+- Leo 9 - Ananas
+
+
+
+
+FUNKTIONER:
+- lägga till en produkt
+    -skapar en rad i produkt-tabellen
+    -skapa en rad i productSupplier-tabellen
+    Lägger in alla värden rätt
+    returnerar supplier id
+
+- ta bort en produkt/supplier
+    -ta bort en rad i produkt-tabellen
+    -ta bort en rad i productSupplier-tabellen
+
+- uppdatera en produkt/supplier
+    -ändrar en rad i produkt-tabellen
+    -OBS: man får inte ändra id, eller ändra pris till 0 / namn till ""
+
+- Läs en produkt/supplier
+    - Returnerar produktens info 
+    - eller Returnerar suppliers info
+
+-Lägg till supplier
+    -skapa en rad i supplier-tabellen
+    returnerar supplier id
+-Ta bort en supplier
