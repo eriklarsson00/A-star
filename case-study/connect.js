@@ -1,6 +1,6 @@
 const mysql = require('mysql');
 
-export const connection = mysql.createConnection({
+var connection = mysql.createConnection({
   host: 'casestudy-mysql.cux8adwumflc.us-east-1.rds.amazonaws.com',
   port: '3306',
   user: 'admin',
