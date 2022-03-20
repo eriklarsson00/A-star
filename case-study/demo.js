@@ -128,11 +128,12 @@ async function getOrderQuantity(db, productId) {
 }
 
 async function getStock(db) {
-  let sql = mysql.format("SELECT id, quantity FROM Products")
+  let sql = mysql.format(
+    "SELECT Products.id, Products.quantity as stock, SUM(Orders.quantity) as orders FROM Products " +
+      "LEFT JOIN Orders ON Orders.product_id = Products.id " +
+      "GROUP BY Products.id"
+  );
   let products = await queryDB(db, sql);
-  for (let i = 0; i < products.length; i++) {
-    products[i].orderedQuantity = await getOrderQuantity(db, products[i].id);
-  }
   return products;
 }
 
