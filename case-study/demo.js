@@ -94,7 +94,8 @@ async function getProducts(db) {
       "LEFT JOIN ProductSupplier ON ProductSupplier.product_id = Products.id " +
       "LEFT JOIN Supplier ON Supplier.id = ProductSupplier.supplier_id"
   );
-  return await queryDB(db, sql);
+  let products = await queryDB(db, sql);
+  return products
 }
 
 async function getSuppliers(db) {
@@ -116,6 +117,25 @@ async function getProductSupplier(db) {
   return await queryDB(db, sql);
 }
 
+async function getOrderQuantity(db, productId) {
+  let sql = mysql.format("SELECT quantity from Orders WHERE product_id = ?", productId);
+  let quantity = 0;
+  let results = await queryDB(db, sql);
+  results.forEach(row => {
+    quantity += row.quantity;
+  })
+  return quantity;
+}
+
+async function getStock(db) {
+  let sql = mysql.format("SELECT id, quantity FROM Products")
+  let products = await queryDB(db, sql);
+  for (let i = 0; i < products.length; i++) {
+    products[i].orderedQuantity = await getOrderQuantity(db, products[i].id);
+  }
+  return products;
+}
+
 async function addOrder(db) {
   let order = {};
   let products = await getProducts(db);
@@ -124,20 +144,25 @@ async function addOrder(db) {
   });
   order.productId = parseInt(prompt("Which product(id) should be ordered: "));
   let product = await getProduct(db, order.productId);
-  console.log(product);
   if (!product[0]) {
     console.log("Product not found");
     return;
   }
   order.product = product[0].code;
   order.quantity = parseInt(prompt("How much should be ordered: "));
-  if (order.quantity > product[0].quantity) {
+  let orderedAmount = await getOrderQuantity(db, order.productId)
+  if (orderedAmount + order.quantity > product[0].quantity) {
     console.log(`Not enough ${order.product} in stock`);
+    return;
   }
   await insertOrder(db, order);
 }
 
 async function updateOrder(db) {
+  let orders = await getOrders(db);
+  orders.forEach((row) => {
+    console.log(JSON.parse(JSON.stringify(row)));
+  });
   let orderId = parseInt(prompt("Which order(id) should be updated: "));
   let quantity = parseInt(
     prompt("What quantity should the order be updated to: ")
@@ -151,6 +176,10 @@ async function updateOrder(db) {
 }
 
 async function deleteOrder(db) {
+  let orders = await getOrders(db);
+  orders.forEach((row) => {
+    console.log(JSON.parse(JSON.stringify(row)));
+  });
   let orderId = parseInt(prompt("Which order(id) should be deleted: "));
   let sql = mysql.format("DELETE FROM Orders WHERE id = ?", orderId);
   await queryDB(db, sql);
@@ -158,7 +187,7 @@ async function deleteOrder(db) {
 }
 
 async function printTable(db) {
-  let menu = "[1] Products\n[2] Suppliers\n[3] Orders\n[4] Product Supplier\n";
+  let menu = "[1] Products\n[2] Suppliers\n[3] Orders\n[4] Products & Suppliers\n[5] Orders & Stock\n";
   let input = prompt(menu);
   let table = [];
   switch (input) {
@@ -174,6 +203,9 @@ async function printTable(db) {
     case "4":
       table = await getProductSupplier(db);
       break;
+    case "5":
+      table = await getStock(db);
+      break;
   }
   table.forEach((row) => {
     console.log(JSON.parse(JSON.stringify(row)));
@@ -188,6 +220,10 @@ async function addSupplier(db) {
 }
 
 async function updateSupplier(db) {
+  let suppliers = await getSuppliers(db);
+  suppliers.forEach((row) => {
+    console.log(JSON.parse(JSON.stringify(row)));
+  });
   let supplierId = parseInt(prompt("Which supplier(id) should be updated: "));
   let name = prompt("What is the new name of the supplier: ");
   let phone = prompt("What is the new phone number: ");
@@ -200,6 +236,10 @@ async function updateSupplier(db) {
 }
 
 async function deleteSupplier(db) {
+  let suppliers = await getSuppliers(db);
+  suppliers.forEach((row) => {
+    console.log(JSON.parse(JSON.stringify(row)));
+  });
   let supplierId = parseInt(prompt("Which supplier(id) should be deleted: "));
   let sql = mysql.format(
     "DELETE FROM ProductSupplier WHERE supplier_id = ?",
@@ -228,6 +268,10 @@ async function addProduct(db) {
 }
 
 async function updateProduct(db) {
+  let products = await getProducts(db);
+  products.forEach((row) => {
+    console.log(JSON.parse(JSON.stringify(row)));
+  });
   let productId = parseInt(prompt("Which product(id) should be updated: "));
   let quantity = parseInt(prompt("What is the new product quantity: "));
   let price = parseInt(prompt("What is the new product price: "));
@@ -240,6 +284,10 @@ async function updateProduct(db) {
 }
 
 async function deleteProduct(db) {
+  let products = await getProducts(db);
+  products.forEach((row) => {
+    console.log(JSON.parse(JSON.stringify(row)));
+  });
   let productId = parseInt(prompt("Which product(id) should be deleted: "));
   let sql = mysql.format("DELETE FROM Orders WHERE product_id = ?", productId);
   await queryDB(db, sql);
