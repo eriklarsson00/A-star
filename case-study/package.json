@@ -22,6 +22,7 @@
     "crypto": "^1.0.1",
     "ejs": "latest",
     "express": "latest",
-    "mysql": "latest"
+    "mysql": "latest",
+    "prompt-sync": "latest"
   }
 }

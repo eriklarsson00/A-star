@@ -53,7 +53,7 @@ export default {
         this.products = ['apple', 'banana'];
         this.suppliers = ['Seidon', 'Elias'];
          this.productSuppliers = ['Seidon'];
-         this.orders: ['orange', 'kiwi'];
+         this.orders = ['orange', 'kiwi'];
         
     },
 

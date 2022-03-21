@@ -2,13 +2,23 @@ const mysql = require("mysql");
 const util = require("util");
 const prompt = require("prompt-sync")();
 
-let config = {
+const prodConfig = {
   host: "casestudy-mysql.cux8adwumflc.us-east-1.rds.amazonaws.com",
   port: "3306",
   user: "admin",
   database: "casestudy",
   password: "casestudysql",
 };
+
+const devConfig = {
+  host: "localhost",
+  port: "3306",
+  user: "",               // Add ypur own user name
+  database: "casestudy",
+  password: "",           // Add your own password
+};
+
+let config = prodConfig    // Switch between development (local machine) and production (aws- instance) here
 
 function makeDb(config) {
   const connection = mysql.createConnection(config);
