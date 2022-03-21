@@ -23,6 +23,6 @@
     "ejs": "latest",
     "express": "latest",
     "mysql": "latest",
-    "prompt-sync": "latest"
+    "prompt-sync": "^4.2.0"
   }
 }

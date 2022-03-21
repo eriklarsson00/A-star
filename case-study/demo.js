@@ -2,6 +2,8 @@ const mysql = require("mysql");
 const util = require("util");
 const prompt = require("prompt-sync")();
 
+let debug = false;
+
 const prodConfig = {
   host: "casestudy-mysql.cux8adwumflc.us-east-1.rds.amazonaws.com",
   port: "3306",
@@ -33,6 +35,7 @@ function makeDb(config) {
 }
 
 async function queryDB(db, query) {
+  if (debug) console.log(query);
   let result = await db.query(query);
   return result;
 }
@@ -139,7 +142,7 @@ async function getOrderQuantity(db, productId) {
 
 async function getStock(db) {
   let sql = mysql.format(
-    "SELECT Products.id, Products.quantity as stock, SUM(Orders.quantity) as orders FROM Products " +
+    "SELECT Products.code, Products.quantity as stock, SUM(Orders.quantity) as orders FROM Products " +
       "LEFT JOIN Orders ON Orders.product_id = Products.id " +
       "GROUP BY Products.id"
   );
@@ -364,7 +367,7 @@ async function main() {
   const db = makeDb(config);
   let run = true;
   let menu =
-    "[1] Print Table \n[2] Manage Suppliers \n[3] Manage Products \n[4] Manage Orders\n[5] Quit Database manager\n\n:";
+    "[1] Print Table \n[2] Manage Suppliers \n[3] Manage Products \n[4] Manage Orders\n[5] Verbose Queries\n[6] Quit Database Manager\n:";
   console.log("Welcome to the database manager\n");
   while (run) {
     let input = prompt(menu);
@@ -382,6 +385,10 @@ async function main() {
         await manageOrders(db);
         break;
       case "5":
+        debug = !debug;
+        console.log("Verbose queries are", debug ? "Enabled" : "Disabled");
+        break;
+      case "6":
         run = false;
         break;
       default:
