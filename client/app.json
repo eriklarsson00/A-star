@@ -1,5 +1,14 @@
 {
   "expo": {
+    "plugins": [
+
+    [
+      "expo-image-picker",
+      {
+        "photosPermission": "The app accesses your photos to let you upload images of your food."
+      }
+     ]
+    ],
     "name": "client",
     "slug": "client",
     "version": "1.0.0",
@@ -17,9 +26,11 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "host.exp.exponent"
     },
     "android": {
+      "package": "host.exp.exponent",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
