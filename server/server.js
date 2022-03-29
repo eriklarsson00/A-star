@@ -1,7 +1,6 @@
+import 'dotenv/config';
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
-
-import 'dotenv/config'
 
 const express = require("express");
 const http = require("http");

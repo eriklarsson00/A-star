@@ -8,10 +8,9 @@ let should = chai.should();
 
 chai.use(chaiHttp);
 
-const dbEndpoints = (server) => {
-
+export function userTests(server) { 
     describe('/users', function () {
-        it('should get all users', function (done) {
+        it('should get all users', (done) => {
             chai.request(server)
                 .get('/users')
                 .end((err, res) => {
@@ -24,7 +23,7 @@ const dbEndpoints = (server) => {
                     done();
                 });
         });
-        it('should get user by id', function (done) {
+        it('should get user by id', (done) => {
             chai.request(server)
                 .get('/users/1')
                 .end((err, res) => {
@@ -37,7 +36,7 @@ const dbEndpoints = (server) => {
                     done();
                 });
         });
-        it('should get user by email', function (done) {
+        it('should get user by email', (done) => {
             chai.request(server)
                 .get('/users/email/anja.persson@icloud.com')
                 .end((err, res) => {
@@ -52,22 +51,4 @@ const dbEndpoints = (server) => {
                 });
         });
     });
-
-    describe('/communities', () => {
-        it('should get all communities', function (done) {
-            chai.request(server)
-                .get('/communities')
-                .end((err, res) => {
-                    if (err) {
-                        console.error(err);
-                    }
-                    res.should.have.status(200);
-                    res.body.should.be.a('array');
-                    res.body.length.should.not.be.eql(0);
-                    done();
-                });
-        });
-    });
 }
-
-export { dbEndpoints };
