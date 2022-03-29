@@ -4,12 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-<<<<<<< HEAD
-    "start": "node server.js"
-=======
     "start": "node server.js",
     "test": "mocha"
->>>>>>> 2aee0238834bef7ce4714dc7af27147f7902a9ca
   },
   "author": "",
   "license": "ISC",
