@@ -1,23 +1,16 @@
+
 process.env.NODE_ENV = 'test';
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
 
 //Require the dev-dependencies
 let chai = require('chai');
 let chaiHttp = require('chai-http');
-const dbEndpoints = require('./db-endpoints');
+import { dbEndpoints } from './db-endpoints.js';
+import { server } from '../server.js';
 
-
-
-chai.use(chaiHttp);
 
 describe("", () => {
-	let server;
-	before(() => {
-		server = require('../server');
-	});
-
-	after(() => {
-		server.close();
-	})
 	
-	describe('Database endpoints', dbEndpoints);
+	describe('Database endpoints', () => { dbEndpoints(server) });
 });

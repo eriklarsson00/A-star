@@ -13,7 +13,6 @@ const knex = require("knex")({
 });
 
 function getCommunities(req, res) {
-  console.log("GET Communities", new Date());
   knex("Communities")
     .select()
     .then((communities) => {
@@ -23,7 +22,6 @@ function getCommunities(req, res) {
 
 function getCommunity(req, res) {
   const id = req.params.id;
-  console.log("GET Communities/" + id, new Date());
   knex("Communities")
     .select()
     .where("id", id)
