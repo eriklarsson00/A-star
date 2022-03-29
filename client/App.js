@@ -1,15 +1,15 @@
 import React from "react";
 import * as eva from "@eva-design/eva";
-import { ApplicationProvider, Layout, Text } from "@ui-kitten/components";
-
-const HomeScreen = () => (
-	<Layout style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-		<Text category="h1">HOMEeegge</Text>
-	</Layout>
-);
+import { ApplicationProvider, IconRegistry } from "@ui-kitten/components";
+import { EvaIconsPack } from "@ui-kitten/eva-icons";
+import { AppNavigator } from "./Navigation/Navigation";
+import { default as theme } from "./assets/custom-theme.json"; // <-- Import app theme
 
 export default () => (
-	<ApplicationProvider {...eva} theme={eva.light}>
-		<HomeScreen />
-	</ApplicationProvider>
+	<>
+		<IconRegistry icons={EvaIconsPack} />
+		<ApplicationProvider {...eva} theme={{ ...eva.light, ...theme }}>
+			<AppNavigator />
+		</ApplicationProvider>
+	</>
 );
