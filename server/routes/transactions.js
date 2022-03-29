@@ -13,7 +13,6 @@ const knex = require("knex")({
 });
 
 function getTransactions(req, res) {
-  console.log("GET Transactions", new Date());
   knex("Transactions")
     .select()
     .then((transactions) => {
@@ -23,7 +22,6 @@ function getTransactions(req, res) {
 
 function getTransaction(req, res) {
   const id = req.params.id;
-  console.log("GET Transactions/" + id, new Date());
   knex("Transactions")
     .select()
     .where("id", id)
@@ -34,7 +32,6 @@ function getTransaction(req, res) {
 
 function getResponderTransactions(req, res) {
   const id = req.params.id;
-  console.log("GET Transactions/responder/" + id, new Date());
   knex("Transactions")
     .select()
     .where("responder_id", id)
@@ -45,7 +42,6 @@ function getResponderTransactions(req, res) {
 
 function getListerTransactions(req, res) {
   const id = req.params.id;
-  console.log("GET Transactions/responder/" + id, new Date());
   knex("Transactions")
     .select("Transactions.*")
     .leftJoin("Offers", "Offers.id", "Transactions.offer_id")

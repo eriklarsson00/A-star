@@ -14,7 +14,6 @@ const knex = require("knex")({
   
 
 function getOffers(req, res) {
-  console.log("GET Offers", new Date());
   knex("Offers")
     .select()
     .then((offers) => {
@@ -24,7 +23,6 @@ function getOffers(req, res) {
 
 function getOffer(req, res) {
   const id = req.params.id;
-  console.log("GET Offers/" + id, new Date());
   knex("Offers")
     .select()
     .where("id", id)

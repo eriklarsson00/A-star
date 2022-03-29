@@ -21,7 +21,6 @@ console.log({
 });
 
 function getUsers(req, res) {
-  console.log("GET Users", new Date());
   knex("Users")
     .select()
     .then((users) => {
@@ -31,7 +30,6 @@ function getUsers(req, res) {
 
 function getUser(req, res) {
   const id = req.params.id;
-  console.log("GET Users/" + id, new Date());
   knex("Users")
     .select()
     .where("id", id)
@@ -41,8 +39,7 @@ function getUser(req, res) {
 }
 
 function getUserEmail(req, res) {
-  const name = req.params.email;
-  console.log("GET Users/email/" + email, new Date());
+  const email = req.params.email;
   knex("Users")
     .select()
     .where("email", email)
