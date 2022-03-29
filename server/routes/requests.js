@@ -32,4 +32,30 @@ function getRequest(req, res) {
     });
 }
 
-export { getRequests, getRequest };
+function addRequest(req, res) {
+  const body = req.body;
+  const request = body.request;
+  const communities = body.communities;
+  let request_id = -1;
+  knex("Requests")
+    .insert(request)
+    .catch(() => {
+      res.sendStatus(404);
+      return;
+    })
+    .then((id) => {
+      if (id !== undefined) res.json("Request inserted with id: " + id);
+      request_id = id;
+    })
+    .then(() => {
+      if (request_id == -1) return;
+      communities.forEach((community) => {
+        knex("CommunityListings").insert({
+          community_id: community,
+          request_id: request_id,
+        });
+      });
+    });
+}
+
+export { getRequests, getRequest, addRequest };

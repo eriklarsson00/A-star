@@ -1,24 +1,30 @@
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 
-import 'dotenv/config'
+import "dotenv/config";
+
+/*
+*************************
+    REST API SETUP
+*************************
+*/
 
 const express = require("express");
-const http = require("http");
-const WebSocket = require("ws");
 const app = express();
+app.use(express.json());
+
+/*
+*************************
+    WebSocket SETUP
+*************************
+*/
+
+const http = require("http");
+const WebSocket = require("ws")
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
-import { getUser, getUsers, getUserEmail, addUser, updateUser, deleteUser } from "./routes/users.js"
-import { userExists } from "./routes/login.js";
-import { getCommunities, getCommunity } from "./routes/communities.js";
-import { getOffers, getOffer } from "./routes/offers.js"
-import { getRequests, getRequest } from "./routes/requests.js"
-import { getTransactions, getTransaction, getResponderTransactions, getListerTransactions } from "./routes/transactions.js"
-import { getProduct } from "./routes/products.js"
 
-app.use(express.json());
 
 wss.on("connection", function connection(ws) {
   ws.on("message", function incoming(message, isBinary) {
@@ -31,53 +37,90 @@ wss.on("connection", function connection(ws) {
   });
 });
 
-//PRODUCTS
+/*
+*************************
+    REST API ROUTES
+*************************
+*/
 
-app.route("/products/:gtin").get(getProduct)
+import {
+  getUser,
+  getUsers,
+  getUserEmail,
+  addUser,
+  updateUser,
+  deleteUser,
+  addUserToCommunity,
+  getUserCommunities,
+} from "./routes/users.js";
+import { userExists } from "./routes/login.js";
+import {
+  getCommunities,
+  getCommunity,
+  addCommunity,
+  updateCommunity,
+  deleteCommunity,
+} from "./routes/communities.js";
+import { getOffers, getOffer, addOffer } from "./routes/offers.js";
+import { getRequests, getRequest, addRequest } from "./routes/requests.js";
+import {
+  getTransactions,
+  getTransaction,
+  getResponderTransactions,
+  getListerTransactions,
+} from "./routes/transactions.js";
+import { getProduct } from "./routes/products.js";
 
-//USERS
+
+//*************************PRODUCTS*************************
+
+app.route("/products/:gtin").get(getProduct);
+
+//*************************USERS*************************
 
 app.route("/users").get(getUsers).post(addUser);
 
-app
-  .route("/users/:id")
-  .get(getUser)
-  .put(updateUser)
-  .delete(deleteUser);
+app.route("/users/:id").get(getUser).put(updateUser).delete(deleteUser);
 
 app.route("/users/email/:email").get(getUserEmail);
 
-//LOGIN
+app.route("/users/community").post(addUserToCommunity);
+
+app.route("/users/community/:id").get(getUserCommunities);
+
+//*************************LOGIN*************************
 
 app.route("/login").post(userExists);
 
-//COMMUNITIES
+//*************************COMMUNITIES*************************
 
-app.route("/communities").get(getCommunities);
+app.route("/communities").get(getCommunities).post(addCommunity);
 
-app.route("/communities/:id").get(getCommunity);
+app
+  .route("/communities/:id")
+  .get(getCommunity)
+  .put(updateCommunity)
+  .delete(deleteCommunity);
 
-//OFFERS
+//*************************OFFERS*************************
 
-app.route("/offers").get(getOffers);
+app.route("/offers").get(getOffers).post(addOffer);
 
 app.route("/offers/:id").get(getOffer);
 
-//REQUESTS
+//*************************REQUESTS*************************
 
 app.route("/requests").get(getRequests);
 
 app.route("/requests/:id").get(getRequest);
 
-//TRANSACTIONS
+//*************************TRANSACTIONS*************************
 
 app.route("/transactions").get(getTransactions);
 
 app.route("/transactions/:id").get(getTransaction);
 
-app
-  .route("/transactions/responder/:id")
-  .get(getResponderTransactions);
+app.route("/transactions/responder/:id").get(getResponderTransactions);
 
 app.route("/transactions/lister/:id").get(getListerTransactions);
 
