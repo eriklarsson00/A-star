@@ -81,4 +81,44 @@ function deleteUser(req, res) {
     });
 }
 
-export { getUser, getUsers, getUserEmail, addUser, updateUser, deleteUser };
+function addUserToCommunity(req, res) {
+  const body = req.body;
+  if (!body.user_id || !body.community_id) {
+    res.sendStatus(404);
+    return;
+  }
+  knex("CommunityUser")
+    .insert(body)
+    .catch(() => {
+      res.sendStatus(404);
+    })
+    .then((id) => {
+      if (id !== undefined)
+        res.json(
+          `User with id ${body.user_id} added to community with id ${body.community_id}`
+        );
+    });
+}
+
+function getUserCommunities(req, res) {
+  const id = req.params.id;
+  knex("Communities")
+    .select("Communities.*")
+    .leftJoin("CommunityUser", "CommunityUser.community_id", "Communities.id")
+    .leftJoin("Users", "Users.id", "CommunityUser.user_id")
+    .where("Users.id", id)
+    .then((communities) => {
+      res.json(communities);
+    });
+}
+
+export {
+  getUser,
+  getUsers,
+  getUserEmail,
+  addUser,
+  updateUser,
+  deleteUser,
+  addUserToCommunity,
+  getUserCommunities,
+};

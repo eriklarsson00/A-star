@@ -5,11 +5,11 @@ function getProduct(req, res) {
   postData("https://productsearch.gs1.se/foodservice/tradeItem/search", {
     query: gtin,
   }).then((data) => {
-    console.log(data);
-    const id = data.results[0].id;
-    fetch(`https://productsearch.gs1.se/foodservice/tradeItem/${id}`)
-      .then((response) => response.json())
-      .then((data) => res.json(data));
+    res.json(data.results[0])
+    // const id = data.results[0].id;
+    // fetch(`https://productsearch.gs1.se/foodservice/tradeItem/${id}`)
+    //   .then((response) => response.json())
+    //   .then((data) => res.json(data));
   });
 }
 

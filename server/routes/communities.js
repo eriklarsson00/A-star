@@ -30,4 +30,45 @@ function getCommunity(req, res) {
     });
 }
 
-export { getCommunities, getCommunity };
+function addCommunity(req, res) {
+  const body = req.body;
+  knex("Community")
+    .insert(body)
+    .catch(() => {
+      res.sendStatus(404);
+    })
+    .then((id) => {
+      if (id !== undefined) res.json("Community inserted with id: " + id);
+    });
+}
+
+function updateCommunity(req, res) {
+  const id = req.params.id;
+  const body = req.body;
+  knex("Community")
+    .where("id", id)
+    .update(body)
+    .catch((err) => {
+      res.json(err);
+      id = undefined;
+    })
+    .then(() => {
+      if (id !== undefined) res.json(body);
+    });
+}
+
+function deleteCommunity(req, res) {
+  const id = req.params.id;
+  knex("Community")
+    .where("id", id)
+    .del()
+    .catch((err) => {
+      res.json(err);
+      id = undefined;
+    })
+    .then(() => {
+      res.json("Community deleted");
+    });
+}
+
+export { getCommunities, getCommunity, addCommunity, updateCommunity, deleteCommunity };
