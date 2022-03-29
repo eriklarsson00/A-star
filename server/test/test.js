@@ -1,9 +1,23 @@
-const assert = require('assert');
-const dbconfig = require("../dbconfig").config;
-describe('Array', function () {
-  describe('#indexOf()', function () {
-    it('should return -1 when the value is not present', function () {
-      assert.equal([1, 2, 3].indexOf(4), -1);
-    });
-  });
+process.env.NODE_ENV = 'test';
+
+//Require the dev-dependencies
+let chai = require('chai');
+let chaiHttp = require('chai-http');
+const dbEndpoints = require('./db-endpoints');
+
+
+
+chai.use(chaiHttp);
+
+describe("", () => {
+	let server;
+	before(() => {
+		server = require('../server');
+	});
+
+	after(() => {
+		server.close();
+	})
+	
+	describe('Database endpoints', dbEndpoints);
 });
