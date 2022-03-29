@@ -20,6 +20,13 @@ export default function BarCodeScannerComp() {
    
     setScanned(true);
     alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    fetch("https://productsearch.gs1.se/foodservice/tradeitem/search", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json"
+      },
+      body: `"query": "${data}"`
+    }).then(data => alert(data));
   };
 
   if (hasPermission === null) {
@@ -32,7 +39,7 @@ export default function BarCodeScannerComp() {
   return (
     <View style={styles.container}>
       <BarCodeScanner 
-        barCodeTypes={[BarCodeScanner.Constants.BarCodeType.ean8]}
+        barCodeTypes={[BarCodeScanner.Constants.BarCodeType.ean13]}  
         onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
         style={StyleSheet.absoluteFillObject}
       />

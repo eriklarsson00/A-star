@@ -3,11 +3,12 @@ import { StyleSheet, Text, View } from 'react-native';
 import ImagePicker from './Components/ImagePicker';
 import LoginScreen from './Screens/LoginScreen';
 import BarCodeScanner from './Components/BarCodeScanner';
+import BarCodeScannerComp from './Components/BarCodeScanner';
 
 
 export default function App() {
   return (
-    <BarCodeScanner />
+    <BarCodeScannerComp/>  
   );
 }
 
