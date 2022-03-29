@@ -1,21 +1,15 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import ImagePicker from './Components/ImagePicker';
-import LoginScreen from './Screens/LoginScreen';
-import BarCodeScanner from './Components/BarCodeScanner';
+import React from "react";
+import * as eva from "@eva-design/eva";
+import { ApplicationProvider, Layout, Text } from "@ui-kitten/components";
 
+const HomeScreen = () => (
+	<Layout style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+		<Text category="h1">HOMEeegge</Text>
+	</Layout>
+);
 
-export default function App() {
-  return (
-    <BarCodeScanner />
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default () => (
+	<ApplicationProvider {...eva} theme={eva.light}>
+		<HomeScreen />
+	</ApplicationProvider>
+);
