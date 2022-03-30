@@ -45,7 +45,7 @@ function addUser(req, res) {
   knex("Users")
     .insert(body)
     .catch(() => {
-      res.sendStatus(404);
+      res.sendStatus(400);
     })
     .then((id) => {
       if (id !== undefined) res.json("User inserted with id: " + id);
@@ -53,8 +53,13 @@ function addUser(req, res) {
 }
 
 function updateUser(req, res) {
-  const id = req.params.id;
+  const id = parseInt(req.params.id);
   const body = req.body;
+
+  if (isNaN(id)) {
+    return res.status(400).json("Usage: /users/:id. id has to be a number");
+  }
+
   knex("Users")
     .where("id", id)
     .update(body)
@@ -63,12 +68,17 @@ function updateUser(req, res) {
       id = undefined;
     })
     .then(() => {
-      if (id !== undefined) res.json(body);
+      if (id !== undefined) res.json("User updated");
     });
 }
 
 function deleteUser(req, res) {
-  const id = req.params.id;
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res.status(400).json("Usage: /users/:id. id has to be a number");
+  }
+
   knex("Users")
     .where("id", id)
     .update({
@@ -95,14 +105,17 @@ function deleteUser(req, res) {
 
 function addUserToCommunity(req, res) {
   const body = req.body;
-  if (!body.user_id || !body.community_id) {
-    res.sendStatus(404);
+  const user_id = parseInt(body.user_id);
+  const community_id = parseInt(body.community_id);
+  if (isNaN(user_id) || isNaN(community_id)) {
+    res.status(400).json("Body needs to contain 'user_id' and 'community_id'");
     return;
   }
   knex("CommunityUser")
     .insert(body)
-    .catch(() => {
-      res.sendStatus(404);
+    .catch((err) => {
+      res.json(err);
+      id = undefined;
     })
     .then((id) => {
       if (id !== undefined)
@@ -113,7 +126,13 @@ function addUserToCommunity(req, res) {
 }
 
 function getUserCommunities(req, res) {
-  const id = req.params.id;
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res
+      .status(400)
+      .json("Usage: /users/community/:id. id has to be a number");
+  }
   knex("Communities")
     .select("Communities.*")
     .leftJoin("CommunityUser", "CommunityUser.community_id", "Communities.id")

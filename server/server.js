@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 
@@ -141,4 +142,4 @@ server.listen(8080, () => {
   console.log("Listening to port 8080");
 });
 
-export { server }; // needed for testing purposes
+export { server }; // Needed for testing purposes

@@ -39,9 +39,11 @@ CREATE TABLE IF NOT EXISTS CommunityUser
     community_id INT NOT NULL,
     user_id      INT NOT NULL,
     CONSTRAINT communityuser_ibfk_1
-        FOREIGN KEY (community_id) REFERENCES Communities (id),
+        FOREIGN KEY (community_id) REFERENCES Communities (id)
+        ON DELETE CASCADE,
     CONSTRAINT communityuser_ibfk_2
         FOREIGN KEY (user_id) REFERENCES Users (id)
+        ON DELETE CASCADE
 );
 
 CREATE INDEX community_id
@@ -93,11 +95,14 @@ CREATE TABLE IF NOT EXISTS CommunityListings
     request_id   INT NULL,
     offer_id     INT NULL,
     CONSTRAINT communitylistings_ibfk_1
-        FOREIGN KEY (request_id) REFERENCES Requests (id),
+        FOREIGN KEY (request_id) REFERENCES Requests (id)
+        ON DELETE CASCADE,
     CONSTRAINT communitylistings_ibfk_2
-        FOREIGN KEY (offer_id) REFERENCES Offers (id),
+        FOREIGN KEY (offer_id) REFERENCES Offers (id)
+        ON DELETE CASCADE,
     CONSTRAINT communitylistings_ibfk_3
         FOREIGN KEY (community_id) REFERENCES Communities (id)
+        ON DELETE CASCADE
 );
 
 CREATE INDEX community_id
@@ -123,9 +128,11 @@ CREATE TABLE IF NOT EXISTS Transactions
     time_of_creation   TIMESTAMP NOT NULL,
     time_of_expiration TIMESTAMP NOT NULL,
     CONSTRAINT transactions_ibfk_1
-        FOREIGN KEY (offer_id) REFERENCES Offers (id),
+        FOREIGN KEY (offer_id) REFERENCES Offers (id)
+        ON DELETE CASCADE,
     CONSTRAINT transactions_ibfk_2
-        FOREIGN KEY (request_id) REFERENCES Requests (id),
+        FOREIGN KEY (request_id) REFERENCES Requests (id)
+        ON DELETE CASCADE,
     CONSTRAINT transactions_ibfk_3
         FOREIGN KEY (responder_id) REFERENCES Users (id)
 );
@@ -138,4 +145,3 @@ CREATE INDEX request_id
 
 CREATE INDEX responder_id
     ON Transactions (responder_id);
-

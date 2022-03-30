@@ -1,16 +1,29 @@
-
-process.env.NODE_ENV = 'test';
+import { communityTests } from "./communities.js";
+import { userTests } from "./users.js";
+import { server } from "../server.js";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 
-//Require the dev-dependencies
-let chai = require('chai');
-let chaiHttp = require('chai-http');
-import { dbEndpoints } from './db-endpoints.js';
-import { server } from '../server.js';
-
+const knex = require("knex")({
+  client: "mysql2",
+  connection: {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+  },
+});
 
 describe("", () => {
-	
-	describe('Database endpoints', () => { dbEndpoints(server) });
+  before(async () => {
+    await knex
+      .raw("call p_insert_dummy_data();")
+      .then(() => console.log("Cleared test-db and inserted dummy data.\n"));
+  });
+
+  describe("Database endpoints", () => {
+    userTests(server);
+    communityTests(server);
+  });
 });

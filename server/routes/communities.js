@@ -21,7 +21,14 @@ function getCommunities(req, res) {
 }
 
 function getCommunity(req, res) {
-  const id = req.params.id;
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res
+      .status(400)
+      .json("Usage: /communities/:id. id has to be a number");
+  }
+
   knex("Communities")
     .select()
     .where("id", id)
@@ -32,10 +39,11 @@ function getCommunity(req, res) {
 
 function addCommunity(req, res) {
   const body = req.body;
-  knex("Community")
+  knex("Communities")
     .insert(body)
-    .catch(() => {
-      res.sendStatus(404);
+    .catch((err) => {
+      res.json(err);
+      id = undefined;
     })
     .then((id) => {
       if (id !== undefined) res.json("Community inserted with id: " + id);
@@ -43,9 +51,16 @@ function addCommunity(req, res) {
 }
 
 function updateCommunity(req, res) {
-  const id = req.params.id;
+  const id = parseInt(req.params.id);
   const body = req.body;
-  knex("Community")
+
+  if (isNaN(id)) {
+    return res
+      .status(400)
+      .json("Usage: /communities/:id. id has to be a number");
+  }
+
+  knex("Communities")
     .where("id", id)
     .update(body)
     .catch((err) => {
@@ -53,13 +68,20 @@ function updateCommunity(req, res) {
       id = undefined;
     })
     .then(() => {
-      if (id !== undefined) res.json(body);
+      if (id !== undefined) res.json("Community updated with id: " + id);
     });
 }
 
 function deleteCommunity(req, res) {
-  const id = req.params.id;
-  knex("Community")
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res
+      .status(400)
+      .json("Usage: /communities/:id. id has to be a number");
+  }
+
+  knex("Communities")
     .where("id", id)
     .del()
     .catch((err) => {
@@ -67,8 +89,14 @@ function deleteCommunity(req, res) {
       id = undefined;
     })
     .then(() => {
-      res.json("Community deleted");
+      res.json("Community deleted with id: " + id);
     });
 }
 
-export { getCommunities, getCommunity, addCommunity, updateCommunity, deleteCommunity };
+export {
+  getCommunities,
+  getCommunity,
+  addCommunity,
+  updateCommunity,
+  deleteCommunity,
+};
