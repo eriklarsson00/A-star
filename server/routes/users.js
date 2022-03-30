@@ -68,7 +68,7 @@ function updateUser(req, res) {
       id = undefined;
     })
     .then(() => {
-      if (id !== undefined) res.json(body);
+      if (id !== undefined) res.json("User updated");
     });
 }
 

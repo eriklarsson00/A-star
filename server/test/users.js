@@ -134,7 +134,7 @@ export function userTests(server) {
         .end((err, res) => {
           res.should.have.status(200);
           res.text.length.should.not.be.eql(0);
-          res.body.should.be.a("object");
+          res.body.should.be.a("string");
           done();
         });
     });
@@ -144,7 +144,6 @@ export function userTests(server) {
         .request(server)
         .delete("/users/1")
         .end((err, res) => {
-          console.log(res.body);
           res.should.have.status(200);
           res.text.length.should.not.be.eql(0);
           res.body.should.be.a("string");
@@ -153,35 +152,60 @@ export function userTests(server) {
     });
 
     it("should not update user", (done) => {
+      const data = {
+        firstname: "Dummy",
+        lastname: "Person",
+        number: "0735959908",
+        email: "dummy.person@gmail.com",
+        adress: "Råbyvägen 53 B, 75429 Uppsala",
+        location: "Gränby",
+        imgurl: "path/to/s3/bucket",
+        rating: 10,
+        raters: 1000,
+        given: 4,
+        taken: 5,
+      };
+
+      // Invalid id
       chai
         .request(server)
-        .put("/users/badId")
-        .send({
-          firstname: "Dummy",
-          lastname: "Person",
-          number: "0735959908",
-          email: "dummy.person@gmail.com",
-          adress: "Råbyvägen 53 B, 75429 Uppsala",
-          location: "Gränby",
-          imgurl: "path/to/s3/bucket",
-          rating: 10,
-          raters: 1000,
-          given: 4,
-          taken: 5,
-        })
+        .put("/users/invalidId")
+        .send(data)
         .end((err, res) => {
           res.should.have.status(400);
+          res.text.length.should.not.be.eql(0);
+          res.body.should.be.a("string");
+        });
+
+      // Bad id
+      chai
+        .request(server)
+        .put("/users/-1")
+        .send(data)
+        .end((err, res) => {
+          res.should.have.status(200);
           res.text.length.should.not.be.eql(0);
           res.body.should.be.a("string");
           done();
         });
     });
     it("should not delete user", (done) => {
+      // Invalid id
       chai
         .request(server)
         .delete("/users/strangeId")
         .end((err, res) => {
           res.should.have.status(400);
+          res.text.length.should.not.be.eql(0);
+          res.body.should.be.a("string");
+        });
+
+      // Bad id
+      chai
+        .request(server)
+        .delete("/users/-1")
+        .end((err, res) => {
+          res.should.have.status(200);
           res.text.length.should.not.be.eql(0);
           res.body.should.be.a("string");
           done();
