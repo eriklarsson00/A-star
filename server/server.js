@@ -69,6 +69,11 @@ import {
   getListerTransactions,
 } from "./routes/transactions.js";
 import { getProduct } from "./routes/products.js";
+import { deployServer } from "./routes/ci.js";
+
+//*************************CI*************************
+
+app.route("/ci/deploy").get(deployServer);
 
 //*************************PRODUCTS*************************
 
