@@ -45,7 +45,7 @@ function addUser(req, res) {
   knex("Users")
     .insert(body)
     .catch(() => {
-      res.sendStatus(404);
+      res.sendStatus(400);
     })
     .then((id) => {
       if (id !== undefined) res.json("User inserted with id: " + id);
@@ -53,8 +53,13 @@ function addUser(req, res) {
 }
 
 function updateUser(req, res) {
-  const id = req.params.id;
+  const id = parseInt(req.params.id);
   const body = req.body;
+
+  if (isNaN(id)) {
+    return res.status(400).json("Usage: /users/:id. id has to be a number");
+  }
+
   knex("Users")
     .where("id", id)
     .update(body)
@@ -68,7 +73,12 @@ function updateUser(req, res) {
 }
 
 function deleteUser(req, res) {
-  const id = req.params.id;
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res.status(400).json("Usage: /users/:id. id has to be a number");
+  }
+
   knex("Users")
     .where("id", id)
     .del()
@@ -84,13 +94,13 @@ function deleteUser(req, res) {
 function addUserToCommunity(req, res) {
   const body = req.body;
   if (!body.user_id || !body.community_id) {
-    res.sendStatus(404);
+    res.sendStatus(400);
     return;
   }
   knex("CommunityUser")
     .insert(body)
     .catch(() => {
-      res.sendStatus(404);
+      res.sendStatus(400);
     })
     .then((id) => {
       if (id !== undefined)

@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import "dotenv/config";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 
@@ -21,11 +21,9 @@ app.use(express.json());
 */
 
 const http = require("http");
-const WebSocket = require("ws")
+const WebSocket = require("ws");
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
-
-
 
 wss.on("connection", function connection(ws) {
   ws.on("message", function incoming(message, isBinary) {
@@ -71,7 +69,6 @@ import {
   getListerTransactions,
 } from "./routes/transactions.js";
 import { getProduct } from "./routes/products.js";
-
 
 //*************************PRODUCTS*************************
 
@@ -131,4 +128,4 @@ server.listen(8080, () => {
   console.log("Listening to port 8080");
 });
 
-export { server }; // needed for testing purposes
+export { server }; // Needed for testing purposes
