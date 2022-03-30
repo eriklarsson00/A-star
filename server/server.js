@@ -20,11 +20,9 @@ app.use(express.json());
 */
 
 const http = require("http");
-const WebSocket = require("ws")
+const WebSocket = require("ws");
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
-
-
 
 wss.on("connection", function connection(ws) {
   ws.on("message", function incoming(message, isBinary) {
@@ -61,8 +59,18 @@ import {
   updateCommunity,
   deleteCommunity,
 } from "./routes/communities.js";
-import { getOffers, getOffer, addOffer } from "./routes/offers.js";
-import { getRequests, getRequest, addRequest } from "./routes/requests.js";
+import {
+  getOffers,
+  getOffer,
+  addOffer,
+  getActiveOffers,
+} from "./routes/offers.js";
+import {
+  getRequests,
+  getRequest,
+  addRequest,
+  getActiveRequests,
+} from "./routes/requests.js";
 import {
   getTransactions,
   getTransaction,
@@ -70,7 +78,6 @@ import {
   getListerTransactions,
 } from "./routes/transactions.js";
 import { getProduct } from "./routes/products.js";
-
 
 //*************************PRODUCTS*************************
 
@@ -108,11 +115,15 @@ app.route("/offers").get(getOffers).post(addOffer);
 
 app.route("/offers/:id").get(getOffer);
 
+app.route("/offers/active").get(getActiveOffers);
+
 //*************************REQUESTS*************************
 
-app.route("/requests").get(getRequests);
+app.route("/requests").get(getRequests).post(addRequest);
 
 app.route("/requests/:id").get(getRequest);
+
+app.route("/requests/active").get(getActiveRequests);
 
 //*************************TRANSACTIONS*************************
 

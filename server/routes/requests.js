@@ -12,6 +12,16 @@ const knex = require("knex")({
   },
 });
 
+function getActiveRequests(req, res) {
+  knex("Requests")
+    .select("Requests.*")
+    .leftJoin("Transactions", "Transaction.request_id", "Requests.id")
+    .where("Transactions.request_id", null)
+    .then(requests => {
+      res.json(requests)
+    })
+}
+
 function getRequests(req, res) {
   knex("Requests")
     .select()
@@ -56,4 +66,4 @@ function addRequest(req, res) {
     });
 }
 
-export { getRequests, getRequest, addRequest };
+export { getActiveRequests, getRequests, getRequest, addRequest };

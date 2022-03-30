@@ -71,13 +71,25 @@ function deleteUser(req, res) {
   const id = req.params.id;
   knex("Users")
     .where("id", id)
-    .del()
+    .update({
+      firstname: "removed",
+      lastname: "removed",
+      number: "removed",
+      email: "removed",
+      adress: "removed",
+      location: "removed",
+      imgurl: "removed",
+      rating: -1,
+      raters: -1,
+      given: -1,
+      taken: -1,
+    })
     .catch((err) => {
       res.json(err);
       id = undefined;
     })
     .then(() => {
-      res.json("User deleted");
+      if (id !== undefined) res.json(body);
     });
 }
 

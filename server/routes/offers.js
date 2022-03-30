@@ -12,6 +12,16 @@ const knex = require("knex")({
   },
 });
 
+function getActiveOffers(req, res) {
+  knex("Offers")
+    .select("Offers.*")
+    .leftJoin("Transactions", "Transactions.offer_id", "Offers.id")
+    .where("Transactions.offer_id", null)
+    .then(offers => {
+      res.json(offers)
+    })
+}
+
 function getOffers(req, res) {
   knex("Offers")
     .select()
@@ -56,4 +66,4 @@ function addOffer(req, res) {
     });
 }
 
-export { getOffers, getOffer, addOffer };
+export { getActiveOffers, getOffers, getOffer, addOffer };
