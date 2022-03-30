@@ -93,14 +93,17 @@ function deleteUser(req, res) {
 
 function addUserToCommunity(req, res) {
   const body = req.body;
-  if (!body.user_id || !body.community_id) {
-    res.sendStatus(400);
+  const user_id = parseInt(body.user_id);
+  const community_id = parseInt(body.community_id);
+  if (isNaN(user_id) || isNaN(community_id)) {
+    res.status(400).json("Body needs to contain 'user_id' and 'community_id'");
     return;
   }
   knex("CommunityUser")
     .insert(body)
-    .catch(() => {
-      res.sendStatus(400);
+    .catch((err) => {
+      res.json(err);
+      id = undefined;
     })
     .then((id) => {
       if (id !== undefined)
@@ -111,7 +114,13 @@ function addUserToCommunity(req, res) {
 }
 
 function getUserCommunities(req, res) {
-  const id = req.params.id;
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res
+      .status(400)
+      .json("Usage: /users/community/:id. id has to be a number");
+  }
   knex("Communities")
     .select("Communities.*")
     .leftJoin("CommunityUser", "CommunityUser.community_id", "Communities.id")

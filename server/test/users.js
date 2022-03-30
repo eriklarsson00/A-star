@@ -212,4 +212,77 @@ export function userTests(server) {
         });
     });
   });
+
+  describe("/users/community", () => {
+    it("should add user to community", (done) => {
+      chai
+        .request(server)
+        .post("/users/community")
+        .send({ user_id: 2, community_id: 3 })
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.text.length.should.not.be.eql(0);
+          res.body.should.be.a("string");
+          done();
+        });
+    });
+    it("should get user to community", (done) => {
+      chai
+        .request(server)
+        .get("/users/community/1")
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.text.length.should.not.be.eql(0);
+          res.body.should.be.a("array");
+          done();
+        });
+    });
+
+    it("should not add user to community", (done) => {
+      // Invalid ids
+      chai
+        .request(server)
+        .post("/users/community")
+        .send({ user_id: "invalidId1", community_id: "invalidId2" })
+        .end((err, res) => {
+          res.should.have.status(400);
+          res.text.length.should.not.be.eql(0);
+          res.body.should.be.a("string");
+        });
+
+      // Bad ids
+      chai
+        .request(server)
+        .post("/users/community")
+        .send({ user_id: -1, community_id: -3 })
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.text.length.should.not.be.eql(0);
+          res.body.should.be.a("object");
+          done();
+        });
+    });
+    it("should not get user to community", (done) => {
+      // Invalid id
+      chai
+        .request(server)
+        .get("/users/community/invalidId")
+        .end((err, res) => {
+          res.should.have.status(400);
+          res.text.length.should.not.be.eql(0);
+          res.body.should.be.a("string");
+        });
+
+      // Bad id
+      chai
+        .request(server)
+        .get("/users/community/-1")
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.text.length.should.not.be.eql(0);
+          res.body.should.be.a("array");
+          done();
+        });
+    });
+  });
 }
