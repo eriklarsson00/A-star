@@ -10,7 +10,7 @@ export function deployServer(req, res) {
       console.log(`stderr: ${stderr}`);
       return;
     }
-    console.log(`stdout: ${stdout}`);
+    console.log("deploy endpoint called");
   });
   res.sendStatus(200);
 }
