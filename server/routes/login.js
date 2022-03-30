@@ -23,6 +23,4 @@ function userExists(req, res) {
     });
 }
 
-// Bad comment, please remove
-
 export { userExists };
