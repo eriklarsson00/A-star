@@ -99,7 +99,7 @@ function deleteUser(req, res) {
       id = undefined;
     })
     .then(() => {
-      if (id !== undefined) res.json(body);
+      if (id !== undefined) res.json("User has been removed");
     });
 }
 
