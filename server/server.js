@@ -180,6 +180,4 @@ server.listen(process.env.SERVER_PORT_HTTP, () => {
   );
 });
 
-// Dummy comment - remove this
-
 export { server }; // Needed for testing purposes
