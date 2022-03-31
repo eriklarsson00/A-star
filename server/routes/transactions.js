@@ -44,10 +44,10 @@ function getListerTransactions(req, res) {
   const id = req.params.id;
   knex("Transactions")
     .select("Transactions.*")
-    .leftJoin("Offers", "Offers.id", "Transactions.offer_id")
-    .leftJoin("Requests", "Requests.id", "Transactions.request_id")
-    .where("Requests.user_id", id)
-    .orWhere("Offers.user_id", id)
+    .leftJoin("Transactions", "Transactions.id", "Transactions.transaction_id")
+    .leftJoin("Transactions", "Transactions.id", "Transactions.transaction_id")
+    .where("Transactions.user_id", id)
+    .orWhere("Transactions.user_id", id)
     .then((transactions) => {
       res.json(transactions);
     });
@@ -58,11 +58,43 @@ function getTransactionCommunity(req, res) {
   knex
     .raw(
       "SELECT C.* FROM Transactions T " +
-        "LEFT JOIN CommunityListings CL ON CL.request_id = T.request_id OR CL.offer_id = T.offer_id " +
+        "LEFT JOIN CommunityListings CL ON CL.transaction_id = T.transaction_id OR CL.transaction_id = T.transaction_id " +
         "LEFT JOIN Communities C ON C.id = CL.community_id WHERE T.id = " + id
     )
     .then((communities) => {
       res.json(communities[0]);
+    });
+}
+
+function addTransaction(req, res) {
+  const transaction = req.body
+  transaction.status = "pending"
+  knex("Transactions")
+    .insert(body)
+    .catch(() => {
+      res.sendStatus(400);
+    })
+    .then((id) => {
+      if (id !== undefined) res.json("Transaction inserted with id: " + id);
+    });
+}
+
+function deleteTransaction(req, res) {
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res.status(400).json("Usage: /transactions/:id. id has to be a number");
+  }
+
+  knex("Transactions")
+    .where("id", id)
+    .delete()
+    .catch((err) => {
+      res.json(err);
+      id = undefined;
+    })
+    .then(() => {
+      if (id !== undefined) res.json("Transaction has been removed");
     });
 }
 
@@ -72,4 +104,6 @@ export {
   getResponderTransactions,
   getListerTransactions,
   getTransactionCommunity,
+  addTransaction,
+  deleteTransaction,
 };

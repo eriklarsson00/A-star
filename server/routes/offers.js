@@ -79,4 +79,23 @@ function addOffer(req, res) {
     });
 }
 
-export { getActiveOffersCommunity, getActiveOffers, getOffers, getOffer, addOffer };
+function deleteOffer(req, res) {
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res.status(400).json("Usage: /offers/:id. id has to be a number");
+  }
+
+  knex("Offers")
+    .where("id", id)
+    .delete()
+    .catch((err) => {
+      res.json(err);
+      id = undefined;
+    })
+    .then(() => {
+      if (id !== undefined) res.json("Offer has been removed");
+    });
+}
+
+export { getActiveOffersCommunity, getActiveOffers, getOffers, getOffer, addOffer, deleteOffer };

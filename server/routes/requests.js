@@ -17,12 +17,16 @@ function getActiveRequestsCommunity(req, res) {
   knex("Requests")
     .select("Requests.*")
     .leftJoin("Transactions", "Transactions.request_id", "Requests.id")
-    .leftJoin("CommunityListings", "CommunityListings.request_id", "Requests.id")
+    .leftJoin(
+      "CommunityListings",
+      "CommunityListings.request_id",
+      "Requests.id"
+    )
     .where("Transactions.request_id", null)
     .andWhere("CommunityListings.community_id", community)
-    .then(requests => {
-      res.json(requests)
-    })
+    .then((requests) => {
+      res.json(requests);
+    });
 }
 
 function getActiveRequests(req, res) {
@@ -30,9 +34,9 @@ function getActiveRequests(req, res) {
     .select("Requests.*")
     .leftJoin("Transactions", "Transactions.request_id", "Requests.id")
     .where("Transactions.request_id", null)
-    .then(requests => {
-      res.json(requests)
-    })
+    .then((requests) => {
+      res.json(requests);
+    });
 }
 
 function getRequests(req, res) {
@@ -79,4 +83,30 @@ function addRequest(req, res) {
     });
 }
 
-export { getActiveRequestsCommunity, getActiveRequests, getRequests, getRequest, addRequest };
+function deleteRequest(req, res) {
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res.status(400).json("Usage: /requests/:id. id has to be a number");
+  }
+
+  knex("Requests")
+    .where("id", id)
+    .delete()
+    .catch((err) => {
+      res.json(err);
+      id = undefined;
+    })
+    .then(() => {
+      if (id !== undefined) res.json("Request has been removed");
+    });
+}
+
+export {
+  getActiveRequestsCommunity,
+  getActiveRequests,
+  getRequests,
+  getRequest,
+  addRequest,
+  deleteRequest,
+};
