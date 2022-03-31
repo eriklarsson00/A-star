@@ -168,10 +168,10 @@ if (sserver) {
   sserver.listen(process.env.SERVER_PORT_HTTPS, () => {
     console.log("Listening to port " + process.env.SERVER_PORT_HTTPS);
   });
-} else {
-  server.listen(process.env.SERVER_PORT_HTTP, () => {
-    console.log("Listening to port " + process.env.SERVER_PORT_HTTP);
-  });
 }
+
+server.listen(process.env.SERVER_PORT_HTTP, () => {
+  console.log("Listening to port " + process.env.SERVER_PORT_HTTP);
+});
 
 export { server }; // Needed for testing purposes
