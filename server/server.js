@@ -20,8 +20,20 @@ app.use(express.json());
 *************************
 */
 
+const fs = require("fs");
 const http = require("http");
+const https = require("https");
 const WebSocket = require("ws");
+
+let sslKey;
+let sslCert;
+let sserver;
+if (process.env.NODE_ENV === "prod") {
+  sslKey = fs.readFileSync("ca.key", "utf8");
+  sslCert = fs.readFileSync("ca.crt", "utf8");
+  sserver = https.createServer({ key: sslKey, cert: sslCert }, app);
+}
+
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
@@ -65,18 +77,21 @@ import {
   getOffer,
   addOffer,
   getActiveOffers,
+  getActiveOffersCommunity,
 } from "./routes/offers.js";
 import {
   getRequests,
   getRequest,
   addRequest,
   getActiveRequests,
+  getActiveRequestsCommunity,
 } from "./routes/requests.js";
 import {
   getTransactions,
   getTransaction,
   getResponderTransactions,
   getListerTransactions,
+  getTransactionCommunity,
 } from "./routes/transactions.js";
 import { getProduct } from "./routes/products.js";
 import { deployServer } from "./routes/ci.js";
@@ -123,6 +138,8 @@ app.route("/offers/:id").get(getOffer);
 
 app.route("/offers/active").get(getActiveOffers);
 
+app.route("/offers/active/:community").get(getActiveOffersCommunity);
+
 //*************************REQUESTS*************************
 
 app.route("/requests").get(getRequests).post(addRequest);
@@ -131,11 +148,15 @@ app.route("/requests/:id").get(getRequest);
 
 app.route("/requests/active").get(getActiveRequests);
 
+app.route("/requests/active/:community").get(getActiveRequestsCommunity);
+
 //*************************TRANSACTIONS*************************
 
 app.route("/transactions").get(getTransactions);
 
 app.route("/transactions/:id").get(getTransaction);
+
+app.route("/transactions/community/:id").get(getTransactionCommunity);
 
 app.route("/transactions/responder/:id").get(getResponderTransactions);
 
@@ -143,8 +164,14 @@ app.route("/transactions/lister/:id").get(getListerTransactions);
 
 //*************************SERVER*************************
 
-server.listen(8080, () => {
-  console.log("Listening to port 8080 with auto reload!");
-});
+if (sserver) {
+  sserver.listen(process.env.SERVER_PORT_HTTPS, () => {
+    console.log("Listening to port " + process.env.SERVER_PORT_HTTPS);
+  });
+} else {
+  server.listen(process.env.SERVER_PORT_HTTP, () => {
+    console.log("Listening to port " + process.env.SERVER_PORT_HTTP);
+  });
+}
 
 export { server }; // Needed for testing purposes

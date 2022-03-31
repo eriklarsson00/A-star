@@ -18,7 +18,7 @@ function getTransactions(req, res) {
     .then((transactions) => {
       res.json(transactions);
     });
-};
+}
 
 function getTransaction(req, res) {
   const id = req.params.id;
@@ -28,7 +28,7 @@ function getTransaction(req, res) {
     .then((transactions) => {
       res.json(transactions);
     });
-};
+}
 
 function getResponderTransactions(req, res) {
   const id = req.params.id;
@@ -51,6 +51,25 @@ function getListerTransactions(req, res) {
     .then((transactions) => {
       res.json(transactions);
     });
-};
+}
 
-export { getTransactions, getTransaction, getResponderTransactions, getListerTransactions }
+function getTransactionCommunity(req, res) {
+  const id = req.params.id;
+  knex
+    .raw(
+      "SELECT C.* FROM Transactions T " +
+        "LEFT JOIN CommunityListings CL ON CL.request_id = T.request_id OR CL.offer_id = T.offer_id " +
+        "LEFT JOIN Communities C ON C.id = CL.community_id WHERE T.id = " + id
+    )
+    .then((communities) => {
+      res.json(communities[0]);
+    });
+}
+
+export {
+  getTransactions,
+  getTransaction,
+  getResponderTransactions,
+  getListerTransactions,
+  getTransactionCommunity,
+};
