@@ -1,9 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import ImagePicker from './Components/ImagePicker';
-import LoginScreen from './Screens/LoginScreen';
-import BarCodeScanner from './Components/BarCodeScanner';
-import BarCodeScannerComp from './Components/BarCodeScanner';
+import ImagePicker from './Components/ImagePicker.component.js';
+import GoogleLogin from './Components/GoogleLogin.component';
+import BarCodeScanner from './Components/BarCodeScanner.component';
+import BarCodeScannerComp from './Components/BarCodeScanner.component';
+
 
 
 export default function App() {
@@ -12,7 +13,7 @@ export default function App() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create( {
   container: {
     flex: 1,
     backgroundColor: '#fff',

@@ -17,16 +17,14 @@ export default function BarCodeScannerComp() {
 
 
   const handleBarCodeScanned = ({ type, data }) => {
-   
     setScanned(true);
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-    fetch("https://productsearch.gs1.se/foodservice/tradeitem/search", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json"
-      },
-      body: `"query": "${data}"`
-    }).then(data => alert(data));
+    fetch(
+      `http://ec2-54-165-238-176.compute-1.amazonaws.com:8080/products/${data}`
+    )
+      .then((response) => response.json())
+      .then((product) => {
+        alert(product.brandName + " " + product.functionalName);
+      });
   };
 
   if (hasPermission === null) {
