@@ -1,109 +1,35 @@
 import React from "react";
-import {StyleSheet } from 'react-native';
-import { SafeAreaView, Text, View,Divider } from "react-native";
-import { TopNavigation, Tab, TabView, TabBar,ViewPager,Layout } from "@ui-kitten/components";
+import { SafeAreaView,} from "react-native";
+import { TopNavigation,useTheme, Text } from "@ui-kitten/components";
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { NavigationContainer } from '@react-navigation/native';
+import { CommunityInfo } from "../assets/AppContext";
 import tw from 'twrnc'
 
+import {ItemAvailableComponent} from "../Components/ItemAvailableComponent"
+import {ItemRequestedComponent} from "../Components/ItemRequestedComponent"
 
-
+const TopTabs = createMaterialTopTabNavigator();
 
 export const ExploreScreen = () => {
-    const [selectedIndex, setSelectedIndex] = React.useState(0);
-
-	return (
-		<SafeAreaView>
-            <TopNavigation title="Majklockan" alignment="center" />
-            <TabView
-            selectedIndex={selectedIndex}
-            onSelect={index => setSelectedIndex(index)}>
-            
-            <Tab title='Tillgängligt'>
-                <Layout style={styles.tabContainer} >
-                    <Text category='h5'>Tillgänligt</Text>
-                    <Text category='h5'>Tillgänligt</Text>
-                    <Text category='h5'>Tillgänligt</Text>
-                    <Text category='h5'>Tillgänligt</Text>
-                    <Text category='h5'>Tillgänligt</Text>
-                    <Text category='h5'>Tillgänligt</Text>
-                    <Text category='h5'>Tillgänligt</Text>
-                    <Text category='h5'>Tillgänligt</Text>
-                    <Text category='h5'>Tillgänligt</Text>
-                    <Text category='h5'>Tillgänligt</Text>
-                    <Text category='h5'>Tillgänligt</Text>
-                </Layout>
-            </Tab>
-            <Tab title='Efterfrågas'>
-                <Layout >
-                    <Text category='h5'>Efterfrågas</Text>
-                 </Layout>
-            </Tab>
-            </TabView>
-            
-		</SafeAreaView>
-	);
-}
-
-const styles = StyleSheet.create({
-    tabContainer: {
-      marginTop: 3,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-  });
-
-  /*function FeedScreen() {
+  const { community, setCommunity } = React.useContext(CommunityInfo);
+    const theme = useTheme();
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Feed!</Text>
-      </View>
-    );
-  }
-  
-  function NotificationsScreen() {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Notifications!</Text>
-      </View>
-    );
-  }
-  
-  function ProfileScreen() {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Profile!</Text>
-      </View>
-    );
-  }
-  
-  const Tab = createMaterialTopTabNavigator();
-  
-export const ExploreScreen = () => {
-    return (
-      <Tab.Navigator
-        initialRouteName="Feed"
-        screenOptions={{
-          tabBarActiveTintColor: '#e91e63',
-          tabBarLabelStyle: { fontSize: 12 },
-          tabBarStyle: { backgroundColor: 'powderblue' },
-        }}
-      >
-        <Tab.Screen
-          name="Feed"
-          component={FeedScreen}
-          options={{ tabBarLabel: 'Home' }}
+    <SafeAreaView style={{flex:1}}>
+    <TopNavigation alignment="center" title={community.map(name=><Text style={tw`text-lg`}>{name} </Text>)}>
+    </TopNavigation>
+      <TopTabs.Navigator
+      screenOptions={{
+          tabBarIndicatorStyle:{backgroundColor :theme['color-primary-500']}
+      }}>
+        <TopTabs.Screen
+          name='Tillgängligt'
+          component={ItemAvailableComponent}
         />
-        <Tab.Screen
-          name="Notifications"
-          component={NotificationsScreen}
-          options={{ tabBarLabel: 'Updates' }}
+        <TopTabs.Screen
+          name='Efterfrågas'
+          component={ItemRequestedComponent}
         />
-        <Tab.Screen
-          name="Profile"
-          component={ProfileScreen}
-          options={{ tabBarLabel: 'Profile' }}
-        />
-      </Tab.Navigator>
+      </TopTabs.Navigator>
+      </SafeAreaView>
     );
-  }  */
+} 
