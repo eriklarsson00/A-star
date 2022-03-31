@@ -14,7 +14,6 @@ const http = require("http");
 const express = require("express");
 const app = express();
 app.use(express.json());
-const server = http.createServer(app);
 
 /*
 *************************
@@ -22,7 +21,21 @@ const server = http.createServer(app);
 *************************
 */
 
+const fs = require("fs");
+const http = require("http");
+const https = require("https");
 const WebSocket = require("ws");
+
+let sslKey;
+let sslCert;
+let sserver;
+if (process.env.NODE_ENV === "prod") {
+  sslKey = fs.readFileSync("ca.key", "utf8");
+  sslCert = fs.readFileSync("ca.crt", "utf8");
+  sserver = https.createServer({ key: sslKey, cert: sslCert }, app);
+}
+
+const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 wss.on("connection", function connection(ws) {
@@ -156,8 +169,20 @@ app.route("/transactions/lister/:id").get(getListerTransactions);
 
 //*************************SERVER*************************
 
-server.listen(8080, () => {
-  console.log("Listening to port 8080");
+if (sserver) {
+  sserver.listen(process.env.SERVER_PORT_HTTPS, () => {
+    console.log(
+      "Listening to port " +
+        process.env.SERVER_PORT_HTTPS +
+        " with auto reload!"
+    );
+  });
+}
+
+server.listen(process.env.SERVER_PORT_HTTP, () => {
+  console.log(
+    "Listening to port " + process.env.SERVER_PORT_HTTP + " with auto reload!"
+  );
 });
 
 export { server }; // Needed for testing purposes
