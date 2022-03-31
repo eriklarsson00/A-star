@@ -1,3 +1,4 @@
+import { transactionChecker } from "./modelchecker";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 
@@ -68,6 +69,10 @@ function getTransactionCommunity(req, res) {
 
 function addTransaction(req, res) {
   const transaction = req.body
+
+  if (!transactionChecker(transaction))
+    return res.status(400).json("Invalid offer properties");
+
   transaction.status = "pending"
   knex("Transactions")
     .insert(body)

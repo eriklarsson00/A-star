@@ -1,3 +1,4 @@
+import { offerChecker } from "./modelchecker";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 
@@ -57,6 +58,10 @@ function addOffer(req, res) {
   const body = req.body;
   const offer = body.offer;
   const communities = body.communities;
+
+  if (!offerChecker(offer))
+    return res.status(400).json("Invalid offer properties");
+
   let offer_id = -1;
   knex("Offers")
     .insert(offer)

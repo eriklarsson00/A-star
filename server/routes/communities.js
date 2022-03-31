@@ -1,3 +1,4 @@
+import { communityChecker } from "./modelchecker";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 
@@ -39,6 +40,10 @@ function getCommunity(req, res) {
 
 function addCommunity(req, res) {
   const body = req.body;
+
+  if (!communityChecker(body))
+    return res.status(400).json("Invalid community properties");
+
   knex("Communities")
     .insert(body)
     .catch((err) => {

@@ -1,4 +1,5 @@
 import { createRequire } from "module";
+import { userChecker } from "./modelchecker.js";
 const require = createRequire(import.meta.url);
 
 const knex = require("knex")({
@@ -42,6 +43,10 @@ function getUserEmail(req, res) {
 
 function addUser(req, res) {
   const body = req.body;
+
+  if (!userChecker(body))
+    return res.status(400).json("Invalid user properties");
+
   knex("Users")
     .insert(body)
     .catch(() => {

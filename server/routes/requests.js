@@ -1,3 +1,4 @@
+import { requestChecker } from "./modelchecker";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 
@@ -61,6 +62,10 @@ function addRequest(req, res) {
   const body = req.body;
   const request = body.request;
   const communities = body.communities;
+
+  if (!requestChecker(request))
+    return res.status(400).json("Invalid request properties");
+
   let request_id = -1;
   knex("Requests")
     .insert(request)

@@ -6,25 +6,17 @@ import "dotenv/config";
 
 /*
 *************************
-    REST API SETUP
+    SERVER SETUP
 *************************
 */
 
-const http = require("http");
 const express = require("express");
 const app = express();
-app.use(express.json());
-
-/*
-*************************
-    WebSocket SETUP
-*************************
-*/
-
 const fs = require("fs");
 const http = require("http");
 const https = require("https");
 const WebSocket = require("ws");
+app.use(express.json());
 
 let sslKey;
 let sslCert;
