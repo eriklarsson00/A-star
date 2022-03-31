@@ -65,18 +65,21 @@ import {
   getOffer,
   addOffer,
   getActiveOffers,
+  getActiveOffersCommunity,
 } from "./routes/offers.js";
 import {
   getRequests,
   getRequest,
   addRequest,
   getActiveRequests,
+  getActiveRequestsCommunity,
 } from "./routes/requests.js";
 import {
   getTransactions,
   getTransaction,
   getResponderTransactions,
   getListerTransactions,
+  getTransactionCommunity,
 } from "./routes/transactions.js";
 import { getProduct } from "./routes/products.js";
 
@@ -118,6 +121,8 @@ app.route("/offers/:id").get(getOffer);
 
 app.route("/offers/active").get(getActiveOffers);
 
+app.route("/offers/active/:community").get(getActiveOffersCommunity);
+
 //*************************REQUESTS*************************
 
 app.route("/requests").get(getRequests).post(addRequest);
@@ -126,11 +131,15 @@ app.route("/requests/:id").get(getRequest);
 
 app.route("/requests/active").get(getActiveRequests);
 
+app.route("/requests/active/:community").get(getActiveRequestsCommunity);
+
 //*************************TRANSACTIONS*************************
 
 app.route("/transactions").get(getTransactions);
 
 app.route("/transactions/:id").get(getTransaction);
+
+app.route("/transactions/community/:id").get(getTransactionCommunity);
 
 app.route("/transactions/responder/:id").get(getResponderTransactions);
 

@@ -12,6 +12,19 @@ const knex = require("knex")({
   },
 });
 
+function getActiveOffersCommunity(req, res) {
+  const community = req.params.community;
+  knex("Offers")
+    .select("Offers.*")
+    .leftJoin("Transactions", "Transactions.offer_id", "Offers.id")
+    .leftJoin("CommunityListings", "CommunityListings.offer_id", "Offers.id")
+    .where("Transactions.offer_id", null)
+    .andWhere("CommunityListings.community_id", community)
+    .then(offers => {
+      res.json(offers)
+    })
+}
+
 function getActiveOffers(req, res) {
   knex("Offers")
     .select("Offers.*")
@@ -66,4 +79,4 @@ function addOffer(req, res) {
     });
 }
 
-export { getActiveOffers, getOffers, getOffer, addOffer };
+export { getActiveOffersCommunity, getActiveOffers, getOffers, getOffer, addOffer };
