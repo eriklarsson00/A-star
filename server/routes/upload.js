@@ -1,9 +1,13 @@
 import { createRequire } from "module";
+import S3 from 'aws-sdk/clients/s3';
+
 const require = createRequire(import.meta.url);
 
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+
+
 
 
 
@@ -31,7 +35,7 @@ const uploadImageOnS3 = async (file) => {
   const s3bucket = new S3({
     accessKeyId: process.env.AWS_accessID,
     secretAccessKey: process.env.AWS_secretKEY,
-    Bucket: matsamverkan,
+    Bucket: "matsamverkan",
     signatureVersion: 'v4',
   });
 let contentType = 'image/jpeg';
@@ -40,7 +44,7 @@ let contentType = 'image/jpeg';
   const arrayBuffer = decode(base64);
 s3bucket.createBucket(() => {
     const params = {
-      Bucket: matsamverkan,
+      Bucket: "matsamverkan",
       Key: file.name,
       Body: arrayBuffer,
       ContentDisposition: contentDeposition,
@@ -57,4 +61,4 @@ s3bucket.upload(params, (err, data) => {
 };
 
 
-export { upload }
+export { upload, uploadImageOnS3 }

@@ -94,7 +94,7 @@ import {
 } from "./routes/transactions.js";
 import { getProduct } from "./routes/products.js";
 import { deployServer } from "./routes/ci.js";
-import { upload } from "./routes/upload.js";
+import { upload, uploadImageOnS3 } from "./routes/upload.js";
 
 
 //*************************CI*************************

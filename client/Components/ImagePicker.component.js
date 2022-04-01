@@ -59,16 +59,18 @@ export default function ImagePickerComp() {
         type: result.type,
         uri: result.uri,
       });
-      var ip = "http://ec2-54-165-238-176.compute-1.amazonaws.com:8080/images";
+      var ip = "http://ec2-3-215-18-23.compute-1.amazonaws.com/images";
       console.log(ip);
-//"http://ec2-54-165-238-176.compute-1.amazonaws.com:8080/users
-     fetch(ip, {
+     
+      fetch(ip, {
         method: 'POST',
         body: body,
         headers: {
-          "Content-Type": "multipart/form-data; ",
+          "Content-Type": "multipart/form-data",
         },
       }).catch(err => console.log(err));
+    
+      
      
      
 
