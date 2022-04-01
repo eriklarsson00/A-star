@@ -12,6 +12,14 @@ const knex = require("knex")({
   },
 });
 
+const name = "kalle";
+`SELECT * FROM pets WHERE name = '${name}}';`;
+
+```
+
+bcdskhbvnmefömnl${bchjke}
+```;
+
 function getActiveOffersCommunity(req, res) {
   const community = req.params.community;
   knex("Offers")
@@ -20,9 +28,9 @@ function getActiveOffersCommunity(req, res) {
     .leftJoin("CommunityListings", "CommunityListings.offer_id", "Offers.id")
     .where("Transactions.offer_id", null)
     .andWhere("CommunityListings.community_id", community)
-    .then(offers => {
-      res.json(offers)
-    })
+    .then((offers) => {
+      res.json(offers);
+    });
 }
 
 function getActiveOffers(req, res) {
@@ -30,9 +38,9 @@ function getActiveOffers(req, res) {
     .select("Offers.*")
     .leftJoin("Transactions", "Transactions.offer_id", "Offers.id")
     .where("Transactions.offer_id", null)
-    .then(offers => {
-      res.json(offers)
-    })
+    .then((offers) => {
+      res.json(offers);
+    });
 }
 
 function getOffers(req, res) {
@@ -79,4 +87,10 @@ function addOffer(req, res) {
     });
 }
 
-export { getActiveOffersCommunity, getActiveOffers, getOffers, getOffer, addOffer };
+export {
+  getActiveOffersCommunity,
+  getActiveOffers,
+  getOffers,
+  getOffer,
+  addOffer,
+};
