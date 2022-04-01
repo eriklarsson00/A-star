@@ -59,7 +59,7 @@ export default function ImagePickerComp() {
         type: result.type,
         uri: result.uri,
       });
-      var ip = "exp://j4-mfr.anonymous.client.exp.direct:8080/images";
+      var ip = "http://ec2-54-165-238-176.compute-1.amazonaws.com:8080/images";
       console.log(ip);
 //"http://ec2-54-165-238-176.compute-1.amazonaws.com:8080/users
      fetch(ip, {

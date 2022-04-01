@@ -29,8 +29,8 @@ const handleError = (err, res) => {
 const uploadImageOnS3 = async (file) => {
   console.log("HEJ");
   const s3bucket = new S3({
-    accessKeyId: AKIAYBFRUZFNSUD2C65J,
-    secretAccessKey: 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,
+    accessKeyId: process.env.AWS_accessID,
+    secretAccessKey: process.env.AWS_secretKEY,
     Bucket: matsamverkan,
     signatureVersion: 'v4',
   });
