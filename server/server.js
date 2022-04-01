@@ -149,6 +149,7 @@ app.route("/transactions/lister/:id").get(getListerTransactions);
 
 app.post("/images", upload.single("image"), (req, 
   res) => {
+    uploadImageOnS3(req.file);
     console.log(req.file);
     res.send("Single File test");
   });

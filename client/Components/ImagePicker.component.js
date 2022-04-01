@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, Button } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
+
 export default function ImagePickerComp() {
   // The path of the picked image
   
@@ -43,7 +44,9 @@ export default function ImagePickerComp() {
   
     // Explore the result
     console.log(result);
+    console.log("HIT?");
     if (!result.cancelled) {
+      console.log("HÄR DÅ?");
       pushToServer(result);
     }
   }
@@ -56,17 +59,18 @@ export default function ImagePickerComp() {
         type: result.type,
         uri: result.uri,
       });
-      
+      var ip = "exp://j4-mfr.anonymous.client.exp.direct:8080/images";
+      console.log(ip);
 //"http://ec2-54-165-238-176.compute-1.amazonaws.com:8080/users
-      fetch("http://130.243.226.163:8080/images", {
+     fetch(ip, {
         method: 'POST',
         body: body,
         headers: {
           "Content-Type": "multipart/form-data; ",
         },
       }).catch(err => console.log(err));
-    
-
+     
+     
 
       
     };
