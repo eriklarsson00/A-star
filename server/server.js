@@ -2,7 +2,6 @@ import "dotenv/config";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 
-import "dotenv/config";
 
 /*
 *************************
@@ -95,6 +94,8 @@ import {
 } from "./routes/transactions.js";
 import { getProduct } from "./routes/products.js";
 import { deployServer } from "./routes/ci.js";
+import { upload } from "./routes/upload.js";
+
 
 //*************************CI*************************
 
@@ -161,6 +162,19 @@ app.route("/transactions/community/:id").get(getTransactionCommunity);
 app.route("/transactions/responder/:id").get(getResponderTransactions);
 
 app.route("/transactions/lister/:id").get(getListerTransactions);
+
+//*************************IMAGES*********************
+
+
+
+
+app.post("/images", upload.single("image"), (req, 
+  res) => {
+    uploadImageOnS3(req.file);
+    console.log(req.file);
+    res.send("Single File test");
+  });
+
 
 //*************************SERVER*************************
 
