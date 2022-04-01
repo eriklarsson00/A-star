@@ -26,4 +26,35 @@ const handleError = (err, res) => {
     .end("Oops! Something went wrong!");
 };
 
+const uploadImageOnS3 = async (file) => {
+  console.log("HEJ");
+  const s3bucket = new S3({
+    accessKeyId: AKIAYBFRUZFNSUD2C65J,
+    secretAccessKey: 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,
+    Bucket: matsamverkan,
+    signatureVersion: 'v4',
+  });
+let contentType = 'image/jpeg';
+  let contentDeposition = 'inline;filename="' + file.name + '"';
+  const base64 = await fs.readFile(file.uri, 'base64');
+  const arrayBuffer = decode(base64);
+s3bucket.createBucket(() => {
+    const params = {
+      Bucket: matsamverkan,
+      Key: file.name,
+      Body: arrayBuffer,
+      ContentDisposition: contentDeposition,
+      ContentType: contentType,
+  };
+s3bucket.upload(params, (err, data) => {
+    if (err) {
+      console.log('error in callback');
+    }
+  console.log('success');
+  console.log("Respomse URL : "+ data.Location);
+  });
+});
+};
+
+
 export { upload }
