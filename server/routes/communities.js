@@ -40,9 +40,9 @@ function getCommunity(req, res) {
 function addCommunity(req, res) {
   const body = req.body;
   knex("Communities")
-    .insert(body)
+    .insert(body === {} ? null : body)
     .catch((err) => {
-      res.json(err);
+      res.status(500).json(err);
       id = undefined;
     })
     .then((id) => {
@@ -64,7 +64,7 @@ function updateCommunity(req, res) {
     .where("id", id)
     .update(body)
     .catch((err) => {
-      res.json(err);
+      res.status(500).json(err);
       id = undefined;
     })
     .then(() => {
@@ -85,7 +85,7 @@ function deleteCommunity(req, res) {
     .where("id", id)
     .del()
     .catch((err) => {
-      res.json(err);
+      res.status(500).json(err);
       id = undefined;
     })
     .then(() => {
