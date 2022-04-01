@@ -1,5 +1,5 @@
 import { createRequire } from "module";
-import { userChecker } from "./modelchecker.js";
+import { checkIntID, checkEmptyBody, checkEmptyParam } from "./common.js";
 const require = createRequire(import.meta.url);
 
 const knex = require("knex")({
@@ -23,6 +23,11 @@ function getUsers(req, res) {
 
 function getUser(req, res) {
   const id = req.params.id;
+
+  if (checkIntID(id, res, "Usage: /users/:id. id has to be a number")) {
+    return;
+  }
+
   knex("Users")
     .select()
     .where("id", id)
@@ -33,6 +38,12 @@ function getUser(req, res) {
 
 function getUserEmail(req, res) {
   const email = req.params.email;
+  const errMsg = "Usage: /users/email/:email. email has to be a string";
+
+  if (checkEmptyParam(email, res, errMsg)) {
+    return;
+  }
+
   knex("Users")
     .select()
     .where("email", email)
@@ -44,13 +55,14 @@ function getUserEmail(req, res) {
 function addUser(req, res) {
   const body = req.body;
 
-  if (!userChecker(body))
-    return res.status(400).json("Invalid user properties");
+  if (checkEmptyBody(body, res, "Body cannot be empty")) {
+    return;
+  }
 
   knex("Users")
     .insert(body)
-    .catch(() => {
-      res.sendStatus(400);
+    .catch((err) => {
+      res.status(500).json(err);
     })
     .then((id) => {
       if (id !== undefined) res.json("User inserted with id: " + id);
@@ -61,15 +73,18 @@ function updateUser(req, res) {
   const id = parseInt(req.params.id);
   const body = req.body;
 
-  if (isNaN(id)) {
-    return res.status(400).json("Usage: /users/:id. id has to be a number");
+  if (
+    checkIntID(id, res, "Usage: /users/:id. id has to be a number") ||
+    checkEmptyBody(body, res, "Body cannot be empty")
+  ) {
+    return;
   }
 
   knex("Users")
     .where("id", id)
     .update(body)
     .catch((err) => {
-      res.json(err);
+      res.status(500).json(err);
       id = undefined;
     })
     .then(() => {
@@ -80,8 +95,8 @@ function updateUser(req, res) {
 function deleteUser(req, res) {
   const id = parseInt(req.params.id);
 
-  if (isNaN(id)) {
-    return res.status(400).json("Usage: /users/:id. id has to be a number");
+  if (checkIntID(id, res, "Usage: /users/:id. id has to be a number")) {
+    return;
   }
 
   knex("Users")
@@ -100,7 +115,7 @@ function deleteUser(req, res) {
       taken: -1,
     })
     .catch((err) => {
-      res.json(err);
+      res.status(500).json(err);
       id = undefined;
     })
     .then(() => {
@@ -110,17 +125,24 @@ function deleteUser(req, res) {
 
 function addUserToCommunity(req, res) {
   const body = req.body;
+
+  if (checkEmptyBody(body, res, "Body cannot be empty")) {
+    return;
+  }
+
   const user_id = parseInt(body.user_id);
   const community_id = parseInt(body.community_id);
+
   if (isNaN(user_id) || isNaN(community_id)) {
     res.status(400).json("Body needs to contain 'user_id' and 'community_id'");
     return;
   }
+
   knex("CommunityUser")
     .insert(body)
     .catch((err) => {
-      res.json(err);
-      id = undefined;
+      res.status(500).json(err);
+      return;
     })
     .then((id) => {
       if (id !== undefined)
@@ -132,12 +154,12 @@ function addUserToCommunity(req, res) {
 
 function getUserCommunities(req, res) {
   const id = parseInt(req.params.id);
+  const errMsg = "Usage: /users/communities/:id. id has to be a number";
 
-  if (isNaN(id)) {
-    return res
-      .status(400)
-      .json("Usage: /users/community/:id. id has to be a number");
+  if (checkIntID(id, res, errMsg)) {
+    return;
   }
+
   knex("Communities")
     .select("Communities.*")
     .leftJoin("CommunityUser", "CommunityUser.community_id", "Communities.id")
