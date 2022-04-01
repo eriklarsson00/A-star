@@ -23,7 +23,6 @@ const handleError = (err, res) => {
 };
 
 const uploadImageOnS3 = async (file) => {
-  console.log("HEJ");
   const s3bucket = new S3({
     accessKeyId: process.env.AWS_accessID,
     secretAccessKey: process.env.AWS_secretKEY,
@@ -31,13 +30,13 @@ const uploadImageOnS3 = async (file) => {
     signatureVersion: "v4",
   });
   let contentType = "image/jpeg";
-  let contentDeposition = 'inline;filename="' + file.name + '"';
-  const base64 = await fs.readFileSync(file.uri, "base64");
+  let contentDeposition = 'inline;filename="' + file.filename + '"';
+  const base64 = await fs.readFileSync(file.path, "base64");
   const arrayBuffer = decode(base64);
   s3bucket.createBucket(() => {
     const params = {
       Bucket: "matsamverkan",
-      Key: file.name,
+      Key: file.filename,
       Body: arrayBuffer,
       ContentDisposition: contentDeposition,
       ContentType: contentType,
