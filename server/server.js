@@ -6,24 +6,17 @@ import "dotenv/config";
 
 /*
 *************************
-    REST API SETUP
+    SERVER SETUP
 *************************
 */
 
 const express = require("express");
 const app = express();
-app.use(express.json());
-
-/*
-*************************
-    WebSocket SETUP
-*************************
-*/
-
 const fs = require("fs");
 const http = require("http");
 const https = require("https");
 const WebSocket = require("ws");
+app.use(express.json());
 
 let sslKey;
 let sslCert;
@@ -76,6 +69,7 @@ import {
   getOffers,
   getOffer,
   addOffer,
+  deleteOffer,
   getActiveOffers,
   getActiveOffersCommunity,
 } from "./routes/offers.js";
@@ -83,6 +77,7 @@ import {
   getRequests,
   getRequest,
   addRequest,
+  deleteRequest,
   getActiveRequests,
   getActiveRequestsCommunity,
 } from "./routes/requests.js";
@@ -92,6 +87,8 @@ import {
   getResponderTransactions,
   getListerTransactions,
   getTransactionCommunity,
+  addTransaction,
+  deleteTransaction,
 } from "./routes/transactions.js";
 import { getProduct } from "./routes/products.js";
 import { deployServer } from "./routes/ci.js";
@@ -134,7 +131,7 @@ app
 
 app.route("/offers").get(getOffers).post(addOffer);
 
-app.route("/offers/:id").get(getOffer);
+app.route("/offers/:id").get(getOffer).delete(deleteOffer);
 
 app.route("/offers/active").get(getActiveOffers);
 
@@ -144,7 +141,7 @@ app.route("/offers/active/:community").get(getActiveOffersCommunity);
 
 app.route("/requests").get(getRequests).post(addRequest);
 
-app.route("/requests/:id").get(getRequest);
+app.route("/requests/:id").get(getRequest).delete(deleteRequest);
 
 app.route("/requests/active").get(getActiveRequests);
 
@@ -152,9 +149,9 @@ app.route("/requests/active/:community").get(getActiveRequestsCommunity);
 
 //*************************TRANSACTIONS*************************
 
-app.route("/transactions").get(getTransactions);
+app.route("/transactions").get(getTransactions).post(addTransaction);
 
-app.route("/transactions/:id").get(getTransaction);
+app.route("/transactions/:id").get(getTransaction).delete(deleteTransaction);
 
 app.route("/transactions/community/:id").get(getTransactionCommunity);
 
