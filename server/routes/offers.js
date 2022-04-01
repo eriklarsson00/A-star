@@ -1,4 +1,4 @@
-import { offerChecker } from "./modelchecker";
+import { offerChecker } from "./modelchecker.js";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 

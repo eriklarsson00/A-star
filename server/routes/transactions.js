@@ -1,4 +1,4 @@
-import { transactionChecker } from "./modelchecker";
+import { transactionChecker } from "./modelchecker.js";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 

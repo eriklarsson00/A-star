@@ -12,10 +12,10 @@ import "dotenv/config";
 
 const express = require("express");
 const app = express();
+const socketio = require("socket.io");
 const fs = require("fs");
 const http = require("http");
 const https = require("https");
-const WebSocket = require("ws");
 app.use(express.json());
 
 let sslKey;
@@ -28,16 +28,33 @@ if (process.env.NODE_ENV === "prod") {
 }
 
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
+const io = socketio(server);
 
-wss.on("connection", function connection(ws) {
-  ws.on("message", function incoming(message, isBinary) {
-    console.log(message.toString());
-    wss.clients.forEach(function each(client) {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(message.toString());
-      }
-    });
+io.on("connection", (socket) => {
+  const connectedClients = () => {
+    return `${io.of("/").sockets.size} clients connected`;
+  };
+  console.log(socket.id, "has connected");
+  socket.emit(
+    "message",
+    `Connected to WebSocket server\n ${connectedClients()}`
+  );
+
+  socket.on("communities", (communities) => {
+    console.log(communities);
+    socket.join(communities.ids);
+  });
+
+  socket.broadcast.emit(
+    "message",
+    `A new client connected to the WebSocket server\n ${connectedClients()}`
+  );
+
+  socket.on("disconnect", () => {
+    io.emit(
+      "message",
+      `A client has disconnected from the server \n ${connectedClients()}`
+    );
   });
 });
 
@@ -129,7 +146,16 @@ app
 
 //*************************OFFERS*************************
 
-app.route("/offers").get(getOffers).post(addOffer);
+app
+  .route("/offers")
+  .get(getOffers)
+  .post((req, res) => {
+    const communities = req.body.communities;
+    communities.forEach((community) => {
+      io.sockets.to(community).emit("newOffer", req.body.offer);
+    });
+    // addOffer(req, res)
+  });
 
 app.route("/offers/:id").get(getOffer).delete(deleteOffer);
 
@@ -139,7 +165,16 @@ app.route("/offers/active/:community").get(getActiveOffersCommunity);
 
 //*************************REQUESTS*************************
 
-app.route("/requests").get(getRequests).post(addRequest);
+app
+  .route("/requests")
+  .get(getRequests)
+  .post((req, res) => {
+    const communities = req.body.communities;
+    communities.forEach((community) => {
+      io.sockets.to(community).emit("newRequest", req.body.request);
+    });
+    // addRequest(req, res)
+  });
 
 app.route("/requests/:id").get(getRequest).delete(deleteRequest);
 

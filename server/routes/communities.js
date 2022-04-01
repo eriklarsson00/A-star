@@ -1,4 +1,4 @@
-import { communityChecker } from "./modelchecker";
+import { communityChecker } from "./modelchecker.js";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 
