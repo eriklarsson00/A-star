@@ -1,4 +1,5 @@
 import { React, createContext, useState, useMemo } from "react";
+import { StatusBar } from "react-native";
 import * as eva from "@eva-design/eva";
 import { ApplicationProvider, IconRegistry } from "@ui-kitten/components";
 import { EvaIconsPack } from "@ui-kitten/eva-icons";
@@ -26,7 +27,8 @@ import { UserInfo, CommunityInfo} from './assets/AppContext'
 		<UserInfo.Provider value={FirstUservalue}>
 		<CommunityInfo.Provider value={FirstCommunityValue}>
 		<ApplicationProvider {...eva} theme={{ ...eva.light, ...theme }}>
-			<AppNavigator />
+		<StatusBar barStyle="dark-content"/>
+				<AppNavigator />
 		</ApplicationProvider>
 		</CommunityInfo.Provider>
 		</UserInfo.Provider>

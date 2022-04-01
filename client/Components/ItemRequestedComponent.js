@@ -39,7 +39,9 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
     },
     container: {
-        marginTop:15,
-        height:80,
+      marginTop:15,
+      height:80,
+      marginRight:10,
+      marginLeft:10,
     },
 });

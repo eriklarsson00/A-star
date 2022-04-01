@@ -7,10 +7,9 @@ import tw from 'twrnc';
 const ProfileInfoComponent = (props) => {
 	return (
 		<Layout style={styles.container}>
-			<Text> {props.value} </Text>
+			{/* <Text> {props.value} </Text>
 			<Divider style={styles.divider} />
-			<Text> {props.heading} </Text> 
-
+			<Text> {props.heading} </Text>  */}
 		</Layout>
 	)
 };

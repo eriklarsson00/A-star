@@ -2,7 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import {StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { BottomNavigation, BottomNavigationTab, Divider, Layout, Text, Icon } from '@ui-kitten/components';
+import { BottomNavigation, BottomNavigationTab, Icon } from '@ui-kitten/components';
 import { ExploreScreen } from "../Screens/ExploreScreen";
 import { CommunityScreen } from "../Screens/CommunityScreen";
 import { OngoingScreen } from "../Screens/OngoingScreen";
@@ -58,8 +58,10 @@ export const AppNavigator = () => (
 ); 
 
 const styles = StyleSheet.create({
-    navbar:{ //Styles the navbar
-        marginBottom:25,
-        marginTop:8,
+    navbar:{ //Styles the navbar 
+        paddingBottom:25,
+        paddingTop:8,
+        borderTopWidth:0.8,
+        borderTopColor:"black",
     },
 });

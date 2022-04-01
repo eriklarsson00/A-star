@@ -1,6 +1,6 @@
 import React from "react";
-import { SafeAreaView,} from "react-native";
-import { TopNavigation,useTheme, Text } from "@ui-kitten/components";
+import { SafeAreaView,View} from "react-native";
+import { TopNavigation,useTheme, Text,Layout } from "@ui-kitten/components";
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { CommunityInfo } from "../assets/AppContext";
 import tw from 'twrnc'
@@ -14,7 +14,8 @@ export const ExploreScreen = () => {
   const { community, setCommunity } = React.useContext(CommunityInfo);
     const theme = useTheme();
     return (
-    <SafeAreaView style={{flex:1}}>
+    /*<SafeAreaView style={{flex:1}}>*/
+    <Layout style={{flex:1, paddingTop:50}}>
     <TopNavigation alignment="center" title={community.map(name=><Text style={tw`text-lg`}>{name} </Text>)}>
     </TopNavigation>
       <TopTabs.Navigator
@@ -30,6 +31,7 @@ export const ExploreScreen = () => {
           component={ItemRequestedComponent}
         />
       </TopTabs.Navigator>
-      </SafeAreaView>
+      </Layout>
+     /* </SafeAreaView>*/
     );
 } 
