@@ -32,7 +32,7 @@ const uploadImageOnS3 = async (file) => {
   let contentType = "image/jpeg";
   let contentDeposition = 'inline;filename="' + file.filename + '"';
   const base64 = await fs.readFileSync(file.path, "base64");
-  const arrayBuffer = decode(base64);
+  const arrayBuffer = atob(base64);
   s3bucket.createBucket(() => {
     const params = {
       Bucket: "matsamverkan",
@@ -40,6 +40,7 @@ const uploadImageOnS3 = async (file) => {
       Body: arrayBuffer,
       ContentDisposition: contentDeposition,
       ContentType: contentType,
+      ContentEncoding: 'base64'
     };
     s3bucket.upload(params, (err, data) => {
       if (err) {
