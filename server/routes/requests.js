@@ -12,10 +12,23 @@ const knex = require("knex")({
   },
 });
 
+function getActiveRequestsCommunity(req, res) {
+  const community = req.params.community;
+  knex("Requests")
+    .select("Requests.*")
+    .leftJoin("Transactions", "Transactions.request_id", "Requests.id")
+    .leftJoin("CommunityListings", "CommunityListings.request_id", "Requests.id")
+    .where("Transactions.request_id", null)
+    .andWhere("CommunityListings.community_id", community)
+    .then(requests => {
+      res.json(requests)
+    })
+}
+
 function getActiveRequests(req, res) {
   knex("Requests")
     .select("Requests.*")
-    .leftJoin("Transactions", "Transaction.request_id", "Requests.id")
+    .leftJoin("Transactions", "Transactions.request_id", "Requests.id")
     .where("Transactions.request_id", null)
     .then(requests => {
       res.json(requests)
@@ -66,4 +79,4 @@ function addRequest(req, res) {
     });
 }
 
-export { getActiveRequests, getRequests, getRequest, addRequest };
+export { getActiveRequestsCommunity, getActiveRequests, getRequests, getRequest, addRequest };

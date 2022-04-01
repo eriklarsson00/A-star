@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "start-prod": "nodemon server.js 8080",
+    "start-prod": "DOTENV_CONFIG_PATH=.env.prod nodemon server.js 443 80",
     "test": "DOTENV_CONFIG_PATH=.env.test mocha --timeout 10000 './test/test.js' --exit",
     "test-dev": "DOTENV_CONFIG_PATH=.env.dev mocha --timeout 10000 './test/test.js' --exit"
   },
