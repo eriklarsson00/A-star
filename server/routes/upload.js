@@ -1,51 +1,29 @@
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 
-var multer = require("multer");
-var AWS = require("aws-sdk");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 
-var accessKeyId = "AKIAYBFRUZFNSL7KZ3HD";
-var secretAccessKey = "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";
 
-AWS.config.update({
-  accessKeyId: accessKeyId,
-  secretAccessKey: secretAccessKey,
+
+const fileStorageEngine = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "../Images");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "--" + file.originalname);
+  },
 });
 
-var s3 = new AWS.S3();
+const upload = multer( {storage: fileStorageEngine});
 
-app.use(
-  multer({
-    // https://github.com/expressjs/multer
-    dest: "./upload",
-    limits: { fileSize: 100000 },
-    rename: function (fieldname, filename) {
-      return filename.replace(/\W+/g, "-").toLowerCase();
-    },
-    onFileUploadData: function (file, data, req, res) {
-      // file : { fieldname, originalname, name, encoding, mimetype, path, extension, size, truncated, buffer }
-      var params = {
-        Bucket: "matsamverkan",
-        Key: file.name,
-        Body: data,
-      };
 
-      s3.putObject(params, function (perr, pres) {
-        if (perr) {
-          console.log("Error uploading data: ", perr);
-        } else {
-          console.log("Successfully uploaded data to myBucket/myKey");
-        }
-      });
-    },
-  })
-);
+const handleError = (err, res) => {
+  res
+    .status(500)
+    .contentType("text/plain")
+    .end("Oops! Something went wrong!");
+};
 
-app.post("/upload", function (req, res) {
-  if (req.files.image !== undefined) {
-    // `image` is the field name from your form
-    res.redirect("/uploads"); // success
-  } else {
-    res.send("error, no file chosen");
-  }
-});
+export { upload }

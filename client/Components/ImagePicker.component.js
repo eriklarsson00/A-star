@@ -43,7 +43,6 @@ export default function ImagePickerComp() {
   
     // Explore the result
     console.log(result);
-    console.log("WOW "+result.type + " WOW");
     if (!result.cancelled) {
       pushToServer(result);
     }
@@ -57,15 +56,16 @@ export default function ImagePickerComp() {
         type: result.type,
         uri: result.uri,
       });
+      
 //"http://ec2-54-165-238-176.compute-1.amazonaws.com:8080/users
-      fetch("http://130.243.232.134:8080", {
+      fetch("http://130.243.226.163:8080/images", {
         method: 'POST',
         body: body,
         headers: {
           "Content-Type": "multipart/form-data; ",
         },
       }).catch(err => console.log(err));
-      console.log("WOWOOWOWOWOWOWOWOWOOW" + result.uri);
+    
 
 
       

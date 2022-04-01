@@ -20,10 +20,6 @@
     "express": "^4.17.3",
     "fs": "^0.0.1-security",
     "http": "^0.0.1-security",
-<<<<<<< HEAD
-    "multer": "^1.4.4",
-    "path": "^0.12.7",
-=======
     "knex": "^1.0.4",
     "mocha": "^9.2.2",
     "multer": "^1.4.4",
@@ -32,9 +28,9 @@
     "node-fetch": "^3.2.3",
     "nodemon": "^2.0.15",
     "objection": "^3.0.1",
+    "path": "^0.12.7",
     "sequelize": "^6.17.0",
     "typeorm": "^0.3.4",
->>>>>>> 9780a6144349e7e130c6242271f326cb755e575f
     "ws": "^8.5.0"
   },
   "type": "module"
