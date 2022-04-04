@@ -12,12 +12,21 @@ chai.use(chaiHttp);
 const dummyOffer = {
   user_id: 1,
   product_id: 2,
-  product_text: "banan",
+  product_text: "kulor",
   description: "en äcklig banan",
   quantity: 5,
-  time_of_creation: Date.now(),
-  time_of_purchase: Date.now(),
-  time_of_expiration: Date.now(),
+  time_of_creation: new Date()
+    .toISOString()
+    .replace(/T/, " ")
+    .replace(/\..+/, ""),
+  time_of_purchase: new Date()
+    .toISOString()
+    .replace(/T/, " ")
+    .replace(/\..+/, ""),
+  time_of_expiration: new Date()
+    .toISOString()
+    .replace(/T/, " ")
+    .replace(/\..+/, ""),
   imgurl: "path/to/s3",
   broken_pkg: true,
 };
@@ -25,7 +34,6 @@ const dummyOffer = {
 export function offerTests(server) {
   describe("/offers", () => {
     it("should get all offers", function (done) {
-      console.log(Date.prototype.toISOString(Date.now()));
       chai
         .request(server)
         .get("/offers")
@@ -91,7 +99,6 @@ export function offerTests(server) {
           if (err) {
             console.error(err);
           }
-          console.log(res.body);
           res.should.have.status(200);
           res.body.should.be.a("string");
           res.body.length.should.not.be.eql(0);
