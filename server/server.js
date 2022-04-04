@@ -2,7 +2,6 @@ import "dotenv/config";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 
-
 /*
 *************************
     SERVER SETUP
@@ -89,6 +88,7 @@ import {
   deleteOffer,
   getActiveOffers,
   getActiveOffersCommunity,
+  updateOffer,
 } from "./routes/offers.js";
 import {
   getRequests,
@@ -110,7 +110,6 @@ import {
 import { getProduct } from "./routes/products.js";
 import { deployServer } from "./routes/ci.js";
 import { upload, uploadImageOnS3 } from "./routes/upload.js";
-
 
 //*************************CI*************************
 
@@ -154,14 +153,16 @@ app
   .route("/offers")
   .get(getOffers)
   .post((req, res) => {
+    addOffer(req, res);
     const communities = req.body.communities;
-    communities.forEach((community) => {
-      io.sockets.to(community).emit("newOffer", req.body.offer);
-    });
-    addOffer(req, res)
+    if (communities) {
+      communities.forEach((community) => {
+        io.sockets.to(community).emit("newOffer", req.body.offer);
+      });
+    }
   });
 
-app.route("/offers/:id").get(getOffer).delete(deleteOffer);
+app.route("/offers/:id").get(getOffer).put(updateOffer).delete(deleteOffer);
 
 app.route("/offers/active").get(getActiveOffers);
 
@@ -177,7 +178,7 @@ app
     communities.forEach((community) => {
       io.sockets.to(community).emit("newRequest", req.body.request);
     });
-    addRequest(req, res)
+    addRequest(req, res);
   });
 
 app.route("/requests/:id").get(getRequest).delete(deleteRequest);
@@ -200,16 +201,11 @@ app.route("/transactions/lister/:id").get(getListerTransactions);
 
 //*************************IMAGES*********************
 
-
-
-
-app.post("/images", upload.single("image"), (req, 
-  res) => {
-    uploadImageOnS3(req.file);
-    console.log(req.file);
-    res.send("Single File test");
-  });
-
+app.post("/images", upload.single("image"), (req, res) => {
+  uploadImageOnS3(req.file);
+  console.log(req.file);
+  res.send("Single File test");
+});
 
 //*************************SERVER*************************
 

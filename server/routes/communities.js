@@ -18,7 +18,7 @@ function getCommunities(req, res) {
     .raw(
       "SELECT C.*, COUNT(CU.id) as members FROM Communities C " +
         "LEFT JOIN CommunityUser CU ON CU.community_id = C.id " +
-        "GROUP BY CU.community_id"
+        "GROUP BY C.id, CU.community_id"
     )
     .then((communities) => {
       res.json(communities[0]);
@@ -73,6 +73,9 @@ function updateCommunity(req, res) {
       .status(400)
       .json("Usage: /communities/:id. id has to be a number");
   }
+
+  if (!communityChecker(body))
+    return res.status(400).json("Invalid community properties");
 
   knex("Communities")
     .where("id", id)
