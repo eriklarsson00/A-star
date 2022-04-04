@@ -82,9 +82,9 @@ export function userTests(server) {
         .request(server)
         .get("/users/dåligtId")
         .end((err, res) => {
-          res.should.have.status(200);
-          res.text.length.should.be.eql(2);
-          res.body.should.be.a("array");
+          res.should.have.status(400);
+          res.body.length.should.not.be.eql(0);
+          res.body.should.be.a("string");
           done();
         });
     });
@@ -256,7 +256,7 @@ export function userTests(server) {
         .post("/users/community")
         .send({ user_id: -1, community_id: -3 })
         .end((err, res) => {
-          res.should.have.status(200);
+          res.should.have.status(500);
           res.text.length.should.not.be.eql(0);
           res.body.should.be.a("object");
           done();
