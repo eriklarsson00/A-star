@@ -124,7 +124,37 @@ export function communityTests(server) {
         });
     });
 
+    it("should not add community", function (done) {
+      chai
+        .request(server)
+        .post("/communities")
+        .send({})
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(400);
+          res.body.should.be.a("string");
+          res.body.length.should.not.be.eql(0);
+          done();
+        });
+    });
+
     it("should not update community", function (done) {
+      // Empty body
+      chai
+        .request(server)
+        .put("/communities/1")
+        .send({})
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(400);
+          res.body.should.be.a("string");
+          res.body.length.should.not.be.eql(0);
+        });
+
       // Invalid id
       chai
         .request(server)
@@ -151,7 +181,6 @@ export function communityTests(server) {
           res.should.have.status(200);
           res.body.should.be.a("string");
           res.body.length.should.not.be.eql(0);
-          done();
         });
     });
 

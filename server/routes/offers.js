@@ -1,3 +1,4 @@
+import { offerChecker } from "./modelchecker.js";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 
@@ -20,9 +21,9 @@ function getActiveOffersCommunity(req, res) {
     .leftJoin("CommunityListings", "CommunityListings.offer_id", "Offers.id")
     .where("Transactions.offer_id", null)
     .andWhere("CommunityListings.community_id", community)
-    .then(offers => {
-      res.json(offers)
-    })
+    .then((offers) => {
+      res.json(offers);
+    });
 }
 
 function getActiveOffers(req, res) {
@@ -30,9 +31,9 @@ function getActiveOffers(req, res) {
     .select("Offers.*")
     .leftJoin("Transactions", "Transactions.offer_id", "Offers.id")
     .where("Transactions.offer_id", null)
-    .then(offers => {
-      res.json(offers)
-    })
+    .then((offers) => {
+      res.json(offers);
+    });
 }
 
 function getOffers(req, res) {
@@ -57,6 +58,10 @@ function addOffer(req, res) {
   const body = req.body;
   const offer = body.offer;
   const communities = body.communities;
+
+  if (!offerChecker(offer))
+    return res.status(400).json("Invalid offer properties");
+
   let offer_id = -1;
   knex("Offers")
     .insert(offer)
@@ -79,4 +84,30 @@ function addOffer(req, res) {
     });
 }
 
-export { getActiveOffersCommunity, getActiveOffers, getOffers, getOffer, addOffer };
+function deleteOffer(req, res) {
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res.status(400).json("Usage: /offers/:id. id has to be a number");
+  }
+
+  knex("Offers")
+    .where("id", id)
+    .delete()
+    .catch((err) => {
+      res.json(err);
+      id = undefined;
+    })
+    .then(() => {
+      if (id !== undefined) res.json("Offer has been removed");
+    });
+}
+
+export {
+  getActiveOffersCommunity,
+  getActiveOffers,
+  getOffers,
+  getOffer,
+  addOffer,
+  deleteOffer,
+};

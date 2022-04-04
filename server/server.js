@@ -5,24 +5,17 @@ const require = createRequire(import.meta.url);
 
 /*
 *************************
-    REST API SETUP
+    SERVER SETUP
 *************************
 */
 
 const express = require("express");
 const app = express();
-app.use(express.json());
-
-/*
-*************************
-    WebSocket SETUP
-*************************
-*/
-
+const socketio = require("socket.io");
 const fs = require("fs");
 const http = require("http");
 const https = require("https");
-const WebSocket = require("ws");
+app.use(express.json());
 
 let sslKey;
 let sslCert;
@@ -34,16 +27,33 @@ if (process.env.NODE_ENV === "prod") {
 }
 
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
+const io = socketio(server);
 
-wss.on("connection", function connection(ws) {
-  ws.on("message", function incoming(message, isBinary) {
-    console.log(message.toString());
-    wss.clients.forEach(function each(client) {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(message.toString());
-      }
-    });
+io.on("connection", (socket) => {
+  const connectedClients = () => {
+    return `${io.of("/").sockets.size} clients connected`;
+  };
+  console.log(socket.id, "has connected");
+  socket.emit(
+    "message",
+    `Connected to WebSocket server\n ${connectedClients()}`
+  );
+
+  socket.on("communities", (communities) => {
+    console.log(communities);
+    socket.join(communities.ids);
+  });
+
+  socket.broadcast.emit(
+    "message",
+    `A new client connected to the WebSocket server\n ${connectedClients()}`
+  );
+
+  socket.on("disconnect", () => {
+    io.emit(
+      "message",
+      `A client has disconnected from the server \n ${connectedClients()}`
+    );
   });
 });
 
@@ -67,6 +77,7 @@ import { userExists } from "./routes/login.js";
 import {
   getCommunities,
   getCommunity,
+  getCommunityMembers,
   addCommunity,
   updateCommunity,
   deleteCommunity,
@@ -75,6 +86,7 @@ import {
   getOffers,
   getOffer,
   addOffer,
+  deleteOffer,
   getActiveOffers,
   getActiveOffersCommunity,
 } from "./routes/offers.js";
@@ -82,6 +94,7 @@ import {
   getRequests,
   getRequest,
   addRequest,
+  deleteRequest,
   getActiveRequests,
   getActiveRequestsCommunity,
 } from "./routes/requests.js";
@@ -91,6 +104,8 @@ import {
   getResponderTransactions,
   getListerTransactions,
   getTransactionCommunity,
+  addTransaction,
+  deleteTransaction,
 } from "./routes/transactions.js";
 import { getProduct } from "./routes/products.js";
 import { deployServer } from "./routes/ci.js";
@@ -131,11 +146,22 @@ app
   .put(updateCommunity)
   .delete(deleteCommunity);
 
+app.route("communities/members/:id").get(getCommunityMembers);
+
 //*************************OFFERS*************************
 
-app.route("/offers").get(getOffers).post(addOffer);
+app
+  .route("/offers")
+  .get(getOffers)
+  .post((req, res) => {
+    const communities = req.body.communities;
+    communities.forEach((community) => {
+      io.sockets.to(community).emit("newOffer", req.body.offer);
+    });
+    addOffer(req, res)
+  });
 
-app.route("/offers/:id").get(getOffer);
+app.route("/offers/:id").get(getOffer).delete(deleteOffer);
 
 app.route("/offers/active").get(getActiveOffers);
 
@@ -143,9 +169,18 @@ app.route("/offers/active/:community").get(getActiveOffersCommunity);
 
 //*************************REQUESTS*************************
 
-app.route("/requests").get(getRequests).post(addRequest);
+app
+  .route("/requests")
+  .get(getRequests)
+  .post((req, res) => {
+    const communities = req.body.communities;
+    communities.forEach((community) => {
+      io.sockets.to(community).emit("newRequest", req.body.request);
+    });
+    addRequest(req, res)
+  });
 
-app.route("/requests/:id").get(getRequest);
+app.route("/requests/:id").get(getRequest).delete(deleteRequest);
 
 app.route("/requests/active").get(getActiveRequests);
 
@@ -153,9 +188,9 @@ app.route("/requests/active/:community").get(getActiveRequestsCommunity);
 
 //*************************TRANSACTIONS*************************
 
-app.route("/transactions").get(getTransactions);
+app.route("/transactions").get(getTransactions).post(addTransaction);
 
-app.route("/transactions/:id").get(getTransaction);
+app.route("/transactions/:id").get(getTransaction).delete(deleteTransaction);
 
 app.route("/transactions/community/:id").get(getTransactionCommunity);
 
