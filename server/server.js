@@ -157,7 +157,7 @@ app
     communities.forEach((community) => {
       io.sockets.to(community).emit("newOffer", req.body.offer);
     });
-    // addOffer(req, res)
+    addOffer(req, res)
   });
 
 app.route("/offers/:id").get(getOffer).delete(deleteOffer);
@@ -176,7 +176,7 @@ app
     communities.forEach((community) => {
       io.sockets.to(community).emit("newRequest", req.body.request);
     });
-    // addRequest(req, res)
+    addRequest(req, res)
   });
 
 app.route("/requests/:id").get(getRequest).delete(deleteRequest);
