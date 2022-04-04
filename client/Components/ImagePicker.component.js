@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, Button } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-
+import * as ImageManipulator from 'expo-image-manipulator';
 export default function ImagePickerComp() {
   // The path of the picked image
 
@@ -17,8 +17,10 @@ export default function ImagePickerComp() {
       alert("You've refused to allow this app to access your photos!");
       return;
     }
-
-    const result = await ImagePicker.launchImageLibraryAsync();
+    console.log("här");
+    const result = await ImagePicker.launchImageLibraryAsync({
+      quality: 0,
+    });
 
     // Explore the result
     console.log(result);
@@ -43,20 +45,19 @@ export default function ImagePickerComp() {
 
     // Explore the result
     console.log(result);
-    console.log("HIT?");
     if (!result.cancelled) {
-      console.log("HÄR DÅ?");
       pushToServer(result);
     }
   };
 
-  const pushToServer = (result) => {
-    setPickedImagePath(result.uri);
+  const pushToServer = async (result) => {
+   // setPickedImagePath(result.uri);
+   const image = await resizeImage(result);
     const body = new FormData();
     body.append("image", {
       name: "photo.jpg",
-      type: result.type,
-      uri: result.uri,
+      type: image.type,
+      uri: image.uri,
     });
     var ip = "http://ec2-3-215-18-23.compute-1.amazonaws.com/images";
 
@@ -68,6 +69,26 @@ export default function ImagePickerComp() {
       },
     }).catch((err) => console.log(err));
   };
+
+
+  resizeImage = async (result) => {
+    const manipResult = await ImageManipulator.manipulateAsync(
+     
+      result.uri,
+      [{ resize: { width: result.width * 0.04, height: result.height * 0.04 } }],
+      { compress: 1}
+    ); 
+    setPickedImagePath(manipResult.uri);
+      return manipResult;
+    }
+
+
+
+
+
+
+
+
 
   return (
     <View style={styles.screen}>
@@ -83,7 +104,10 @@ export default function ImagePickerComp() {
       </View>
     </View>
   );
-}
+    
+
+
+        }
 
 // Kindacode.com
 // Just some styles
