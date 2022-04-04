@@ -78,6 +78,7 @@ import { userExists } from "./routes/login.js";
 import {
   getCommunities,
   getCommunity,
+  getCommunityMembers,
   addCommunity,
   updateCommunity,
   deleteCommunity,
@@ -143,6 +144,8 @@ app
   .get(getCommunity)
   .put(updateCommunity)
   .delete(deleteCommunity);
+
+app.route("communities/members/:id").get(getCommunityMembers);
 
 //*************************OFFERS*************************
 

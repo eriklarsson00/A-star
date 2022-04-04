@@ -14,10 +14,14 @@ const knex = require("knex")({
 });
 
 function getCommunities(req, res) {
-  knex("Communities")
-    .select()
+  knex
+    .raw(
+      "SELECT C.*, COUNT(CU.id) as members FROM Communities C " +
+        "LEFT JOIN CommunityUser CU ON CU.community_id = C.id " +
+        "GROUP BY CU.community_id"
+    )
     .then((communities) => {
-      res.json(communities);
+      res.json(communities[0]);
     });
 }
 
@@ -30,11 +34,16 @@ function getCommunity(req, res) {
       .json("Usage: /communities/:id. id has to be a number");
   }
 
-  knex("Communities")
-    .select()
-    .where("id", id)
+  knex
+    .raw(
+      "SELECT C.*, COUNT(CU.id) as members FROM Communities C " +
+        "LEFT JOIN CommunityUser CU ON CU.community_id = C.id " +
+        "WHERE C.id =" +
+        id +
+        " GROUP BY CU.community_id"
+    )
     .then((communities) => {
-      res.json(communities);
+      res.json(communities[0]);
     });
 }
 
@@ -98,9 +107,27 @@ function deleteCommunity(req, res) {
     });
 }
 
+function getCommunityMembers(req, res) {
+  const id = parseInt(req.params.id);
+  const body = req.body;
+
+  if (isNaN(id)) {
+    return res
+      .status(400)
+      .json("Usage: /communities/members/:id. id has to be a number");
+  }
+
+  knex
+    .raw("SELECT COUNT(id) FROM CommunityUser WHERE community_id = " + id)
+    .then((amount) => {
+      res.json(amount[0]);
+    });
+}
+
 export {
   getCommunities,
   getCommunity,
+  getCommunityMembers,
   addCommunity,
   updateCommunity,
   deleteCommunity,

@@ -17,7 +17,7 @@ const request = async (type, route, body) => {
   }
 };
 
-const users = await request("GET", "/users");
+const users = await request("POST", "/users", {firstname: "kalle"});
 
 const communities = await request("GET", "/communities");
 
