@@ -181,6 +181,7 @@ export function communityTests(server) {
           res.should.have.status(200);
           res.body.should.be.a("string");
           res.body.length.should.not.be.eql(0);
+          done();
         });
     });
 
