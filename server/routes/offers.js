@@ -13,14 +13,6 @@ const knex = require("knex")({
   },
 });
 
-const name = "kalle";
-`SELECT * FROM pets WHERE name = '${name}}';`;
-
-```
-
-bcdskhbvnmefömnl${bchjke}
-```;
-
 function getActiveOffersCommunity(req, res) {
   const community = req.params.community;
   knex("Offers")
