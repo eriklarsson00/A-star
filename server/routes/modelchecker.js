@@ -1,5 +1,5 @@
 const checker = (fields, body) => {
-  return fields.split(" ").every((prop) => prop in body);
+  return body && fields.split(" ").every((prop) => prop in body);
 };
 
 const userChecker = (body) => {
