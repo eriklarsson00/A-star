@@ -8,17 +8,12 @@ let should = chai.should();
 
 chai.use(chaiHttp);
 
-const dummyOffer = {
+const dummyRequest = {
   user_id: 1,
   product_id: 2,
-  product_text: "kulor",
-  description: "en äcklig banan",
-  quantity: 5,
+  description: "en smarrig banan sökes",
+  quantity: 1,
   time_of_creation: new Date()
-    .toISOString()
-    .replace(/T/, " ")
-    .replace(/\..+/, ""),
-  time_of_purchase: new Date()
     .toISOString()
     .replace(/T/, " ")
     .replace(/\..+/, ""),
@@ -26,16 +21,14 @@ const dummyOffer = {
     .toISOString()
     .replace(/T/, " ")
     .replace(/\..+/, ""),
-  imgurl: "path/to/s3",
-  broken_pkg: true,
 };
 
-export function offerTests(server) {
-  describe("/offers", () => {
-    it("should get all offers", function (done) {
+export function requestTests(server) {
+  describe("/requests", () => {
+    it("should get all requests", function (done) {
       chai
         .request(server)
-        .get("/offers")
+        .get("/requests")
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -46,10 +39,10 @@ export function offerTests(server) {
           done();
         });
     });
-    it("should get offer by id", function (done) {
+    it("should get request by id", function (done) {
       chai
         .request(server)
-        .get("/offers/1")
+        .get("/requests/1")
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -60,11 +53,11 @@ export function offerTests(server) {
           done();
         });
     });
-    it("should not get offer by id", function (done) {
+    it("should not get request by id", function (done) {
       // Invalid id
       chai
         .request(server)
-        .get("/offers/invalidId")
+        .get("/requests/invalidId")
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -77,7 +70,7 @@ export function offerTests(server) {
       // Bad id
       chai
         .request(server)
-        .get("/offers/-1")
+        .get("/requests/-1")
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -89,11 +82,11 @@ export function offerTests(server) {
         });
     });
 
-    it("should add offer", function (done) {
+    it("should add request", function (done) {
       chai
         .request(server)
-        .post("/offers")
-        .send({ offer: dummyOffer, communities: [1, 2] })
+        .post("/requests")
+        .send({ request: dummyRequest, communities: [1, 2] })
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -105,11 +98,11 @@ export function offerTests(server) {
         });
     });
 
-    it("should update offer", function (done) {
+    it("should update request", function (done) {
       chai
         .request(server)
-        .put("/offers/1")
-        .send(dummyOffer)
+        .put("/requests/1")
+        .send(dummyRequest)
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -121,10 +114,10 @@ export function offerTests(server) {
         });
     });
 
-    it("should delete offer", function (done) {
+    it("should delete request", function (done) {
       chai
         .request(server)
-        .delete("/offers/1")
+        .delete("/requests/1")
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -136,10 +129,10 @@ export function offerTests(server) {
         });
     });
 
-    it("should not add offer", function (done) {
+    it("should not add request", function (done) {
       chai
         .request(server)
-        .post("/offers")
+        .post("/requests")
         .send({})
         .end((err, res) => {
           if (err) {
@@ -152,11 +145,11 @@ export function offerTests(server) {
         });
     });
 
-    it("should not update offer", function (done) {
+    it("should not update request", function (done) {
       // Empty body
       chai
         .request(server)
-        .put("/offers/1")
+        .put("/requests/1")
         .send({})
         .end((err, res) => {
           if (err) {
@@ -170,8 +163,8 @@ export function offerTests(server) {
       // Invalid id
       chai
         .request(server)
-        .put("/offers/InvalidId")
-        .send(dummyOffer)
+        .put("/requests/InvalidId")
+        .send(dummyRequest)
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -184,8 +177,8 @@ export function offerTests(server) {
       // Bad id
       chai
         .request(server)
-        .put("/offers/-1")
-        .send(dummyOffer)
+        .put("/requests/-1")
+        .send(dummyRequest)
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -197,11 +190,11 @@ export function offerTests(server) {
         });
     });
 
-    it("should not delete offer", function (done) {
+    it("should not delete request", function (done) {
       // Invalid id
       chai
         .request(server)
-        .delete("/offers/InvalidId")
+        .delete("/requests/InvalidId")
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -214,7 +207,7 @@ export function offerTests(server) {
       // Bad id
       chai
         .request(server)
-        .delete("/offers/-1")
+        .delete("/requests/-1")
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -226,11 +219,11 @@ export function offerTests(server) {
         });
     });
   });
-  describe("/offers/active", () => {
-    it("should get all active offers", function (done) {
+  describe("/requests/active", () => {
+    it("should get all active requests", function (done) {
       chai
         .request(server)
-        .get("/offers/active")
+        .get("/requests/active")
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -241,10 +234,10 @@ export function offerTests(server) {
           done();
         });
     });
-    it("should get active offers in a community", function (done) {
+    it("should get active requests in a community", function (done) {
       chai
         .request(server)
-        .get("/offers/active/3")
+        .get("/requests/active/2")
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -255,11 +248,11 @@ export function offerTests(server) {
           done();
         });
     });
-    it("should not get active offers in a community", function (done) {
+    it("should not get active requests in a community", function (done) {
       // Invalid id
       chai
         .request(server)
-        .get("/offers/active/InvalidId")
+        .get("/requests/active/InvalidId")
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -272,7 +265,7 @@ export function offerTests(server) {
       // Bad id
       chai
         .request(server)
-        .get("/offers/active/-1")
+        .get("/requests/active/-1")
         .end((err, res) => {
           if (err) {
             console.error(err);

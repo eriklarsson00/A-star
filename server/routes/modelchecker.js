@@ -19,7 +19,7 @@ const offerChecker = (body) => {
 
 const requestChecker = (body) => {
   return checker(
-    "user_id product_text quantity time_of_creation time_of_expiration",
+    "user_id product_id quantity time_of_creation time_of_expiration",
     body
   );
 };

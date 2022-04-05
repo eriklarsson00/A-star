@@ -97,6 +97,7 @@ import {
   deleteRequest,
   getActiveRequests,
   getActiveRequestsCommunity,
+  updateRequest,
 } from "./routes/requests.js";
 import {
   getTransactions,
@@ -149,6 +150,10 @@ app.route("communities/members/:id").get(getCommunityMembers);
 
 //*************************OFFERS*************************
 
+app.route("/offers/active").get(getActiveOffers);
+
+app.route("/offers/active/:community").get(getActiveOffersCommunity);
+
 app
   .route("/offers")
   .get(getOffers)
@@ -164,28 +169,33 @@ app
 
 app.route("/offers/:id").get(getOffer).put(updateOffer).delete(deleteOffer);
 
-app.route("/offers/active").get(getActiveOffers);
-
-app.route("/offers/active/:community").get(getActiveOffersCommunity);
-
 //*************************REQUESTS*************************
+
+app.route("/requests/active").get(getActiveRequests);
+
+app.route("/requests/active/:community").get(getActiveRequestsCommunity);
 
 app
   .route("/requests")
   .get(getRequests)
   .post((req, res) => {
-    const communities = req.body.communities;
-    communities.forEach((community) => {
-      io.sockets.to(community).emit("newRequest", req.body.request);
-    });
+    const body = req.body;
+    const request = body ? body.request : undefined;
+    const communities = body ? body.communities : undefined;
     addRequest(req, res);
+
+    if (communities) {
+      communities.forEach((community) => {
+        io.sockets.to(community).emit("newRequest", request);
+      });
+    }
   });
 
-app.route("/requests/:id").get(getRequest).delete(deleteRequest);
-
-app.route("/requests/active").get(getActiveRequests);
-
-app.route("/requests/active/:community").get(getActiveRequestsCommunity);
+app
+  .route("/requests/:id")
+  .get(getRequest)
+  .put(updateRequest)
+  .delete(deleteRequest);
 
 //*************************TRANSACTIONS*************************
 

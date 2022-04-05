@@ -3,6 +3,7 @@ import { userTests } from "./users.js";
 import { server } from "../server.js";
 import { createRequire } from "module";
 import { offerTests } from "./offers.js";
+import { requestTests } from "./requests.js";
 const require = createRequire(import.meta.url);
 
 const knex = require("knex")({
@@ -27,5 +28,6 @@ describe("", () => {
     userTests(server);
     communityTests(server);
     offerTests(server);
+    requestTests(server);
   });
 });
