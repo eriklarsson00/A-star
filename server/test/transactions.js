@@ -8,11 +8,9 @@ let should = chai.should();
 
 chai.use(chaiHttp);
 
-const dummyRequest = {
-  user_id: 1,
-  product_text: "banan",
-  description: "en smarrig banan sökes",
-  quantity: 1,
+const dummyTransaction = {
+  request_id: 2,
+  responder_id: 2,
   time_of_creation: new Date()
     .toISOString()
     .replace(/T/, " ")
@@ -23,12 +21,12 @@ const dummyRequest = {
     .replace(/\..+/, ""),
 };
 
-export function requestTests(server) {
-  describe("/requests", () => {
-    it("should get all requests", function (done) {
+export function transactionTests(server) {
+  describe("/transactions", () => {
+    it("should get all transactions", function (done) {
       chai
         .request(server)
-        .get("/requests")
+        .get("/transactions")
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -39,10 +37,10 @@ export function requestTests(server) {
           done();
         });
     });
-    it("should get request by id", function (done) {
+    it("should get transaction by id", function (done) {
       chai
         .request(server)
-        .get("/requests/1")
+        .get("/transactions/2")
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -53,11 +51,11 @@ export function requestTests(server) {
           done();
         });
     });
-    it("should not get request by id", function (done) {
+    it("should not get transaction by id", function (done) {
       // Invalid id
       chai
         .request(server)
-        .get("/requests/invalidId")
+        .get("/transactions/invalidId")
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -70,7 +68,7 @@ export function requestTests(server) {
       // Bad id
       chai
         .request(server)
-        .get("/requests/-1")
+        .get("/transactions/-1")
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -82,11 +80,11 @@ export function requestTests(server) {
         });
     });
 
-    it("should add request", function (done) {
+    it("should add transaction", function (done) {
       chai
         .request(server)
-        .post("/requests")
-        .send({ request: dummyRequest, communities: [1, 2] })
+        .post("/transactions")
+        .send(dummyTransaction)
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -98,11 +96,11 @@ export function requestTests(server) {
         });
     });
 
-    it("should update request", function (done) {
+    it("should update transaction", function (done) {
       chai
         .request(server)
-        .put("/requests/1")
-        .send(dummyRequest)
+        .put("/transactions/1")
+        .send(dummyTransaction)
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -114,10 +112,10 @@ export function requestTests(server) {
         });
     });
 
-    it("should delete request", function (done) {
+    it("should delete transaction", function (done) {
       chai
         .request(server)
-        .delete("/requests/1")
+        .delete("/transactions/1")
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -129,10 +127,10 @@ export function requestTests(server) {
         });
     });
 
-    it("should not add request", function (done) {
+    it("should not add transaction", function (done) {
       chai
         .request(server)
-        .post("/requests")
+        .post("/transactions")
         .send({})
         .end((err, res) => {
           if (err) {
@@ -145,11 +143,11 @@ export function requestTests(server) {
         });
     });
 
-    it("should not update request", function (done) {
+    it("should not update transaction", function (done) {
       // Empty body
       chai
         .request(server)
-        .put("/requests/1")
+        .put("/transactions/1")
         .send({})
         .end((err, res) => {
           if (err) {
@@ -163,8 +161,8 @@ export function requestTests(server) {
       // Invalid id
       chai
         .request(server)
-        .put("/requests/InvalidId")
-        .send(dummyRequest)
+        .put("/transactions/InvalidId")
+        .send(dummyTransaction)
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -177,8 +175,8 @@ export function requestTests(server) {
       // Bad id
       chai
         .request(server)
-        .put("/requests/-1")
-        .send(dummyRequest)
+        .put("/transactions/-1")
+        .send(dummyTransaction)
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -190,11 +188,11 @@ export function requestTests(server) {
         });
     });
 
-    it("should not delete request", function (done) {
+    it("should not delete transaction", function (done) {
       // Invalid id
       chai
         .request(server)
-        .delete("/requests/InvalidId")
+        .delete("/transactions/InvalidId")
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -207,7 +205,7 @@ export function requestTests(server) {
       // Bad id
       chai
         .request(server)
-        .delete("/requests/-1")
+        .delete("/transactions/-1")
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -219,11 +217,12 @@ export function requestTests(server) {
         });
     });
   });
-  describe("/requests/active", () => {
-    it("should get all active requests", function (done) {
+
+  describe("/transactions/community", () => {
+    it("should get all communities for a transactions", function (done) {
       chai
         .request(server)
-        .get("/requests/active")
+        .get("/transactions/community/2")
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -234,25 +233,11 @@ export function requestTests(server) {
           done();
         });
     });
-    it("should get active requests in a community", function (done) {
-      chai
-        .request(server)
-        .get("/requests/active/2")
-        .end((err, res) => {
-          if (err) {
-            console.error(err);
-          }
-          res.should.have.status(200);
-          res.body.should.be.a("array");
-          res.body.length.should.not.be.eql(0);
-          done();
-        });
-    });
-    it("should not get active requests in a community", function (done) {
+    it("should not get all communities for a transaction", function (done) {
       // Invalid id
       chai
         .request(server)
-        .get("/requests/active/InvalidId")
+        .get("/transactions/community/InvalidId")
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -265,16 +250,65 @@ export function requestTests(server) {
       // Bad id
       chai
         .request(server)
-        .get("/requests/active/-1")
+        .get("/transactions/community/-1")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(200);
+          res.body.should.be.a("string");
+          res.body.length.should.not.be.eql(0);
+          done();
+        });
+    });
+  });
+
+  describe("/transactions/responder", () => {
+    it("should get the user for a transactions", function (done) {
+      chai
+        .request(server)
+        .get("/transactions/responder/2")
         .end((err, res) => {
           if (err) {
             console.error(err);
           }
           res.should.have.status(200);
           res.body.should.be.a("array");
-          res.body.length.should.be.eql(0);
+          res.body.length.should.not.be.eql(0);
           done();
         });
     });
+    it("should not get the user for a transactions", function (done) {
+      // Invalid id
+      chai
+        .request(server)
+        .get("/transactions/responder/InvalidId")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(400);
+          res.body.should.be.a("string");
+          res.body.length.should.not.be.eql(0);
+        });
+
+      // Bad id
+      chai
+        .request(server)
+        .get("/transactions/responder/-1")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(200);
+          res.body.should.be.a("string");
+          res.body.length.should.not.be.eql(0);
+          done();
+        });
+    });
+  });
+
+  describe("/transactions/lister", () => {
+    // ?
   });
 }

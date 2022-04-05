@@ -32,14 +32,14 @@ BEGIN
     (2, 1, 'Tofu', 'spicy', 700, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL, false),
     (2, 1, 'Rotfruktsgratäng', 'mums', 900, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL, false);
 
-    INSERT INTO Requests (user_id, product_id, description, quantity, time_of_creation, time_of_expiration) VALUES
-    (3, 1, 'Vill ha majs', 150, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
-    (3, 1, 'Vill ha korv', 10, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
-    (3, 1, 'Söker jordnötter', 200, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
-    (4, 1, 'Har nån grädde?', 240, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
-    (4, 1, 'Ääälskar annannanas', 70, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
-    (4, 1, 'bröd.', 500, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
-    (4, 1, 'nån god sås söker jag', 200, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
+    INSERT INTO Requests (user_id, product_text, description, quantity, time_of_creation, time_of_expiration) VALUES
+    (3, "majs", 'Vill ha majs', 150, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
+    (3, "korv", 'Vill ha korv', 10, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
+    (3, "jordnötter", 'Söker jordnötter', 200, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
+    (4, "grädde", 'Har nån grädde?', 240, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
+    (4, "annanas", 'Ääälskar annannanas', 70, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
+    (4, "bröd", 'bröd.', 500, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
+    (4, "sås", 'nån god sås söker jag', 200, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
 
     INSERT INTO CommunityUser (community_id, user_id) VALUES
     (1, 1), (2, 1), (1, 2), (1, 3), (1, 4), (2, 2), (3, 1), (3, 4);
