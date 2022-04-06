@@ -27,7 +27,9 @@
     "react-native": "0.64.3",
     "react-native-fs": "^2.19.0",
     "react-native-web": "0.17.1",
-    "expo-image-manipulator": "~10.2.0"
+    "expo-image-manipulator": "~10.2.0",
+    "expo-location": "~14.0.1",
+    "react-native-maps": "0.29.4"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"
