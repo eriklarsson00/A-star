@@ -2,8 +2,6 @@ import "dotenv/config";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 
-import "dotenv/config";
-
 /*
 *************************
     SERVER SETUP
@@ -71,95 +69,70 @@ io.on("connection", (socket) => {
 *************************
 */
 
-import {
-  getUser,
-  getUsers,
-  getUserEmail,
-  addUser,
-  updateUser,
-  deleteUser,
-  addUserToCommunity,
-  getUserCommunities,
-} from "./routes/users.js";
-import { userExists } from "./routes/login.js";
-import {
-  getCommunities,
-  getCommunity,
-  getCommunityMembers,
-  addCommunity,
-  updateCommunity,
-  deleteCommunity,
-} from "./routes/communities.js";
-import {
-  getOffers,
-  getOffer,
-  addOffer,
-  deleteOffer,
-  getActiveOffers,
-  getActiveOffersCommunity,
-} from "./routes/offers.js";
-import {
-  getRequests,
-  getRequest,
-  addRequest,
-  deleteRequest,
-  getActiveRequests,
-  getActiveRequestsCommunity,
-} from "./routes/requests.js";
-import {
-  getTransactions,
-  getTransaction,
-  getResponderTransactions,
-  getListerTransactions,
-  getTransactionCommunity,
-  addTransaction,
-  deleteTransaction,
-} from "./routes/transactions.js";
-import { getProduct } from "./routes/products.js";
-import { deployServer } from "./routes/ci.js";
+import * as users from "./routes/users.js";
+import * as login from "./routes/login.js";
+import * as communities from "./routes/communities.js";
+import * as offers from "./routes/offers.js";
+import * as requests from "./routes/requests.js";
+import * as transactions from "./routes/transactions.js";
+import * as products from "./routes/products.js";
+import * as ci from "./routes/ci.js";
+import * as uploadS3 from "./routes/upload.js";
 
 //*************************CI*************************
 
-app.route("/ci/deploy").post(deployServer);
+app.route("/ci/deploy").post(ci.deployServer);
 
 //*************************PRODUCTS*************************
 
-app.route("/products/:gtin").get(getProduct);
+app.route("/products/:gtin").get(products.getProduct);
 
 //*************************USERS*************************
 
-app.route("/users").get(getUsers).post(addUser);
+app.route("/users").get(users.getUsers).post(users.addUser);
 
-app.route("/users/:id").get(getUser).put(updateUser).delete(deleteUser);
+app
+  .route("/users/:id")
+  .get(users.getUser)
+  .put(users.updateUser)
+  .delete(users.deleteUser);
 
-app.route("/users/email/:email").get(getUserEmail);
+app.route("/users/email/:email").get(users.getUserEmail);
 
-app.route("/users/community").post(addUserToCommunity);
+app.route("/users/community").post(users.addUserToCommunity);
 
-app.route("/users/community/:id").get(getUserCommunities);
+app.route("/users/community/:id").get(users.getUserCommunities);
 
 //*************************LOGIN*************************
 
-app.route("/login").post(userExists);
+app.route("/login").post(login.userExists);
 
 //*************************COMMUNITIES*************************
 
-app.route("/communities").get(getCommunities).post(addCommunity);
+app
+  .route("/communities")
+  .get(communities.getCommunities)
+  .post(communities.addCommunity);
 
 app
   .route("/communities/:id")
-  .get(getCommunity)
-  .put(updateCommunity)
-  .delete(deleteCommunity);
+  .get(communities.getCommunity)
+  .put(communities.updateCommunity)
+  .delete(communities.deleteCommunity);
 
-app.route("communities/members/:id").get(getCommunityMembers);
+app.route("communities/members/:id").get(communities.getCommunityMembers);
 
 //*************************OFFERS*************************
 
+app.route("/offers/active").get(offers.getActiveOffers);
+
+app.route("/offers/active/:community").get(offers.getActiveOffersCommunity);
+
 app
   .route("/offers")
-  .get(getOffers)
+  .get(offers.getOffers)
   .post((req, res) => {
+    offers.addOffer(req, res);
     const communities = req.body.communities;
     communities.forEach((community) => {
       io.sockets.to(community).emit("offer", req.body.offer);
@@ -167,17 +140,23 @@ app
     addOffer(req, res)
   });
 
-app.route("/offers/:id").get(getOffer).delete(deleteOffer);
-
-app.route("/offers/active").get(getActiveOffers);
-
-app.route("/offers/active/:community").get(getActiveOffersCommunity);
+app
+  .route("/offers/:id")
+  .get(offers.getOffer)
+  .put(offers.updateOffer)
+  .delete(offers.deleteOffer);
 
 //*************************REQUESTS*************************
 
+app.route("/requests/active").get(requests.getActiveRequests);
+
+app
+  .route("/requests/active/:community")
+  .get(requests.getActiveRequestsCommunity);
+
 app
   .route("/requests")
-  .get(getRequests)
+  .get(requests.getRequests)
   .post((req, res) => {
     const communities = req.body.communities;
     communities.forEach((community) => {
@@ -186,23 +165,42 @@ app
     addRequest(req, res)
   });
 
-app.route("/requests/:id").get(getRequest).delete(deleteRequest);
-
-app.route("/requests/active").get(getActiveRequests);
-
-app.route("/requests/active/:community").get(getActiveRequestsCommunity);
+app
+  .route("/requests/:id")
+  .get(requests.getRequest)
+  .put(requests.updateRequest)
+  .delete(requests.deleteRequest);
 
 //*************************TRANSACTIONS*************************
 
-app.route("/transactions").get(getTransactions).post(addTransaction);
+app
+  .route("/transactions")
+  .get(transactions.getTransactions)
+  .post(transactions.addTransaction);
 
-app.route("/transactions/:id").get(getTransaction).delete(deleteTransaction);
+app
+  .route("/transactions/:id")
+  .put(transactions.updateTransaction)
+  .get(transactions.getTransaction)
+  .delete(transactions.deleteTransaction);
 
-app.route("/transactions/community/:id").get(getTransactionCommunity);
+app
+  .route("/transactions/community/:id")
+  .get(transactions.getTransactionCommunity);
 
-app.route("/transactions/responder/:id").get(getResponderTransactions);
+app
+  .route("/transactions/responder/:id")
+  .get(transactions.getResponderTransactions);
 
-app.route("/transactions/lister/:id").get(getListerTransactions);
+app.route("/transactions/lister/:id").get(transactions.getListerTransactions);
+
+//*************************IMAGES*********************
+
+app.post("/images", uploadS3.upload.single("image"), (req, res) => {
+  uploadS3.uploadImageOnS3(req.file);
+  console.log(req.file);
+  res.send("Single File test");
+});
 
 //*************************SERVER*************************
 

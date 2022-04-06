@@ -22,7 +22,14 @@ function getTransactions(req, res) {
 }
 
 function getTransaction(req, res) {
-  const id = req.params.id;
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res
+      .status(400)
+      .json("Usage: /transactions/:id. id has to be a number");
+  }
+
   knex("Transactions")
     .select()
     .where("id", id)
@@ -32,7 +39,14 @@ function getTransaction(req, res) {
 }
 
 function getResponderTransactions(req, res) {
-  const id = req.params.id;
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res
+      .status(400)
+      .json("Usage: /transactions/:id. id has to be a number");
+  }
+
   knex("Transactions")
     .select()
     .where("responder_id", id)
@@ -42,7 +56,14 @@ function getResponderTransactions(req, res) {
 }
 
 function getListerTransactions(req, res) {
-  const id = req.params.id;
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res
+      .status(400)
+      .json("Usage: /transactions/:id. id has to be a number");
+  }
+
   knex("Transactions")
     .select("Transactions.*")
     .leftJoin("Transactions", "Transactions.id", "Transactions.transaction_id")
@@ -55,12 +76,20 @@ function getListerTransactions(req, res) {
 }
 
 function getTransactionCommunity(req, res) {
-  const id = req.params.id;
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res
+      .status(400)
+      .json("Usage: /transactions/:id. id has to be a number");
+  }
+
   knex
     .raw(
       "SELECT C.* FROM Transactions T " +
-        "LEFT JOIN CommunityListings CL ON CL.transaction_id = T.transaction_id OR CL.transaction_id = T.transaction_id " +
-        "LEFT JOIN Communities C ON C.id = CL.community_id WHERE T.id = " + id
+        "LEFT JOIN CommunityListings CL ON CL.offer_id = T.offer_id OR CL.request_id = T.request_id " +
+        "LEFT JOIN Communities C ON C.id = CL.community_id WHERE T.id = " +
+        id
     )
     .then((communities) => {
       res.json(communities[0]);
@@ -68,19 +97,44 @@ function getTransactionCommunity(req, res) {
 }
 
 function addTransaction(req, res) {
-  const transaction = req.body
+  const transaction = req.body;
 
   if (!transactionChecker(transaction))
-    return res.status(400).json("Invalid offer properties");
+    return res.status(400).json("Invalid transaction properties");
 
-  transaction.status = "pending"
+  transaction.status = "pending";
   knex("Transactions")
-    .insert(body)
-    .catch(() => {
-      res.sendStatus(400);
+    .insert(transaction)
+    .catch((err) => {
+      res.status(500).json(err);
     })
     .then((id) => {
       if (id !== undefined) res.json("Transaction inserted with id: " + id);
+    });
+}
+
+function updateTransaction(req, res) {
+  const id = parseInt(req.params.id);
+  const body = req.body;
+
+  if (!transactionChecker(body))
+    return res.status(400).json("Invalid transaction properties");
+
+  if (isNaN(id)) {
+    return res
+      .status(400)
+      .json("Usage: /transactions/:id. id has to be a number");
+  }
+
+  knex("Transactions")
+    .where("id", id)
+    .update(body)
+    .catch((err) => {
+      res.status(500).json(err);
+      id = undefined;
+    })
+    .then(() => {
+      if (id !== undefined) res.json("Transaction updated with id: " + id);
     });
 }
 
@@ -88,14 +142,16 @@ function deleteTransaction(req, res) {
   const id = parseInt(req.params.id);
 
   if (isNaN(id)) {
-    return res.status(400).json("Usage: /transactions/:id. id has to be a number");
+    return res
+      .status(400)
+      .json("Usage: /transactions/:id. id has to be a number");
   }
 
   knex("Transactions")
     .where("id", id)
     .delete()
     .catch((err) => {
-      res.json(err);
+      res.status(500).json(err);
       id = undefined;
     })
     .then(() => {
@@ -110,5 +166,6 @@ export {
   getListerTransactions,
   getTransactionCommunity,
   addTransaction,
+  updateTransaction,
   deleteTransaction,
 };

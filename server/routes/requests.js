@@ -15,6 +15,11 @@ const knex = require("knex")({
 
 function getActiveRequestsCommunity(req, res) {
   const community = req.params.community;
+
+  if (isNaN(community)) {
+    return res.status(400).json("Usage: /requests/:id. id has to be a number");
+  }
+
   knex("Requests")
     .select("Requests.*")
     .leftJoin("Transactions", "Transactions.request_id", "Requests.id")
@@ -50,6 +55,11 @@ function getRequests(req, res) {
 
 function getRequest(req, res) {
   const id = req.params.id;
+
+  if (isNaN(id)) {
+    return res.status(400).json("Usage: /requests/:id. id has to be a number");
+  }
+
   knex("Requests")
     .select()
     .where("id", id)
@@ -60,8 +70,8 @@ function getRequest(req, res) {
 
 function addRequest(req, res) {
   const body = req.body;
-  const request = body.request;
-  const communities = body.communities;
+  const request = body ? body.request : undefined;
+  const communities = body ? body.communities : undefined;
 
   if (!requestChecker(request))
     return res.status(400).json("Invalid request properties");
@@ -69,8 +79,8 @@ function addRequest(req, res) {
   let request_id = -1;
   knex("Requests")
     .insert(request)
-    .catch(() => {
-      res.sendStatus(404);
+    .catch((err) => {
+      res.status(500).json(err);
       return;
     })
     .then((id) => {
@@ -88,6 +98,29 @@ function addRequest(req, res) {
     });
 }
 
+function updateRequest(req, res) {
+  const id = parseInt(req.params.id);
+  const body = req.body;
+
+  if (!requestChecker(body))
+    return res.status(400).json("Invalid request properties");
+
+  if (isNaN(id)) {
+    return res.status(400).json("Usage: /request/:id. id has to be a number");
+  }
+
+  knex("Requests")
+    .where("id", id)
+    .update(body)
+    .catch((err) => {
+      res.status(500).json(err);
+      id = undefined;
+    })
+    .then(() => {
+      if (id !== undefined) res.json("Request updated with id: " + id);
+    });
+}
+
 function deleteRequest(req, res) {
   const id = parseInt(req.params.id);
 
@@ -99,7 +132,7 @@ function deleteRequest(req, res) {
     .where("id", id)
     .delete()
     .catch((err) => {
-      res.json(err);
+      res.status(500).json(err);
       id = undefined;
     })
     .then(() => {
@@ -113,5 +146,6 @@ export {
   getRequests,
   getRequest,
   addRequest,
+  updateRequest,
   deleteRequest,
 };

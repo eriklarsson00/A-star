@@ -14,7 +14,12 @@ const knex = require("knex")({
 });
 
 function getActiveOffersCommunity(req, res) {
-  const community = req.params.community;
+  const community = parseInt(req.params.community);
+
+  if (isNaN(community)) {
+    return res.status(400).json("Usage: /offers/:id. id has to be a number");
+  }
+
   knex("Offers")
     .select("Offers.*")
     .leftJoin("Transactions", "Transactions.offer_id", "Offers.id")
@@ -45,7 +50,12 @@ function getOffers(req, res) {
 }
 
 function getOffer(req, res) {
-  const id = req.params.id;
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res.status(400).json("Usage: /offers/:id. id has to be a number");
+  }
+
   knex("Offers")
     .select()
     .where("id", id)
@@ -59,28 +69,51 @@ function addOffer(req, res) {
   const offer = body.offer;
   const communities = body.communities;
 
-  if (!offerChecker(offer))
+  if (!body || !offerChecker(offer))
     return res.status(400).json("Invalid offer properties");
 
   let offer_id = -1;
   knex("Offers")
     .insert(offer)
-    .catch(() => {
-      res.sendStatus(404);
+    .catch((err) => {
+      res.status(500).json(err);
       return;
     })
     .then((id) => {
-      if (id !== undefined) res.json("User inserted with id: " + id);
+      if (id !== undefined) res.json("Offer inserted with id: " + id);
       offer_id = id;
     })
     .then(() => {
-      if (offer_id == -1) return;
+      if (offer_id == -1 || !communities) return;
       communities.forEach((community) => {
         knex("CommunityListings").insert({
           community_id: community,
           offer_id: offer_id,
         });
       });
+    });
+}
+
+function updateOffer(req, res) {
+  const id = parseInt(req.params.id);
+  const body = req.body;
+
+  if (!offerChecker(body))
+    return res.status(400).json("Invalid offer properties");
+
+  if (isNaN(id)) {
+    return res.status(400).json("Usage: /offers/:id. id has to be a number");
+  }
+
+  knex("Offers")
+    .where("id", id)
+    .update(body)
+    .catch((err) => {
+      res.status(500).json(err);
+      id = undefined;
+    })
+    .then(() => {
+      if (id !== undefined) res.json("Offer updated with id: " + id);
     });
 }
 
@@ -95,7 +128,7 @@ function deleteOffer(req, res) {
     .where("id", id)
     .delete()
     .catch((err) => {
-      res.json(err);
+      res.status(500).json(err);
       id = undefined;
     })
     .then(() => {
@@ -110,4 +143,5 @@ export {
   getOffer,
   addOffer,
   deleteOffer,
+  updateOffer,
 };

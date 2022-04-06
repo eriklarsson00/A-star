@@ -1,16 +1,19 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import ImagePicker from './Components/ImagePicker.component.js';
+import GoogleLogin from './Components/GoogleLogin.component';
+import BarCodeScanner from './Components/BarCodeScanner.component';
+import BarCodeScannerComp from './Components/BarCodeScanner.component';
+
+
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <ImagePicker/>  
   );
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create( {
   container: {
     flex: 1,
     backgroundColor: '#fff',
