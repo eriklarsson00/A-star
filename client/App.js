@@ -9,7 +9,7 @@ import BarCodeScannerComp from './Components/BarCodeScanner.component';
 
 export default function App() {
   return (
-    <ImagePicker/>  
+    <ImagePicker resize={0.2}/>  
   );
 }
 

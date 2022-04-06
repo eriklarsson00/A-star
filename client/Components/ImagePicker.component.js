@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, Button } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as ImageManipulator from 'expo-image-manipulator';
-export default function ImagePickerComp() {
+
+
+// send witb prop resize= {x} to change dimension of picture
+export default function ImagePickerComp({resize}) {
   // The path of the picked image
 
   const [pickedImagePath, setPickedImagePath] = useState("");
@@ -26,6 +29,7 @@ export default function ImagePickerComp() {
     console.log(result);
 
     if (!result.cancelled) {
+      setPickedImagePath(result.uri);
       pushToServer(result);
     }
     console.log(result.uri);
@@ -46,13 +50,13 @@ export default function ImagePickerComp() {
     // Explore the result
     console.log(result);
     if (!result.cancelled) {
+      setPickedImagePath(result.uri);
       pushToServer(result);
     }
   };
 
   const pushToServer = async (result) => {
-   // setPickedImagePath(result.uri);
-   const image = await resizeImage(result);
+   const image = await resizeImage(result, resize);
     const body = new FormData();
     body.append("image", {
       name: "photo.jpg",
@@ -71,14 +75,13 @@ export default function ImagePickerComp() {
   };
 
 
-  resizeImage = async (result) => {
+  resizeImage = async (result, resize) => {
     const manipResult = await ImageManipulator.manipulateAsync(
      
       result.uri,
-      [{ resize: { width: result.width * 0.04, height: result.height * 0.04 } }],
+      [{ resize: { width: result.width * resize, height: result.height * resize } }],
       { compress: 1}
     ); 
-    setPickedImagePath(manipResult.uri);
       return manipResult;
     }
 
