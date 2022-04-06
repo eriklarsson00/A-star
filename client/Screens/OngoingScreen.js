@@ -1,21 +1,31 @@
 import React from "react";
-import { SafeAreaView } from "react-native";
-import { Text, Layout} from "@ui-kitten/components";
+import { TopNavigation, SafeAreaView } from "react-native";
+import { Text, Layout, useTheme} from "@ui-kitten/components";
 import { UserInfo, CommunityInfo } from '../assets/AppContext'
 import tw from 'twrnc'
 
+
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+const TopTabs = createMaterialTopTabNavigator();
+
 export const OngoingScreen = () => {
-	const { userName, setUserName } = React.useContext(UserInfo);
-	const {community, setCommunity} = React.useContext(CommunityInfo);
-	console.log(userName)
-	console.log(community)
-
+	 const theme = useTheme();
 	return (
-		<SafeAreaView>
-			<Text>Ongoing screen</Text>
-			<Text>YOU ARE: {userName}</Text>
-			<Text>YOU ARE INnnn: {community}</Text>
-
-		</SafeAreaView>
+		<Layout style={{flex:1, paddingTop:50}}>
+		{/* <TopNavigation alignment="center">
+		</TopNavigation>
+		  <TopTabs.Navigator
+		  screenOptions={{
+			  tabBarIndicatorStyle:{backgroundColor :theme['color-primary-500']}
+		  }}>
+			<TopTabs.Screen
+			  name='Tillgängligt'
+			
+			/>
+			<TopTabs.Screen
+			  name='Efterfrågas'
+			/>
+		  </TopTabs.Navigator> */}
+		  </Layout>
 	);
 };

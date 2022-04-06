@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, Button } from 'react-native';
+import {ProfileImagePath} from '../assets/AppContext';
 
 import * as ImagePicker from 'expo-image-picker';
 
-export default function ImagePickerComp() {
+export default function ImagePickerComp(props) {
   // The path of the picked image
   const [pickedImagePath, setPickedImagePath] = useState('');
+  const {profileImagePath, setProfileImagePath } = React.useContext(ProfileImagePath);
 
   // This function is triggered when the "Select an image" button pressed
   const showImagePicker = async () => {
@@ -23,6 +25,9 @@ export default function ImagePickerComp() {
     console.log(result);
 
     if (!result.cancelled) {
+      if(props.context == 'Profile'){
+        setProfileImagePath(result.uri);
+      }
       setPickedImagePath(result.uri);
       console.log(result.uri);
     }
@@ -45,6 +50,9 @@ export default function ImagePickerComp() {
 
     if (!result.cancelled) {
       setPickedImagePath(result.uri);
+      if(props.context == 'Profile'){
+        setProfileImagePath(result.uri);
+      }      
       console.log(result.uri);
     }
   }

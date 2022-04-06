@@ -1,17 +1,19 @@
 import React from "react";
 import { SafeAreaView, Text, StyleSheet} from "react-native";
-import {TopNavigation, Button , Modal, Card, Divider} from "@ui-kitten/components";
+import {TopNavigation, Button, useTheme, Layout} from "@ui-kitten/components";
 import tw from 'twrnc'
 
-export const AddNewItemScreen = () => {
+const AddNewItemScreen = ({navigation}) => {
 
 	const [visible, setVisible] = React.useState(false);
+	const theme = useTheme();
 
 	return (
-		<SafeAreaView style={styles.container}>
-			<Button style= {styles.btn} onPress={() => setVisible(true)}>Gives</Button>
-			<Button style= {styles.btn} onPress={() => setVisible(true)}>Sökes </Button>
-			<Modal
+		<Layout style={styles.container}>
+			<Button style={[styles.btn, {backgroundColor: theme['color-primary-400'], borderColor: theme['color-primary-400']}]} onPress={() => setVisible(true)}>Gives</Button>
+			<Button style={[styles.btn, {backgroundColor: theme['color-primary-500']}]} onPress={() => navigation.navigate('CreateNewItemScreen')}>Sökes </Button>
+			{/* <Modal
+					presentationStyle="pageSheet"
 					visible={visible}
 					backdropStyle={styles.backdrop}
 					onBackdropPress={() => setVisible(false)}>
@@ -20,10 +22,12 @@ export const AddNewItemScreen = () => {
 					<Divider/>
 					<Button onPress={() => setVisible(false)}>OK</Button>
 					</Card>
-				</Modal>
-		</SafeAreaView>
+				</Modal> */}
+		</Layout>
 	);
 };
+
+export default AddNewItemScreen
 
 
 const styles = StyleSheet.create({
@@ -34,6 +38,10 @@ const styles = StyleSheet.create({
 		
 	},
 	btn: {
+		borderRadius: 15,
+		width: 150,
+		height: 70,
+		margin: 50, 
 	
 	}
 		

@@ -1,19 +1,10 @@
 import React from "react";
 import { SafeAreaView, StyleSheet, Image } from "react-native";
-import { TopNavigation, Button, Text, Avatar, Layout, Card, Divider, ButtonGroup, List, ListItem} from "@ui-kitten/components";
-import { UserInfo } from '../assets/AppContext'
-import ProfileInfoComponent from '../Components/ProfileInfoComponent'
+import { TopNavigation, Button, Text, Avatar, Layout, Card, Divider, useTheme} from "@ui-kitten/components";
+import { UserInfo } from '../assets/AppContext';
 import tw from 'twrnc';
 
-// ska hämta info från databasen
 export const ProfileScreen = () => {
-   
-	const info = [{
-		given: '15',
-		taken: "10",
-		rating: "3/5"
-	}];
-
 	return(
 	<Layout style={styles.outerContainer} level='1'>
 	  <Layout style={tw`py-10`} >
@@ -22,28 +13,29 @@ export const ProfileScreen = () => {
 			<Text style={tw`text-3xl`}>Förnamn Efternamn</Text>
 	  <Layout style={styles.container}>
 		<Card style={styles.card}>
-			<Text>{info.given}</Text>
-			<Divider/>
-			<Text>Gett bort</Text>
+			<Text style={tw`text-center`}>{12}</Text>
+			<Divider  />
+			<Text style={tw`text-center`}>Gett bort</Text>
 		</Card>
 	
 		<Card style={styles.card} >
-			<Text>123</Text>
+			<Text style={tw`text-center`}>123</Text>
 			<Divider/>
-			<Text>tagit emot</Text>
+			<Text style={tw`text-center`}>Tagit</Text>
 		</Card>
 
 		<Card style={styles.card}>
-			<Text>5/3</Text>
+			<Text style={tw`text-center`}>5/3</Text>
 			<Divider/>
-			<Text>Betyg</Text>
+			<Text style={tw`text-center`}>Betyg</Text>
 		</Card>
 		</Layout>
-		<Layout style={tw`py-20 `}>
-
-			<Button>Logga ut</Button>
+		<Layout style={[{width:"100%", paddingTop: 66, paddingBottom: 40}]} >
+		<Button style={styles.btn} appearance='ghost'> Mina produkter</Button>
+		<Button style={styles.btn} appearance='ghost'> Historik </Button>
+		<Button style={styles.btn} appearance='ghost'> Kontoinställningar</Button>
+		<Button style={styles.btn} appearance='ghost'> Ta bort konto</Button>
 		</Layout>
-
 	</Layout>
 	);
 };
@@ -58,7 +50,7 @@ export const ProfileScreen = () => {
 		paddingTop: 50,
 		flexDirection: 'column',
 	  	flexWrap: 'wrap',
-		alignItems: "center"
+		alignItems: "center",
 	},
 	card: {
 		alignItems: "center",
@@ -67,6 +59,17 @@ export const ProfileScreen = () => {
 		width: 120, 
 	},
 	btn: {
-		
-	}
+		borderRadius: 1,
+		borderBottomColor: 'gainsboro',
+		borderTopColor: "white",
+		borderLeftColor: "white",
+		borderRightColor: "white",
+		margin: 5, 	
+	},
+	logOut: {
+		width: 200,
+		borderRadius: 15,
+		borderColor: "gainsboro",
+		alignSelf: "center",
+	},
   });

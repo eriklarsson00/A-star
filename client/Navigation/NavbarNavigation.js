@@ -8,6 +8,8 @@ import { CommunityScreen } from "../Screens/CommunityScreen";
 import { OngoingScreen } from "../Screens/OngoingScreen";
 import { ProfileScreen } from "../Screens/ProfileScreen";
 import { AddNewItemScreen } from "../Screens/AddNewItemScreen";
+import {CreateUserScreen } from "../Screens/CreateUserScreen";
+import {NewItemNavigation} from './NewItemNavigation';
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
@@ -32,22 +34,28 @@ const BottomTabBar = ({ navigation, state }) => (
     appearance='noIndicator'
     style={styles.navbar}
     selectedIndex={state.index}
-    onSelect={index => navigation.navigate(state.routeNames[index])}>
+    onSelect={index => navigation.navigate(state.routeNames[index])}
+    screenOptions={{tabBarVisible:false}}
+    >
     <BottomNavigationTab title='Utforska' icon={DiscoverIcon}/>
     <BottomNavigationTab title='Grannskap'icon={CommunityIcon}/>
     <BottomNavigationTab title='Lägg till' icon={AddIcon}/>
     <BottomNavigationTab title='Pågående'icon={OngoingIcon}/>
     <BottomNavigationTab title='Profil'icon={ProfileIcon}/>
+    <BottomNavigationTab title='Create User'/>
   </BottomNavigation>
 );
 
 const TabNavigator = () => (
-  <Navigator screenOptions={{ headerShown: false }} tabBar={props => <BottomTabBar {...props} />}>
+  <Navigator 
+    screenOptions={{ headerShown: false}} 
+    tabBar={props => <BottomTabBar {...props} />} >
     <Screen name='ExploreScreen' component={ExploreScreen}/>
     <Screen name='CommunityScreen' component={CommunityScreen}/>
-    <Screen name='AddNewItemScreen' component={AddNewItemScreen}/>
+    <Screen name='AddNewItemScreen' component={NewItemNavigation}/>
     <Screen name='OngoingScreen' component={OngoingScreen}/>
     <Screen name='ProfileScreen' component={ProfileScreen}/>
+    <Screen name='CreateUserScreen' component={CreateUserScreen}/>
   </Navigator>
 );
 

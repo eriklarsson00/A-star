@@ -1,6 +1,6 @@
 import React from "react";
 import {StyleSheet, TouchableOpacity, View, Image} from "react-native";
-import {Text, Layout, Divider, Button, Modal, Card, Input, Icon, List,useTheme, ListItem } from "@ui-kitten/components";
+import {Text, Layout, Divider, Button, Modal, Card, Input, Icon, List, useTheme, ListItem } from "@ui-kitten/components";
 import CommunityComponent from '../Components/CommunityComponent'
 import tw from 'twrnc'
 
@@ -14,8 +14,8 @@ export const CommunityScreen= () => {
 	const [chosenCommunity, setChosenCommunity] = React.useState('');
 
 	const dataBaseCommunities = [
-	{id: 0, memberAmount: 104, name: 'Rackarberget', description: 'beskrivning', location: 'plats', imgurl: 'https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg', private: false, password: 'psw'},
-	{id: 1, memberAmount: 5, name: 'Kajsas änglar', description: 'beskrivning', location: 'plats', imgurl: 'https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg', private: true, password: 'psw'},
+	{id: 0, memberAmount: 104, name: 'Rackarberget', description: 'beskrivning', location: 'plats', imgurl: 'https://www.uppsalahem.se/globalassets/bilder/omradesbilder/7002/Rackarberget_3.jpg?w=320', private: false, password: 'psw'},
+	{id: 1, memberAmount: 5, name: 'Kajsas änglar', description: 'beskrivning', location: 'plats', imgurl: 'https://m.media-amazon.com/images/I/71RfMw9q4fS._AC_UL320_.jpg', private: true, password: 'psw'},
 	{id: 2, memberAmount: 50, name: 'Ultuna', description: 'beskrivning', location: 'plats', imgurl: 'https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg', private: false, password: 'psw'},
 	{id: 3, memberAmount: 60, name: 'Djäknegatan', description: 'beskrivning', location: 'plats', imgurl: 'https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg', private: false, password: 'psw'},
 	{id: 4, memberAmount: 62, name: 'Innerstan', description: 'beskrivning', location: 'plats', imgurl: 'https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg', private: false, password: 'psw'}, 
