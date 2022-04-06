@@ -113,6 +113,31 @@ function addTransaction(req, res) {
     });
 }
 
+function updateTransaction(req, res) {
+  const id = parseInt(req.params.id);
+  const body = req.body;
+
+  if (!transactionChecker(body))
+    return res.status(400).json("Invalid transaction properties");
+
+  if (isNaN(id)) {
+    return res
+      .status(400)
+      .json("Usage: /transactions/:id. id has to be a number");
+  }
+
+  knex("Transactions")
+    .where("id", id)
+    .update(body)
+    .catch((err) => {
+      res.status(500).json(err);
+      id = undefined;
+    })
+    .then(() => {
+      if (id !== undefined) res.json("Transaction updated with id: " + id);
+    });
+}
+
 function deleteTransaction(req, res) {
   const id = parseInt(req.params.id);
 
@@ -141,5 +166,6 @@ export {
   getListerTransactions,
   getTransactionCommunity,
   addTransaction,
+  updateTransaction,
   deleteTransaction,
 };

@@ -256,8 +256,8 @@ export function transactionTests(server) {
             console.error(err);
           }
           res.should.have.status(200);
-          res.body.should.be.a("string");
-          res.body.length.should.not.be.eql(0);
+          res.body.should.be.a("array");
+          res.body.length.should.be.eql(0);
           done();
         });
     });
@@ -301,8 +301,8 @@ export function transactionTests(server) {
             console.error(err);
           }
           res.should.have.status(200);
-          res.body.should.be.a("string");
-          res.body.length.should.not.be.eql(0);
+          res.body.should.be.a("array");
+          res.body.length.should.be.eql(0);
           done();
         });
     });

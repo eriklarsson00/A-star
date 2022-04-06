@@ -179,6 +179,7 @@ app
 
 app
   .route("/transactions/:id")
+  .put(transactions.updateTransaction)
   .get(transactions.getTransaction)
   .delete(transactions.deleteTransaction);
 
