@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS Requests
     id                 INT AUTO_INCREMENT
         PRIMARY KEY,
     user_id            INT       NOT NULL,
-    product_id         INT       NOT NULL,
+    product_text       TEXT      NOT NULL,
     description        TEXT      NULL,
     quantity           INT       NOT NULL,
     time_of_creation   TIMESTAMP NOT NULL,

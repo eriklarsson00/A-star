@@ -25,10 +25,7 @@ const requestChecker = (body) => {
 };
 
 const transactionChecker = (body) => {
-  return checker(
-    "offer_id request_id responder_id time_of_creation time_of_expiration",
-    body
-  );
+  return checker("responder_id time_of_creation time_of_expiration", body);
 };
 
 export {

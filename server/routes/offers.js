@@ -80,7 +80,7 @@ function addOffer(req, res) {
       return;
     })
     .then((id) => {
-      if (id !== undefined) res.json("User inserted with id: " + id);
+      if (id !== undefined) res.json("Offer inserted with id: " + id);
       offer_id = id;
     })
     .then(() => {
@@ -113,7 +113,7 @@ function updateOffer(req, res) {
       id = undefined;
     })
     .then(() => {
-      if (id !== undefined) res.json("Community updated with id: " + id);
+      if (id !== undefined) res.json("Offer updated with id: " + id);
     });
 }
 
