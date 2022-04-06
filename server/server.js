@@ -28,6 +28,13 @@ if (process.env.NODE_ENV === "prod") {
 }
 
 const server = http.createServer(app);
+
+/*
+*************************
+    WebSocket SETUP
+*************************
+*/
+
 const io = socketio(server);
 
 io.on("connection", (socket) => {
@@ -155,7 +162,7 @@ app
   .post((req, res) => {
     const communities = req.body.communities;
     communities.forEach((community) => {
-      io.sockets.to(community).emit("newOffer", req.body.offer);
+      io.sockets.to(community).emit("offer", req.body.offer);
     });
     addOffer(req, res)
   });
@@ -174,7 +181,7 @@ app
   .post((req, res) => {
     const communities = req.body.communities;
     communities.forEach((community) => {
-      io.sockets.to(community).emit("newRequest", req.body.request);
+      io.sockets.to(community).emit("request", req.body.request);
     });
     addRequest(req, res)
   });
