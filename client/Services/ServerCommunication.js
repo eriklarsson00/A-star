@@ -1,4 +1,4 @@
-const host = "http://ec2-3-215-18-23.compute-1.amazonaws.com";
+import { host } from "./ServerHost";
 
 const request = async (type, route, body) => {
   try {

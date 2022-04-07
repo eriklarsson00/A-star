@@ -20,112 +20,116 @@ import {
   Input,
 } from "@ui-kitten/components";
 import tw from "twrnc";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 //import { render } from 'react-dom';
-import { CommunityInfo} from "../assets/AppContext";
+import { CommunityInfo } from "../assets/AppContext";
 import { getOffers } from "../Services/ServerCommunication.js";
+import io from "socket.io-client";
+import { host } from "../Services/ServerHost";
 
 const DiscoverIcon = (props) => <Icon {...props} name="compass-outline" />;
 
-let otherItems = [];
-let ownItems = [];
-let id = 1;
-
-async function getItems() {
-  let offers = await getOffers([1]);
+async function getItems(id, communities) {
+  let offers = await getOffers(communities);
+  let myItems = [];
+  let availableItems = [];
+  let myItemsIndex = 0;
+  let availableItemsIndex = 0;
   offers.forEach((offer) => {
-    if ((offer.user_id == id)) {
-      ownItems.push(offer);
+    if (offer.user_id == id) {
+      offer.index = myItemsIndex;
+      myItems.push(offer);
+      myItemsIndex++;
     } else {
-      otherItems.push(offer);
+      offer.index = availableItemsIndex;
+      availableItems.push(offer);
+      availableItemsIndex++;
     }
   });
-}
-
-// const items = getItems();
-// function getItems() { //TODO: Get the users actuall listning items
-//     return new Array(10).fill({
-//         user_id : 1,
-//         product_id :1,
-//         product_text : "Apelsin",
-//         description: "Beskrivning av varan, den kanske är såhär lång?",
-//         quantity: "3 st",
-//         time_of_creation: "Today 13.37",
-//         time_of_purchase: "Date",
-//         time_of_expiration: "2022-04-01",
-//         imgurl : <DiscoverIcon />,
-//         broken_pkg : true,
-//     });
-// };
-
-// const myItems = getMyItems();
-// function getMyItems() { // TODO: Get the actuall offers in the communitys
-//   return new Array(3).fill({
-//     user_id : 1,
-//     product_id :1,
-//     product_text : "Apelsin",
-//     description: "Beskrivning av varan",
-//     quantity: "3 st",
-//     time_of_creation: "Today 13.37",
-//     time_of_purchase: "Date",
-//     time_of_expiration: "",
-//     imgurl : <DiscoverIcon />,
-//     broken_pkg : true,
-//   });
-// };
-
-// const lists = getLists();
-
-async function getLists() {
-  await getItems();
   let arrayList = new Array(2);
   arrayList[0] = {
     //My items
-    data: ownItems,
+    data: myItems,
     myListings: true,
   };
   arrayList[1] = {
     //All available
-    data: otherItems,
+    data: availableItems,
     myListings: false,
   };
   return arrayList;
 }
 
 export const ItemAvailableComponent = () => {
-  const [visible, setVisible] = React.useState(false);
+  const [visible, setVisible] = React.useState([]);
   const [myVisible, setMyVisible] = React.useState(false);
   const { community } = React.useContext(CommunityInfo);
   const [takeProduct, setTakeProduct] = React.useState(false);
   //const [refreshing, setRefreshing] = React.useState(false);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const [items, setItems] = React.useState([]);
+  const isFocused = useIsFocused();
 
-  /*React.useEffect(() => {
-    const fetchItems = async () => {setItems(await getLists())}
 
-    fetchItems()
-  }, [])*/
+  //fetch items on focus
+  React.useEffect(() => {
+    const fetchItems = async () => {
+      let newVisibles = [];
+      let offers = await getItems(1, [1, 2]);
+      offers[1].data.forEach(() => {
+        newVisibles.push(false);
+      });
+      setVisible(newVisibles);
+      setItems(offers);
+    };
 
-  const onRefresh = React.useCallback(() => {
-    // Used when users refreshes a page
-    setRefreshing(true);
-    //TODO: Implement actuall refresh function
-    setRefreshing(false);
+    fetchItems();
+  }, [isFocused]);
+
+  const socketRef = React.useRef();
+
+  //connect to WebSocket on module load
+  React.useEffect(() => {
+    socketRef.current = io(host);
+
+    // socketRef.current.emit("communities", {CommunityInfo});
+
+    socketRef.current.on("offer", (offer) => {
+      const offers = items;
+      if (offer.user_id == id) {
+        offers[0].data.push(offer);
+      } else {
+        offers[1].data.push(offer);
+      }
+      setItems(offers);
+    });
+
+    return () => {
+      socketRef.current.disconnect();
+    };
   }, []);
+
+  const toggleModal = (i) => {
+    let newVisibles = visible;
+    newVisibles[i] = !newVisibles[i];
+    setVisible(newVisibles);
+  };
 
   const renderAvailableItems = ({ item }) => (
     <View>
       <ListItem
         style={styles.container}
-        onPress={() => setVisible(true)}
-        accessoryLeft={item.imgurl}
+        onPress={() => {
+          toggleModal(item.index);
+        }}
+        // accessoryLeft={"https://picsum.photos/150/150"}
         title={`${item.product_text}`}
         description={`${item.quantity}`}
       />
       <Modal //Modal for additional information about a product
-        visible={visible}
+        visible={visible[item.index]}
         backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}
-        onBackdropPress={() => setVisible(false)}
+        onBackdropPress={() => toggleModal(item.index)}
       >
         <Card disabled={true} style={{ width: 320, flex: 1 }}>
           <Layout style={tw`py-10`}>
@@ -149,16 +153,14 @@ export const ItemAvailableComponent = () => {
           </Text>
           <Text style={{ marginBottom: 10 }}>Användare som lagt upp</Text>
           <Text style={{ marginBottom: 10 }}>{item.description}</Text>
-          <Button onPress={() => (setTakeProduct(true), setVisible(false))}>
-            Ta vara
-          </Button>
+          <Button onPress={() => setTakeProduct(true)}>Ta vara</Button>
         </Card>
       </Modal>
 
-      <Modal //Modal for setting time & requesting an offer
+      {/* <Modal //Modal for setting time & requesting an offer
         visible={takeProduct}
         backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}
-        onBackdropPress={() => (setTakeProduct(false), setVisible(false))}
+        onBackdropPress={() => setTakeProduct(false)}
       >
         <Card disabled={true} style={{ width: 320, flex: 1 }}>
           <Layout style={tw`py-10`}>
@@ -174,21 +176,29 @@ export const ItemAvailableComponent = () => {
           <Text style={{ marginBottom: 10 }}>Jag kan hämta varan: </Text>
           <RadioGroup
             selectedIndex={selectedIndex}
-            onChange={index => setSelectedIndex(index)}
+            onChange={(index) => setSelectedIndex(index)}
           >
             <Radio>Idag</Radio>
             <Radio>Imorgon</Radio>
             <Radio>Inom de närmaste dagarna</Radio>
             <Radio>Annat datum: </Radio>
           </RadioGroup>
-            <Input 
-              style={{marginBottom:10,}}
-              placeholder = 'Annat datum'
-              disabled={selectedIndex !== 3}
-            />
-          <Button onPress={() => (setTakeProduct(false), setVisible(false), console.log(selectedIndex))}>Ta vara</Button>
+          <Input
+            style={{ marginBottom: 10 }}
+            placeholder="Annat datum"
+            disabled={selectedIndex !== 3}
+          />
+          <Button
+            onPress={() => (
+              setTakeProduct(false),
+              setVisible(false),
+              console.log(selectedIndex)
+            )}
+          >
+            Ta vara
+          </Button>
         </Card>
-      </Modal>
+      </Modal> */}
     </View>
   );
 
@@ -199,7 +209,7 @@ export const ItemAvailableComponent = () => {
       <ListItem
         style={styles.container}
         onPress={() => setMyVisible(true)}
-        accessoryLeft={item.imgurl}
+        // accessoryLeft={"https://picsum.photos/150/150"}
         title={`${item.product_text} ${item.quantity}`}
         description={`${item.description}`}
       />
@@ -253,6 +263,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   spaceBetween: {
-    marginBottom:10,
-  }
+    marginBottom: 10,
+  },
 });
