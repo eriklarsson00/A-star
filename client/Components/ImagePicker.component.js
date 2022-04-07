@@ -1,15 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { View, Text, StyleSheet, Image, Button } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as ImageManipulator from 'expo-image-manipulator';
+import {ProfileImagePath} from '../assets/AppContext';
 
 
 // send witb prop resize= {x} to change dimension of picture
-export default function ImagePickerComp({resize}) {
+export default function ImagePickerComp(props) {
   // The path of the picked image
 
   const [pickedImagePath, setPickedImagePath] = useState("");
-
+  const [ProfileImagePath, setProfileImagePath] = useContext(ProfileImagePath);
   // This function is triggered when the "Select an image" button pressed
   const showImagePicker = async () => {
     // Ask the user for the permission to access the media library
@@ -30,6 +31,13 @@ export default function ImagePickerComp({resize}) {
 
     if (!result.cancelled) {
       setPickedImagePath(result.uri);
+      if(props.context === 'Profile') {
+        setProfileImagePath(result.uri);
+      } 
+
+      if(props.context === 'Item') {
+          //TODO set context for item
+      }
       pushToServer(result);
     }
     console.log(result.uri);
@@ -51,12 +59,21 @@ export default function ImagePickerComp({resize}) {
     console.log(result);
     if (!result.cancelled) {
       setPickedImagePath(result.uri);
+      if(props.context === 'Profile') {
+        setProfileImagePath(result.uri);
+      } 
+
+      if(props.context === 'Item') {
+          //TODO set context for item
+      }
+
       pushToServer(result);
     }
   };
 
+  //Sends the picture to the s3 bucket
   const pushToServer = async (result) => {
-   const image = await resizeImage(result, resize);
+   const image = await resizeImage(result, props.resize);
     const body = new FormData();
     body.append("image", {
       name: "photo.jpg",
@@ -74,7 +91,7 @@ export default function ImagePickerComp({resize}) {
     }).catch((err) => console.log(err));
   };
 
-
+  //changes the size of the image. 
   resizeImage = async (result, resize) => {
     const manipResult = await ImageManipulator.manipulateAsync(
      
