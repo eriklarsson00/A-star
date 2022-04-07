@@ -17,9 +17,14 @@ export default function BarCodeScannerComp() {
 
 
   const handleBarCodeScanned = ({ type, data }) => {
-   
     setScanned(true);
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    fetch(
+      `http://ec2-54-165-238-176.compute-1.amazonaws.com:8080/products/${data}`
+    )
+      .then((response) => response.json())
+      .then((product) => {
+        alert(product.brandName + " " + product.functionalName);
+      });
   };
 
   if (hasPermission === null) {
@@ -32,7 +37,7 @@ export default function BarCodeScannerComp() {
   return (
     <View style={styles.container}>
       <BarCodeScanner 
-        barCodeTypes={[BarCodeScanner.Constants.BarCodeType.ean8]}
+        barCodeTypes={[BarCodeScanner.Constants.BarCodeType.ean13]}  
         onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
         style={StyleSheet.absoluteFillObject}
       />
