@@ -26,6 +26,13 @@ if (process.env.NODE_ENV === "prod") {
 }
 
 const server = http.createServer(app);
+
+/*
+*************************
+    WebSocket SETUP
+*************************
+*/
+
 const io = socketio(server);
 
 io.on("connection", (socket) => {
@@ -78,6 +85,7 @@ app.route("/ci/deploy").post(ci.deployServer);
 
 //*************************PRODUCTS*************************
 
+
 app.route("/products/:gtin").get(products.getProduct);
 
 //*************************USERS*************************
@@ -127,11 +135,10 @@ app
   .post((req, res) => {
     offers.addOffer(req, res);
     const communities = req.body.communities;
-    if (communities) {
-      communities.forEach((community) => {
-        io.sockets.to(community).emit("newOffer", req.body.offer);
-      });
-    }
+    communities.forEach((community) => {
+      io.sockets.to(community).emit("offer", req.body.offer);
+    });
+    addOffer(req, res)
   });
 
 app
@@ -152,16 +159,11 @@ app
   .route("/requests")
   .get(requests.getRequests)
   .post((req, res) => {
-    const body = req.body;
-    const request = body ? body.request : undefined;
-    const communities = body ? body.communities : undefined;
-    requests.addRequest(req, res);
-
-    if (communities) {
-      communities.forEach((community) => {
-        io.sockets.to(community).emit("newRequest", request);
-      });
-    }
+    const communities = req.body.communities;
+    communities.forEach((community) => {
+      io.sockets.to(community).emit("request", req.body.request);
+    });
+    addRequest(req, res)
   });
 
 app
