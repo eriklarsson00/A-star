@@ -3,38 +3,42 @@ import { SafeAreaView, StyleSheet, Image, View, TouchableOpacity } from "react-n
 import { Text, Layout, Button, Input, Icon, useTheme, Modal, Card, Select, SelectItem, IndexPath} from "@ui-kitten/components";
 import tw from 'twrnc'
 import ImagePicker from '../Components/ImagePicker'
-import {ProfileImagePath, CommunityInfo, UserInfo} from '../assets/AppContext'
-
+import {ProfileImagePath, CommunityInfo, UserInfo, UserLoggedIn} from '../assets/AppContext'
+import { getUserProfile, addProfile } from "../Services/ServerCommunication";
 
 export const CreateUserScreen = () => {
-
     const [firstName, setFirstName] = React.useState('');
     const [lastName, setLastName] = React.useState('');
     const [phoneNumber, setPhoneNumber] = React.useState('');
     const {userInfo, setUserInfo } = React.useContext(UserInfo);
-    const [location, setLocation] = React.useState('');
+    const {userLoggedIn, setLoggedIn } = React.useContext(UserLoggedIn);
+    const [adress, setAdress] = React.useState('');
     const {profileImagePath, setProfileImagePath } = React.useContext(ProfileImagePath);
     const { community, setCommunity } = React.useContext(CommunityInfo);
 
-    const [selectedIndex, setSelectedIndex] = React.useState(new IndexPath(0));
+    const [selectedIndex, setSelectedIndex] = React.useState([
+        new IndexPath(0),
+        new IndexPath(1),
+    ]);
     const [visible, setVisible] = React.useState(false);
 
-    const createProfile = () => {
+    async function createProfile() {
         let accountData = {
-            firstName : firstName,
-            lastName : lastName,
+            firstname : firstName,
+            lastname : lastName,
             number : phoneNumber,
             email : userInfo.email,
-            location : location,
+            location : "",
             imgurl : '', //TODO fixa bucket-bild
-            rating : '', //TODO : Start rating?
+            rating : 0, //TODO : Start rating?
+            adress : adress,
+            raters : 0,
             given : 0,
             taken : 0,
         }
-        setUserInfo(accountData);
-        console.log(accountData);
-        //TO DO pusha upp på databasen
-        //navigera till start
+        let updatedProfile = await addProfile(accountData);
+        setUserInfo(updatedProfile);
+        setLoggedIn(true);
     }
 
     const theme = useTheme()
@@ -45,10 +49,11 @@ export const CreateUserScreen = () => {
 	{id: 4, memberAmount: 62, name: 'Innerstan', description: 'beskrivning', location: 'plats', imgurl: 'https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg', private: false, password: 'psw'}, 
 	{id: 6, memberAmount: 24, name: 'Kantorn', description: 'beskrivning', location: 'plats', imgurl: 'https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg', private: false, password: 'psw'}, 
 	{id: 6, memberAmount: 13, name: 'Rosendal', description: 'beskrivning', location: 'plats', imgurl: 'https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg', private: false, password: 'psw'}]
-
+    
     const AddIcon = () => (
 		<Icon style={ styles.lockStyle} fill="#8F9BB3"name='plus-circle-outline'/>
 	);
+    
     const ChoseImageModal = ()=> {
         return(
         <Modal
@@ -58,14 +63,14 @@ export const CreateUserScreen = () => {
         >
 			<Card disabled={true}>
 			<ImagePicker context="Profile"/>
-            <Button style={tw`mt-2 w-50 `} onPress={() => setVisible(false)}>Klar</Button>
+            <Button style={tw`mt-2 w-50`} onPress={() => setVisible(false)}>Klar</Button>
 			</Card>
 		</Modal>
-        )}
+    )}
 
     const SelectCommunity = () =>{
     return(
-        <Layout style={{minHeight:128, width:"100%"}} level='1'>
+        <Layout style={{height:128, width:"100%"}} level='1'>
             <Select 
             multiSelect = {true}
             label="Välj grannskap"
@@ -74,9 +79,8 @@ export const CreateUserScreen = () => {
             onSelect={index => setSelectedIndex(index)}>
             {dataBaseCommunities.map(() =>{
                 return(
-                <SelectItem  title={"hej"}/>)
+                <SelectItem key="majklockan" title={"hej"}/>)
             })}
- 
             </Select>
         </Layout>
     )
@@ -98,13 +102,13 @@ export const CreateUserScreen = () => {
             <Input label='Förnamn' value={firstName} onChangeText={nextValue => setFirstName(nextValue)}/>
             <Input label='Efternamn' value={lastName} onChangeText={nextValue => setLastName(nextValue)}/>
             <Input label='Telefonnummer' value={phoneNumber} onChangeText={nextValue => setPhoneNumber(nextValue)}/>
-            <Input label='Adress' value={location} onChangeText={nextValue => setLocation(nextValue)}/>
+            <Input label='Adress' value={adress} onChangeText={nextValue => setAdress(nextValue)}/>
             <SelectCommunity />
             <Button 
                 id="createProfile" 
                 onPress={() => createProfile()} 
-                disabled={firstName === '' || lastName === '' || phoneNumber === '' || location === ''} 
-                style= {{backgroundColor: firstName === '' || lastName === '' || phoneNumber === '' || location === '' ? "grey" : theme['color-primary-500']}}
+                disabled={firstName === '' || lastName === '' || phoneNumber === '' || adress === ''} 
+                style= {{backgroundColor: firstName === '' || lastName === '' || phoneNumber === '' || adress === '' ? "grey" : theme['color-primary-500']}}
             >Skapa Konto</Button>
         </Layout> 
     </Layout>

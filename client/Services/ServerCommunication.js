@@ -39,4 +39,12 @@ const getRequests = async (communities) => {
   return [...new Set(requests)]
 };
 
-export { getOffers, getRequests, getUserProfile}
+//Sends an profile to the database, returns the profile
+//object with their id added.
+const addProfile = async (profile) => {
+  const users = await request("POST", "/users", profile);
+  const updatedProfile = await getUserProfile(profile.email);
+  return updatedProfile;
+}
+
+export { getOffers, getRequests, getUserProfile, addProfile}
