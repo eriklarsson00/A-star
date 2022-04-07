@@ -29,23 +29,25 @@ const CheckIfLoggedIn = () => {
 };
 
 export default () => {
-  const [userLoggedIn, setLoggedIn] = useState(CheckIfLoggedIn);
-  const FirstLoggedInValue = useMemo(
-    () => ({ userLoggedIn, setLoggedIn }),
-    [userLoggedIn]
-  );
+  	const [userLoggedIn, setLoggedIn] = useState(CheckIfLoggedIn);
+  	const FirstLoggedInValue = useMemo(
+    	() => ({ userLoggedIn, setLoggedIn }),
+    	[userLoggedIn]);
 
-  const [userInfo, setUserInfo] = useState();
-  const FirstUservalue = useMemo(() => ({ userInfo, setUserInfo }), [userInfo]);
 
-  const [profileImagePath, setProfileImagePath] = useState(
-    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
-  );
-  const FirstProfileImagePath = useMemo(
-    () => ({ profileImagePath, setProfileImagePath }),
-    [profileImagePath]
-  );
 
+	const [userInfo, setUserInfo] = useState([]);
+	const FirstUservalue = useMemo(
+		  () => ({ userInfo, setUserInfo }), 
+		  [userInfo]
+		);
+			
+		const [profileImagePath, setProfileImagePath] = useState('https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png');
+		const FirstProfileImagePath = useMemo(
+		  () => ({ profileImagePath, setProfileImagePath }), 
+		  [profileImagePath]
+		);
+		
   const [community, setCommunity] = useState([]);
   const FirstCommunityValue = useMemo(
     () => ({ community, setCommunity }),

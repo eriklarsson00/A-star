@@ -19,7 +19,6 @@ export const CreateUserScreen = () => {
     const [selectedIndex, setSelectedIndex] = React.useState(new IndexPath(0));
     const [visible, setVisible] = React.useState(false);
 
-
     const createProfile = () => {
         let accountData = {
             firstName : firstName,
@@ -33,6 +32,7 @@ export const CreateUserScreen = () => {
             taken : 0,
         }
         setUserInfo(accountData);
+        console.log(accountData);
         //TO DO pusha upp på databasen
         //navigera till start
     }
@@ -65,20 +65,23 @@ export const CreateUserScreen = () => {
 
     const SelectCommunity = () =>{
     return(
-        <Layout style={{minHeight:128}} level='1'>
+        <Layout style={{minHeight:128, width:"100%"}} level='1'>
             <Select 
             multiSelect = {true}
+            label="Välj grannskap"
+            placeholder="Välj grannskap"
             selectedIndex={selectedIndex}
             onSelect={index => setSelectedIndex(index)}>
             {dataBaseCommunities.map(() =>{
                 return(
                 <SelectItem  title={"hej"}/>)
-            })}               
+            })}
+ 
             </Select>
         </Layout>
     )
     }
-
+   
 	return (
     <Layout style={styles.container}>
         <Layout style={tw`pt-5 pb-2`}>
@@ -86,7 +89,7 @@ export const CreateUserScreen = () => {
                 Slutför registrering
             </Text>
         </Layout>
-        <Layout style={styles.createUserContainer}>
+        <Layout style={styles.createUserContainer} level='1'>
             <Image style={tw`rounded-full`} source={{uri:profileImagePath, height: 150, width: 150}}/>
             <TouchableOpacity onPress={()=>{setVisible(true)}} style={styles.AddIconContainer}>
             <ChoseImageModal/>
@@ -96,13 +99,14 @@ export const CreateUserScreen = () => {
             <Input label='Efternamn' value={lastName} onChangeText={nextValue => setLastName(nextValue)}/>
             <Input label='Telefonnummer' value={phoneNumber} onChangeText={nextValue => setPhoneNumber(nextValue)}/>
             <Input label='Adress' value={location} onChangeText={nextValue => setLocation(nextValue)}/>
-            <Text></Text>
-            <SelectCommunity/>
+            <SelectCommunity />
             <Button 
-                disabled={firstName === '' || lastName === '' || phoneNumber === '' || location === '' } 
-                onPress={() => createProfile()} style={{width: 200, margin: 15}} 
+                id="createProfile" 
+                onPress={() => createProfile()} 
+                disabled={firstName === '' || lastName === '' || phoneNumber === '' || location === ''} 
+                style= {{backgroundColor: firstName === '' || lastName === '' || phoneNumber === '' || location === '' ? "grey" : theme['color-primary-500']}}
             >Skapa Konto</Button>
-        </Layout>   
+        </Layout> 
     </Layout>
 	);
 };
@@ -118,18 +122,19 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection : 'column',
         alignItems: 'center'
-},
-lockStyle:{
-	width: 65,
-	height: 65,
-},
-AddIconContainer: {
-    position: 'absolute',
-    marginTop: 110,
-    backgroundColor: 'white',
-    borderRadius: 50
-},
-backdrop: {
-	backgroundColor: 'rgba(0, 0, 0, 0.5)',
-},
+    },
+    lockStyle:{
+	    width: 65,
+	    height: 65,
+    },
+    AddIconContainer: {
+        position: 'absolute',
+        marginTop: 110,
+        backgroundColor: 'white',
+        borderRadius: 50
+    },
+    backdrop: {
+	    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    
 }); 

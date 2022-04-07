@@ -12,27 +12,37 @@ const CreateNewItemScreen = () => {
 	const [time_of_purchase, setTime_of_purchase] = React.useState('');
 	const [time_of_expiration, setTime_of_expiration] = React.useState('');
 	const [imgurl, setImgurl] = React.useState('');
-	const [broken_pkg, setBroken_pkg] = React.useState('');
+	const [broken_pkg, setBroken_pkg] = React.useState(false);
 
 	const theme = useTheme();
 
 	const CameraIcon = () => (
 		<Icon style={ styles.lockStyle} fill="black" name='camera-outline'/>
 	);
+	const PlusIcon = () => (
+		<Icon style={ styles.lockStyle} fill="black" name='plus-circle-outline'/>
+	);
 
 	return (
 		<Layout style={styles.container}>
 			<Layout style={tw`pl-5 pb-5`}>
-				<Button style={styles.btn} appearance='ghost' accessoryLeft={CameraIcon}> </Button>
+				<Button style={styles.btn} appearance="ghost" accessoryLeft={CameraIcon}> </Button>
 			</Layout>
-		 <Input style={tw`pb-2 pl-5 pr-5`} placeholder='Typ av vara*' value={product_text} />
-		 <Input style={tw`pb-2 pl-5 pr-5`} placeholder='Beskrivning av vara' value={description} />
-		 <Input style={tw`pb-2 pl-5 pr-5`} placeholder='Antal*' value={quantity} />
+		<Input style={tw`pb-2 pl-5 pr-5`} placeholder='Typ av vara' value={product_text} onChangeText={nextValue => setProduct_test(nextValue)}/>
+		<Input style={tw`pb-2 pl-5 pr-5`} placeholder='Beskrivning av vara' value={description} onChangeText={nextValue => setDescription(nextValue)}/>
+		<Input style={tw`pb-2 pl-5 pr-5`} placeholder='Antal*' value={quantity} onChangeText={nextValue => setQuantity(nextValue)}/>
 		 {/* <Input label='Enhet' value={unit} /> */}
-		 <Input style={tw`pb-2 pl-5 pr-5`} placeholder='Datum varan köptes' value={time_of_purchase} />
-		 <Input style={tw`pb-2 pl-5 pr-5`} placeholder='Datum varan skapades' value={time_of_creation} />
-		 <Input style={tw`pb-2 pl-5 pr-5`} placeholder='Utgångsdatum' value={time_of_expiration} />
-		 <CheckBox style={styles.checkbox} checked={broken_pkg} onChange={nextChecked => setBroken_pkg(nextChecked)}>Bruten förpackning </CheckBox>
+		<Input style={tw`pb-2 pl-5 pr-5`} placeholder='Datum varan köptes' value={time_of_purchase} onChangeText={nextValue => setTime_of_purchase(nextValue)}/>
+		<Input style={tw`pb-2 pl-5 pr-5`} placeholder='Datum varan skapades' value={time_of_creation} onChangeText={nextValue => setTime_of_creation(nextValue)}/>
+		<Input style={tw`pb-2 pl-5 pr-5`} placeholder='Utgångsdatum' value={time_of_expiration} onChangeText={nextValue => setTime_of_expiration(nextValue)}/>
+		<CheckBox style={styles.checkbox} checked={broken_pkg} onChange={nextChecked => setBroken_pkg(nextChecked)}> 
+			{evaProps => <Text {...evaProps} style={{fontSize: 16, paddingLeft: 5, color: theme['color-basic-700'] }}>Bruten förpackning</Text>}</CheckBox>
+		<Layout style={tw`pl-5 pb-5`}>
+			<Button style={styles.btn} appearance="ghost" accessoryLeft={PlusIcon}> </Button>
+		</Layout>
+		<Layout style={tw`pt-25`}>
+			<Button style={styles.createBtn}>Skapa inlägg</Button>
+		</Layout>
 		</Layout>
 	);
 };
@@ -54,13 +64,17 @@ const styles = StyleSheet.create({
 	lockStyle: {
 		width: 55,
 		height: 55,
-
 	},
 	btn: {
 		width: 75,
 		height: 70,
-		borderColor: "black",
+		borderColor: "grey",
 		paddingLeft: 33,
+	},
+	createBtn: {
+		alignSelf: "center",
+		width: 200,
+		height: 50,
 	}
 		
 })
