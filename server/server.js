@@ -207,7 +207,7 @@ app.post("/Image", async (req, res) => {
 
 app.post("/Profile", async (req, res) => {
   try {
-    await uploadImageOnS3(req.file, "/profilePictures");
+    await uploadImageOnS3(req.file, "/profilePictures/test.jpg");
     res.send("Succesfully sent to profiles");
   } catch (err) {
     res.send("Upload failed", err);
