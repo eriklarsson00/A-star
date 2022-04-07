@@ -85,7 +85,6 @@ app.route("/ci/deploy").post(ci.deployServer);
 
 //*************************PRODUCTS*************************
 
-
 app.route("/products/:gtin").get(products.getProduct);
 
 //*************************USERS*************************
@@ -138,7 +137,7 @@ app
     communities.forEach((community) => {
       io.sockets.to(community).emit("offer", req.body.offer);
     });
-    addOffer(req, res)
+    addOffer(req, res);
   });
 
 app
@@ -163,7 +162,7 @@ app
     communities.forEach((community) => {
       io.sockets.to(community).emit("request", req.body.request);
     });
-    addRequest(req, res)
+    addRequest(req, res);
   });
 
 app
@@ -197,12 +196,23 @@ app.route("/transactions/lister/:id").get(transactions.getListerTransactions);
 
 //*************************IMAGES*********************
 
-app.post("/images", uploadS3.upload.single("image"), (req, res) => {
-  uploadS3.uploadImageOnS3(req.file);
-  console.log(req.file);
-  res.send("Single File test");
+app.post("/Image", async (req, res) => {
+  try {
+    await uploadImageOnS3(req.file, "/images");
+    res.send("Succesfully sent to images");
+  } catch (err) {
+    res.send("Upload failed", err);
+  }
 });
 
+app.post("/Profile", async (req, res) => {
+  try {
+    await uploadImageOnS3(req.file, "/profilePictures");
+    res.send("Succesfully sent to profiles");
+  } catch (err) {
+    res.send("Upload failed", err);
+  }
+});
 //*************************SERVER*************************
 
 if (sserver) {
