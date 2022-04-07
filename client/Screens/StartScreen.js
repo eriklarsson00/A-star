@@ -27,7 +27,7 @@ export const StartScreen = ({navigation}) => {
             let newUser = userInfo;
             newUser.email = googleInfo.email;
             setUserInfo(newUser);
-            console.log(userInfo)
+            //console.log(userInfo);
             return;
         }
         if(accessToken){ 

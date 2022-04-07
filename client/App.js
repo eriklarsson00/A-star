@@ -22,7 +22,7 @@ export default () => {
 		  [userLoggedIn]
 		);
 
-		const [userInfo, setUserInfo] = useState();
+		const [userInfo, setUserInfo] = useState([]);
 		const FirstUservalue = useMemo(
 		  () => ({ userInfo, setUserInfo }), 
 		  [userInfo]
