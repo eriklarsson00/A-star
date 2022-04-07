@@ -11,7 +11,7 @@ const request = async (type, route, body) => {
     }).then((data) => data.json());
     return await response;
   } catch (err) {
-    return err;
+    throw err;
   }
 };
 

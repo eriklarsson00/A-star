@@ -20,7 +20,7 @@ import {
   Input,
 } from "@ui-kitten/components";
 import tw from "twrnc";
-import { useFocusEffect, useIsFocused } from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
 //import { render } from 'react-dom';
 import { CommunityInfo } from "../assets/AppContext";
 import { getOffers } from "../Services/ServerCommunication.js";
@@ -75,7 +75,7 @@ export const ItemAvailableComponent = () => {
   React.useEffect(() => {
     const fetchItems = async () => {
       let newVisibles = [];
-      let offers = await getItems(1, [1, 2]);
+      let offers = await getItems(1, [1, 2, 3]);
       offers[1].data.forEach(() => {
         newVisibles.push(false);
       });
@@ -92,7 +92,7 @@ export const ItemAvailableComponent = () => {
   React.useEffect(() => {
     socketRef.current = io(host);
 
-    // socketRef.current.emit("communities", {CommunityInfo});
+    // socketRef.current.emit("communities", {ids: CommunityInfo});
 
     socketRef.current.on("offer", (offer) => {
       const offers = items;
@@ -113,7 +113,15 @@ export const ItemAvailableComponent = () => {
     let newVisibles = visible;
     newVisibles[i] = !newVisibles[i];
     setVisible(newVisibles);
+
+    console.log(i, visible[i]);
   };
+
+  const resetVisibles = () => {
+    let newVisibles = visible
+    newVisibles.map(() => false)
+    setVisible(newVisibles);
+  }
 
   const renderAvailableItems = ({ item }) => (
     <View>
@@ -129,7 +137,7 @@ export const ItemAvailableComponent = () => {
       <Modal //Modal for additional information about a product
         visible={visible[item.index]}
         backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}
-        onBackdropPress={() => toggleModal(item.index)}
+        onBackdropPress={() => resetVisibles()}
       >
         <Card disabled={true} style={{ width: 320, flex: 1 }}>
           <Layout style={tw`py-10`}>
