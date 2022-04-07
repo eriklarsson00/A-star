@@ -12,6 +12,7 @@
     "name": "client",
     "slug": "client",
     "version": "1.0.0",
+    "scheme" : "matsam",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
