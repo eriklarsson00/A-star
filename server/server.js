@@ -207,6 +207,7 @@ app.post("/Image", async (req, res) => {
 
 app.post("/Profile", async (req, res) => {
   try {
+    console.log("IN /Profile on server.js!!!!");
     await uploadImageOnS3(req.file, "/profilePictures/test.jpg");
     res.send("Succesfully sent to profiles");
   } catch (err) {

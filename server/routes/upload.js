@@ -42,6 +42,7 @@ const uploadImageOnS3 = async (file, bucketPath) => {
       ContentType: contentType,
       ContentEncoding: file.encoding,
     };
+    console.log(bucketPath);
     s3bucket.upload(params, (err, data) => {
       if (err) {
         throw err;
