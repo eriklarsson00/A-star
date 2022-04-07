@@ -4,12 +4,14 @@ import ImagePicker from './Components/ImagePicker.component.js';
 import GoogleLogin from './Components/GoogleLogin.component';
 import BarCodeScanner from './Components/BarCodeScanner.component';
 import BarCodeScannerComp from './Components/BarCodeScanner.component';
+import GetLocation from './Components/GetLocation.component.js'
+import Maps from './Components/Maps.component.js';
 
 
 
 export default function App() {
   return (
-    <ImagePicker/>  
+    <Maps/>  
   );
 }
 
