@@ -132,6 +132,7 @@ app
   .route("/offers")
   .get(offers.getOffers)
   .post((req, res) => {
+    offers.addOffer(req, res);
     const communities = req.body.communities;
     communities.forEach((community) => {
       io.sockets.to(community).emit("offer", req.body.offer);
@@ -207,7 +208,7 @@ app.post("/Image", async (req, res) => {
 app.post("/Profile", async (req, res) => {
   try {
     console.log("IN /Profile on server.js!!!!");
-    await uploadImageOnS3(req.file, "/profilePictures/test.jpg");
+    await uploadImageOnS3(req.file, "/profilePictures");
     res.send("Succesfully sent to profiles");
   } catch (err) {
     res.send("Upload failed " + err);
