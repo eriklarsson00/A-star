@@ -207,8 +207,9 @@ app.post("/Image", async (req, res) => {
 
 app.post("/Profile", async (req, res) => {
   try {
-    console.log("IN /Profile on server.js!!!!");
+    console.log("IN /Profile on server.js!!!!\n");
     await uploadImageOnS3(req.file, "/profilePictures/test.png");
+    console.log("VI ÄR FÖRBI UIOS3 funktionen!!!\n");
     res.send("Succesfully sent to profiles");
   } catch (err) {
     res.send("Upload failed " + err);

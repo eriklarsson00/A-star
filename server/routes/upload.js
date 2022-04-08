@@ -23,6 +23,7 @@ const handleError = (err, res) => {
 };
 
 const uploadImageOnS3 = async (file, bucketPath) => {
+  console.log("Inne i uppload image to S3\n");
   const s3bucket = new S3({
     accessKeyId: process.env.AWS_accessID,
     secretAccessKey: process.env.AWS_secretKEY,
