@@ -29,13 +29,11 @@ export default function ImagePickerComp(props) {
     console.log(result);
 
     if (!result.cancelled) {
-      console.log("Image NAME\n" + result.name);
       setPickedImagePath(result.uri);
       if (props.context == "Profile") {
         setProfileImagePath(result.uri);
       }
       setPickedImagePath(result.uri);
-      console.log("KOMMER VI HIT?\n");
       pushToServer(result);
       console.log(result.uri);
     }
@@ -67,7 +65,6 @@ export default function ImagePickerComp(props) {
   };
 
   const pushToServer = async (result) => {
-    console.log("imagePath = " + imagePath);
     const image = await resizeImage(result, props.resize);
     const body = new FormData();
     body.append("image", {
@@ -75,6 +72,8 @@ export default function ImagePickerComp(props) {
       type: image.type,
       uri: image.uri,
     });
+    console.log("body:");
+    console.log(body);
     let imagePath = props.context;
     console.log("imagePath = " + imagePath);
     var ip = "http://ec2-3-215-18-23.compute-1.amazonaws.com/" + imagePath;
