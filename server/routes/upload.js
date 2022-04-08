@@ -33,6 +33,7 @@ const uploadImageOnS3 = async (file, bucketPath) => {
   let contentDeposition = 'inline;filename="' + file.filename + '"';
   const base64 = await fs.readFileSync(file.path, "base64");
   const arrayBuffer = new Buffer.from(base64, "base64");
+  console.log("bucketPath = " + bucketPath);
   s3bucket.createBucket(() => {
     const params = {
       Bucket: "matsamverkan",
@@ -42,7 +43,6 @@ const uploadImageOnS3 = async (file, bucketPath) => {
       ContentType: contentType,
       ContentEncoding: file.encoding,
     };
-    console.log(bucketPath);
     s3bucket.upload(params, (err, data) => {
       if (err) {
         throw err;
