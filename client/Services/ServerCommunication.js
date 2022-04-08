@@ -18,25 +18,36 @@ const request = async (type, route, body) => {
 //Fetches a user profile with the email email.
 //Returns a profile object if the user exists, otherwise
 //An empty array
-const getUserProfile = async (email) => {
+const getUserProfileByEmail = async (email) => {
   let userProfile = await request("GET", "/users/email/" + email);
   return userProfile;
-} 
+};
+
+//Fetches a user profile with the email email.
+//Returns a profile object if the user exists, otherwise
+//An empty array
+const getUserProfileById = async (id) => {
+  let userProfile = await request("GET", "/users/" + id);
+  return userProfile;
+};
 
 const getOffers = async (communities) => {
   let offers = await request("GET", "/offers");
   // await communities.forEach(async (community) => {
   //   offers = await request("GET", "/offers/active/" + community);
   // });
-  return [...new Set(offers)]
+  return [...new Set(offers)];
 };
 
 const getRequests = async (communities) => {
   let requests = [];
   communities.forEach(async (community) => {
-    requests = [...requests, ...await request("GET", "/requests/active/" + community)];
+    requests = [
+      ...requests,
+      ...(await request("GET", "/requests/active/" + community)),
+    ];
   });
-  return [...new Set(requests)]
+  return [...new Set(requests)];
 };
 
-export { getOffers, getRequests, getUserProfile}
+export { getOffers, getRequests, getUserProfileByEmail, getUserProfileById };
