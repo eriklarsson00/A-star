@@ -212,6 +212,7 @@ app.post("/Profile", async (req, res) => {
     console.log("VI ÄR FÖRBI UIOS3 funktionen!!!\n");
     res.send("Succesfully sent to profiles");
   } catch (err) {
+    console.log(err);
     res.send("Upload failed " + err);
   }
 });
