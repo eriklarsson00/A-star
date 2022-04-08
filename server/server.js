@@ -201,24 +201,16 @@ app.post("/Image", async (req, res) => {
     await uploadImageOnS3(req.file, "/images");
     res.send("Succesfully sent to images");
   } catch (err) {
-    res.send("Upload failed " + err);
+    res.send("Upload failed", err);
   }
 });
 
-app.post("/Profile", async (req, res) => {
-  try {
-    console.log("IN /Profile on server.js!!!!\n");
-    console.log(req.file);
-    console.log(req.body);
-    await uploadS3.uploadImageOnS3(req.file, "/profilePictures");
-    console.log("VI ÄR FÖRBI UIOS3 funktionen!!!\n");
-
-    res.send("Succesfully sent to profiles");
-  } catch (err) {
-    console.log(err);
-    res.send("Upload failed " + err);
-  }
+app.post("/Profile", uploadS3.upload.single("image"), (req, res) => {
+  uploadImageOnS3(req.file);
+  console.log(req.file);
+  res.send("Single File test");
 });
+
 //*************************SERVER*************************
 
 if (sserver) {
