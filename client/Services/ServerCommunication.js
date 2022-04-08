@@ -1,4 +1,4 @@
-const host = "http://ec2-3-215-18-23.compute-1.amazonaws.com";
+import { host } from "./ServerHost";
 
 const request = async (type, route, body) => {
   try {
@@ -11,7 +11,7 @@ const request = async (type, route, body) => {
     }).then((data) => data.json());
     return await response;
   } catch (err) {
-    return err;
+    throw err;
   }
 };
 
