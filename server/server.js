@@ -132,12 +132,11 @@ app
   .route("/offers")
   .get(offers.getOffers)
   .post((req, res) => {
-    offers.addOffer(req, res);
     const communities = req.body.communities;
     communities.forEach((community) => {
       io.sockets.to(community).emit("offer", req.body.offer);
     });
-    addOffer(req, res);
+    offers.addOffer(req, res);
   });
 
 app
@@ -162,7 +161,7 @@ app
     communities.forEach((community) => {
       io.sockets.to(community).emit("request", req.body.request);
     });
-    addRequest(req, res);
+    requests.addRequest(req, res);
   });
 
 app
