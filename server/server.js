@@ -200,7 +200,7 @@ app.post("/Image", async (req, res) => {
     await uploadImageOnS3(req.file, "/images");
     res.send("Succesfully sent to images");
   } catch (err) {
-    res.send("Upload failed", err);
+    res.send("Upload failed " + err);
   }
 });
 
@@ -210,7 +210,7 @@ app.post("/Profile", async (req, res) => {
     await uploadImageOnS3(req.file, "/profilePictures/test.jpg");
     res.send("Succesfully sent to profiles");
   } catch (err) {
-    res.send("Upload failed", err);
+    res.send("Upload failed " + err);
   }
 });
 //*************************SERVER*************************
