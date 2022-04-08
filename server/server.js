@@ -145,7 +145,10 @@ app
   .route("/offers/:id")
   .get(offers.getOffer)
   .put(offers.updateOffer)
-  .delete(offers.deleteOffer);
+  .delete((req, res) => {
+    offers.deleteOffer(req, res)
+    io.sockets.emit("deleteOffer", req.params.id)
+  });
 
 //*************************REQUESTS*************************
 
@@ -170,7 +173,10 @@ app
   .route("/requests/:id")
   .get(requests.getRequest)
   .put(requests.updateRequest)
-  .delete(requests.deleteRequest);
+  .delete((req, res) => {
+    requests.deleteRequest(req, res)
+    io.sockets.emit("deleteRequest", req.params.id)
+  });
 
 //*************************TRANSACTIONS*************************
 
