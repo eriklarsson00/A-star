@@ -22,7 +22,7 @@ const handleError = (err, res) => {
   res.status(500).contentType("text/plain").end("Oops! Something went wrong!");
 };
 
-const uploadImageOnS3 = async (file) => {
+const uploadImageOnS3 = async (file, bucketPath) => {
   const s3bucket = new S3({
     accessKeyId: process.env.AWS_accessID,
     secretAccessKey: process.env.AWS_secretKEY,
@@ -36,18 +36,16 @@ const uploadImageOnS3 = async (file) => {
   s3bucket.createBucket(() => {
     const params = {
       Bucket: "matsamverkan",
-      Key: file.filename,
+      Key: bucketPath,
       Body: arrayBuffer,
       ContentDisposition: contentDeposition,
       ContentType: contentType,
       ContentEncoding: file.encoding,
     };
+    console.log(bucketPath);
     s3bucket.upload(params, (err, data) => {
       if (err) {
-        console.log("error in callback: " + err);
-      } else {
-        console.log("success");
-        console.log("Respomse URL : " + data.Location);
+        throw err;
       }
     });
   });

@@ -85,7 +85,6 @@ app.route("/ci/deploy").post(ci.deployServer);
 
 //*************************PRODUCTS*************************
 
-
 app.route("/products/:gtin").get(products.getProduct);
 
 //*************************USERS*************************
@@ -133,19 +132,21 @@ app
   .route("/offers")
   .get(offers.getOffers)
   .post((req, res) => {
-    offers.addOffer(req, res);
     const communities = req.body.communities;
     communities.forEach((community) => {
       io.sockets.to(community).emit("offer", req.body.offer);
     });
-    addOffer(req, res)
+    offers.addOffer(req, res);
   });
 
 app
   .route("/offers/:id")
   .get(offers.getOffer)
   .put(offers.updateOffer)
-  .delete(offers.deleteOffer);
+  .delete((req, res) => {
+    offers.deleteOffer(req, res)
+    io.sockets.emit("deleteOffer", req.params.id)
+  });
 
 //*************************REQUESTS*************************
 
@@ -163,14 +164,17 @@ app
     communities.forEach((community) => {
       io.sockets.to(community).emit("request", req.body.request);
     });
-    addRequest(req, res)
+    requests.addRequest(req, res);
   });
 
 app
   .route("/requests/:id")
   .get(requests.getRequest)
   .put(requests.updateRequest)
-  .delete(requests.deleteRequest);
+  .delete((req, res) => {
+    requests.deleteRequest(req, res)
+    io.sockets.emit("deleteRequest", req.params.id)
+  });
 
 //*************************TRANSACTIONS*************************
 
@@ -197,12 +201,24 @@ app.route("/transactions/lister/:id").get(transactions.getListerTransactions);
 
 //*************************IMAGES*********************
 
-app.post("/images", uploadS3.upload.single("image"), (req, res) => {
-  uploadS3.uploadImageOnS3(req.file);
-  console.log(req.file);
-  res.send("Single File test");
+app.post("/Image", async (req, res) => {
+  try {
+    await uploadImageOnS3(req.file, "/images");
+    res.send("Succesfully sent to images");
+  } catch (err) {
+    res.send("Upload failed", err);
+  }
 });
 
+app.post("/Profile", async (req, res) => {
+  try {
+    console.log("IN /Profile on server.js!!!!");
+    await uploadImageOnS3(req.file, "/profilePictures/test.jpg");
+    res.send("Succesfully sent to profiles");
+  } catch (err) {
+    res.send("Upload failed", err);
+  }
+});
 //*************************SERVER*************************
 
 if (sserver) {

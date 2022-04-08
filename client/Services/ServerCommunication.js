@@ -1,4 +1,4 @@
-const host = "http://ec2-3-215-18-23.compute-1.amazonaws.com";
+import { host } from "./ServerHost";
 
 const request = async (type, route, body) => {
   try {
@@ -11,7 +11,7 @@ const request = async (type, route, body) => {
     }).then((data) => data.json());
     return await response;
   } catch (err) {
-    return err;
+    throw err;
   }
 };
 
@@ -50,4 +50,18 @@ const getRequests = async (communities) => {
   return [...new Set(requests)];
 };
 
-export { getOffers, getRequests, getUserProfileByEmail, getUserProfileById };
+//Sends an profile to the database, returns the profile
+//object with their id added.
+const addProfile = async (profile) => {
+  const users = await request("POST", "/users", profile);
+  const updatedProfile = await getUserProfile(profile.email);
+  return updatedProfile;
+};
+
+export {
+  getOffers,
+  getRequests,
+  getUserProfileByEmail,
+  getUserProfileById,
+  addProfile,
+};
