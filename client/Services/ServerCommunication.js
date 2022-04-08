@@ -54,8 +54,18 @@ const getRequests = async (communities) => {
 //object with their id added.
 const addProfile = async (profile) => {
   const users = await request("POST", "/users", profile);
-  const updatedProfile = await getUserProfile(profile.email);
+  const updatedProfile = await getUserProfileByEmail(profile.email);
   return updatedProfile;
+};
+
+//Sends an profile to the database, returns the profile
+//object with their id added.
+const deleteProfile = async (id) => {
+  console.log(id);
+  const res = await request("DELETE", "/users/" + id)
+    .then((res) => console.log(res))
+    .catch((err) => console.log(err));
+  return res;
 };
 
 export {
@@ -64,4 +74,5 @@ export {
   getUserProfileByEmail,
   getUserProfileById,
   addProfile,
+  deleteProfile,
 };

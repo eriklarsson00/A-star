@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, Button } from "@ui-kitten/components";
 import { View } from "react-native";
-import { UserInfo, UserLoggedIn } from "../assets/AppContext";
+import { UserInfo, UserLoggedIn, GoogleInfo } from "../assets/AppContext";
 import * as Google from "expo-auth-session/providers/google";
 import * as WebBrowser from "expo-web-browser";
 import { getUserProfileByEmail } from "../Services/ServerCommunication";
@@ -12,8 +12,8 @@ WebBrowser.maybeCompleteAuthSession();
 export const StartScreen = ({ navigation }) => {
   const { userLoggedIn, setLoggedIn } = React.useContext(UserLoggedIn);
   const { userInfo, setUserInfo } = React.useContext(UserInfo);
+  const { googleInfo, setGoogleInfo } = React.useContext(GoogleInfo);
   const [accessToken, setAccessToken] = React.useState();
-  const [googleInfo, setGoogleInfo] = React.useState();
 
   const [request, response, promptAsync] = Google.useAuthRequest({
     expoClientId:
@@ -21,7 +21,8 @@ export const StartScreen = ({ navigation }) => {
   });
 
   React.useEffect(async () => {
-    if (googleInfo) {
+    if (googleInfo != null && googleInfo != undefined) {
+      console.log(googleInfo);
       let users = await getUserProfileByEmail(googleInfo.email);
 
       if (users.length !== 0) {
@@ -31,6 +32,7 @@ export const StartScreen = ({ navigation }) => {
           setLoggedIn(true);
         } catch (e) {
           // saving error
+          console.log(e);
         }
       } else {
         navigation.navigate("CreateUserScreen");
