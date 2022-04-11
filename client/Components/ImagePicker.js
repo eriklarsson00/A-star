@@ -84,7 +84,9 @@ export default function ImagePickerComp(props) {
       headers: {
         "Content-Type": "multipart/form-data",
       },
-    }).catch((err) => console.log(err));
+    })
+      .then((response) => console.log("response: " + res + "HEJ"))
+      .catch((err) => console.log(err));
   };
 
   resizeImage = async (result, resize = 1) => {
