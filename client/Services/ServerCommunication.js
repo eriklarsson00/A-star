@@ -21,14 +21,14 @@ const request = async (type, route, body) => {
 const getUserProfile = async (email) => {
   let userProfile = await request("GET", "/users/email/" + email);
   return userProfile;
-} 
+};
 
 const getOffers = async (communities) => {
   let offers = await request("GET", "/offers");
   // await communities.forEach(async (community) => {
   //   offers = await request("GET", "/offers/active/" + community);
   // });
-  return [...new Set(offers)]
+  return [...new Set(offers)];
 };
 
 const getRequests = async (communities) => {
@@ -36,7 +36,7 @@ const getRequests = async (communities) => {
   // communities.forEach(async (community) => {
   //   requests = [...requests, ...await request("GET", "/requests/active/" + community)];
   // });
-  return [...new Set(requests)]
+  return [...new Set(requests)];
 };
 
 //Sends an profile to the database, returns the profile
@@ -45,6 +45,10 @@ const addProfile = async (profile) => {
   const users = await request("POST", "/users", profile);
   const updatedProfile = await getUserProfile(profile.email);
   return updatedProfile;
-}
+};
 
-export { getOffers, getRequests, getUserProfile, addProfile}
+const addTransaction = async (transaction) => {
+  return await request("POST", "/transactions", transaction);
+};
+
+export { getOffers, getRequests, getUserProfile, addProfile, addTransaction };

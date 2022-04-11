@@ -14,7 +14,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import tw from "twrnc";
 import { useIsFocused } from "@react-navigation/native";
 import { CommunityInfo, UserInfo } from "../assets/AppContext";
-import { getOffers, request } from "../Services/ServerCommunication.js";
+import { getOffers, addTransaction } from "../Services/ServerCommunication.js";
 import io from "socket.io-client";
 import { host } from "../Services/ServerHost";
 
@@ -105,7 +105,7 @@ export const ItemAvailableComponent = () => {
     setMyOffers([...myOffers]);
   };
 
-  const addTransaction = async (item) => {
+  const makeTransaction = async (item) => {
     const transaction = {
       offer_id: item.id,
       request_id: null,
@@ -117,7 +117,7 @@ export const ItemAvailableComponent = () => {
 
     console.log(transaction);
 
-    // await request("POST", "/transactions", transaction);
+    await addTransaction(transaction);
     fetchItems();
     toggleModal(item);
   };
