@@ -58,10 +58,31 @@ const getRequests = async (communities) => {
 
 //Sends an profile to the database, returns the profile
 //object with their id added.
-const addProfile = async (profile) => {
+const addProfile = async (profile, communities) => {
+	console.log(profile);
 	const users = await request("POST", "/users", profile);
-	const updatedProfile = await getUserProfile(profile.email);
+	const updatedProfile = await getUserProfileByEmail(profile.email);
+	console.log("updated profile" + updatedProfile);
+	console.log("comm in add Prof" + communities);
+	await addToCommunity(updatedProfile.id, communities);
 	return updatedProfile;
 };
 
-export { getOffers, getRequests, getUserProfile, addProfile, getCommunities };
+const addToCommunity = async (profile_id, communities) => {
+	console.log("communies in addToCommunity" + communities);
+	console.log("profileId in addToCommunity" + profile_id);
+	for (const id of communities) {
+		let upload_obj = { user_id: profile_id, community_id: id };
+		await request("POST", "users/community", upload_obj);
+	}
+};
+
+export {
+	getOffers,
+	getRequests,
+	getUserProfileById,
+	getUserProfileByEmail,
+	addProfile,
+	getCommunities,
+	addToCommunity,
+};

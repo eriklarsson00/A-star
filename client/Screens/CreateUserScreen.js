@@ -23,99 +23,51 @@ import tw from "twrnc";
 import ImagePicker from "../Components/ImagePicker";
 import {
 	ProfileImagePath,
-	CommunityInfo,
+	ShowCommunityIds,
+	MyCommunitysInfo,
 	UserInfo,
 	UserLoggedIn,
 } from "../assets/AppContext";
-import { getUserProfile, addProfile } from "../Services/ServerCommunication";
+import { addProfile, getCommunities } from "../Services/ServerCommunication";
+
+async function getAllCommunities() {
+	let communities = await getCommunities();
+	return communities.filter((community) => community.private == 0);
+}
 
 export const CreateUserScreen = () => {
+	//STATE
 	const [firstName, setFirstName] = React.useState("");
 	const [lastName, setLastName] = React.useState("");
 	const [phoneNumber, setPhoneNumber] = React.useState("");
+	const [multiSelectedIndex, setMultiSelectedIndex] = React.useState([]);
+	const [adress, setAdress] = React.useState("");
+	const [visible, setVisible] = React.useState(false);
+	const [dataBaseCommunities, setDataBaseCommunities] = React.useState([]);
+
+	//CONTEXT
 	const { userInfo, setUserInfo } = React.useContext(UserInfo);
 	const { userLoggedIn, setLoggedIn } = React.useContext(UserLoggedIn);
-	const [adress, setAdress] = React.useState("");
 	const { profileImagePath, setProfileImagePath } =
 		React.useContext(ProfileImagePath);
-	const { community, setCommunity } = React.useContext(CommunityInfo);
+	const { showCommunities, setShowCommunities } =
+		React.useContext(ShowCommunityIds);
+	const { myCommunities, setMyCommunities } =
+		React.useContext(MyCommunitysInfo);
 
-	const [multiSelectedIndex, setMultiSelectedIndex] = React.useState([]);
-	const [visible, setVisible] = React.useState(false);
-
-	const dataBaseCommunities = [
-		{
-			id: 0,
-			memberAmount: 104,
-			name: "Rackarberget",
-			description: "beskrivning",
-			location: "plats",
-			imgurl:
-				"https://www.uppsalahem.se/globalassets/bilder/omradesbilder/7002/Rackarberget_3.jpg?w=320",
-			private: false,
-			password: "psw",
-		},
-		{
-			id: 2,
-			memberAmount: 50,
-			name: "Ultuna",
-			description: "beskrivning",
-			location: "plats",
-			imgurl:
-				"https://vonkraemer.se/____impro/1/onewebmedia/ultuna3.tif.jpeg?etag=W%2F%221f385-58dceb8a%22&sourceContentType=image%2Fjpeg&ignoreAspectRatio&resize=709%2B481&extract=0%2B64%2B709%2B381&quality=85",
-			private: false,
-			password: "psw",
-		},
-		{
-			id: 3,
-			memberAmount: 60,
-			name: "Djäknegatan",
-			description: "beskrivning",
-			location: "plats",
-			imgurl:
-				"https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg",
-			private: false,
-			password: "psw",
-		},
-		{
-			id: 4,
-			memberAmount: 62,
-			name: "Innerstan",
-			description: "beskrivning",
-			location: "plats",
-			imgurl:
-				"https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg",
-			private: false,
-			password: "psw",
-		},
-		{
-			id: 6,
-			memberAmount: 24,
-			name: "Kantorn",
-			description: "beskrivning",
-			location: "plats",
-			imgurl:
-				"https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg",
-			private: false,
-			password: "psw",
-		},
-		{
-			id: 6,
-			memberAmount: 13,
-			name: "Rosendal",
-			description: "beskrivning",
-			location: "plats",
-			imgurl:
-				"https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg",
-			private: false,
-			password: "psw",
-		},
-	];
+	React.useEffect(() => {
+		const getComm = async () => {
+			setDataBaseCommunities(await getAllCommunities());
+		};
+		getComm();
+	}, []);
 
 	async function createProfile() {
-		console.log(multiSelectedIndex);
 		let communities = multiSelectedIndex.map(
-			(item) => dataBaseCommunities[item.row].name //ÄNDRA DETTA TILL .id FÖR ATT SKICKA ID IST :) //TODO fixa rätt context
+			(item) => dataBaseCommunities[item.row]
+		);
+		let communityIDs = multiSelectedIndex.map(
+			(item) => dataBaseCommunities[item.row].id
 		);
 		let accountData = {
 			firstname: firstName,
@@ -130,9 +82,10 @@ export const CreateUserScreen = () => {
 			given: 0,
 			taken: 0,
 		};
-		let updatedProfile = await addProfile(accountData);
+		let updatedProfile = await addProfile(accountData, communityIDs);
 		setUserInfo(updatedProfile);
-		setCommunity(communities);
+		setShowCommunities(communityIDs);
+		setMyCommunities(communities);
 		setLoggedIn(true);
 	}
 
