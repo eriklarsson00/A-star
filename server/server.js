@@ -200,9 +200,12 @@ app.post("/Profile", upload.single("image"), (req, res) => {
   try {
     uploadImageOnS3(req.file, "profilePictures/" + req.file.filename);
     console.log(req.file);
-    res.send("Single File test");
+    res.json(
+      "https://matsamverkan.s3.us-east-1.amazonaws.com/" + req.file.filename
+    );
   } catch (err) {
-    res.send("Upload failed: " + err);
+    res.status(500);
+    res.json("Upload failed: " + err);
   }
 });
 
@@ -210,9 +213,12 @@ app.post("/Image", upload.single("image"), (req, res) => {
   try {
     uploadImageOnS3(req.file, "images/" + req.file.filename);
     console.log(req.file);
-    res.send("Single File test");
+    res.json(
+      "https://matsamverkan.s3.us-east-1.amazonaws.com/" + req.file.filename
+    );
   } catch (err) {
-    res.send("Upload failed: " + err);
+    res.status(500);
+    res.json("Upload failed: " + err);
   }
 });
 //*************************SERVER*************************
