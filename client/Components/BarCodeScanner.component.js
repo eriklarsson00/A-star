@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button, TextPropTypes, ProgressViewIOSComponent } from 'react-native';
+import { Text, View, StyleSheet, Button, TextPropTypes, ProgressViewIOSComponent, Alert } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 
-export default function BarCodeScannerComp() {
+export default function BarCodeScannerComp(props) {
   
-  
+  console.log("Kommer vi in");
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
-
+  const [productName, setProductName] = useState("");
   useEffect(() => {
     (async () => {
       const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -16,14 +16,40 @@ export default function BarCodeScannerComp() {
   }, []);
 
 
+  const createTwoButtonAlert = () =>
+    Alert.alert(
+      "Alert Title",
+      "My Alert Msg",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "OK", onPress: () => {props.productInfo(productName)} }
+      ]
+    );
+
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
     fetch(
-      `http://ec2-54-165-238-176.compute-1.amazonaws.com:8080/products/${data}`
+      `http://ec2-3-215-18-23.compute-1.amazonaws.com/products/${data}`
     )
       .then((response) => response.json())
       .then((product) => {
-        alert(product.brandName + " " + product.functionalName);
+        setProductName(product.brandName + " " + product.functionalName);
+        Alert.alert(
+      "Alert Title",
+      "My Alert Msg",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "OK", onPress: () => {props.productInfo(productName)} }
+      ]
+    );
       });
   };
 
@@ -34,6 +60,9 @@ export default function BarCodeScannerComp() {
     return <Text>No access to camera</Text>;
   }
   
+
+  
+
   return (
     <View style={styles.container}>
       <BarCodeScanner 
@@ -42,6 +71,7 @@ export default function BarCodeScannerComp() {
         style={StyleSheet.absoluteFillObject}
       />
       {scanned && <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />}
+      <Button title="hej" onPress={()=> {props.func(false)} }/>
     </View>
   );
 }
