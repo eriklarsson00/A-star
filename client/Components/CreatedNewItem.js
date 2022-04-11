@@ -45,7 +45,9 @@ const styles = StyleSheet.create({
   item: {
     width: 370,
     alignSelf: "center",
-    paddingBottom: 10,
+    paddingBottom: 5,
+    paddingTop: 5,
+    backgroundColor: "rgba(255, 250, 240, 0.08)",
   },
   icon: {
     width: 30,
