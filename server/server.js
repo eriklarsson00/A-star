@@ -132,11 +132,11 @@ app
   .route("/offers")
   .get(offers.getOffers)
   .post((req, res) => {
+    offers.addOffer(req, res);
     const communities = req.body.communities;
-    communities.forEach((community) => {
+    communities?.forEach((community) => {
       io.sockets.to(community).emit("offer", req.body.offer);
     });
-    offers.addOffer(req, res);
   });
 
 app
@@ -144,8 +144,8 @@ app
   .get(offers.getOffer)
   .put(offers.updateOffer)
   .delete((req, res) => {
-    offers.deleteOffer(req, res)
-    io.sockets.emit("deleteOffer", req.params.id)
+    offers.deleteOffer(req, res);
+    io.sockets.emit("deleteOffer", req.params.id);
   });
 
 //*************************REQUESTS*************************
@@ -160,11 +160,11 @@ app
   .route("/requests")
   .get(requests.getRequests)
   .post((req, res) => {
+    requests.addRequest(req, res);
     const communities = req.body.communities;
-    communities.forEach((community) => {
+    communities?.forEach((community) => {
       io.sockets.to(community).emit("request", req.body.request);
     });
-    requests.addRequest(req, res);
   });
 
 app
@@ -172,8 +172,8 @@ app
   .get(requests.getRequest)
   .put(requests.updateRequest)
   .delete((req, res) => {
-    requests.deleteRequest(req, res)
-    io.sockets.emit("deleteRequest", req.params.id)
+    requests.deleteRequest(req, res);
+    io.sockets.emit("deleteRequest", req.params.id);
   });
 
 //*************************TRANSACTIONS*************************
