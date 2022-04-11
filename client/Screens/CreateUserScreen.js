@@ -28,8 +28,10 @@ export const CreateUserScreen = () => {
   const { userInfo, setUserInfo } = React.useContext(UserInfo);
   const { googleInfo, setGoogleInfo } = React.useContext(GoogleInfo);
   const { userLoggedIn, setLoggedIn } = React.useContext(UserLoggedIn);
-  const [firstName, setFirstName] = React.useState(googleInfo.given_name);
-  const [lastName, setLastName] = React.useState(googleInfo.family_name);
+  const [firstName, setFirstName] = React.useState(
+    googleInfo?.given_name ?? ""
+  );
+  const [lastName, setLastName] = React.useState(googleInfo?.family_name ?? "");
   const [phoneNumber, setPhoneNumber] = React.useState("");
   const [adress, setAdress] = React.useState("");
   const { profileImagePath, setProfileImagePath } =
@@ -47,7 +49,7 @@ export const CreateUserScreen = () => {
       firstname: firstName,
       lastname: lastName,
       number: phoneNumber,
-      email: googleInfo.email,
+      email: googleInfo?.email ?? null,
       location: "",
       imgurl: "", //TODO fixa bucket-bild
       rating: 0,
@@ -212,7 +214,7 @@ export const CreateUserScreen = () => {
         <SelectCommunity />
         <Button
           id="createProfile"
-          onPress={() => createProfile()}
+          onPress={createProfile}
           disabled={
             firstName === "" ||
             lastName === "" ||

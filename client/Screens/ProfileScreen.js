@@ -11,7 +11,12 @@ import {
   Divider,
   useTheme,
 } from "@ui-kitten/components";
-import { ProfileImagePath, UserInfo, UserLoggedIn } from "../assets/AppContext";
+import {
+  ProfileImagePath,
+  UserInfo,
+  GoogleInfo,
+  UserLoggedIn,
+} from "../assets/AppContext";
 import tw from "twrnc";
 import { deleteProfile } from "../Services/ServerCommunication";
 
@@ -20,20 +25,23 @@ export const ProfileScreen = () => {
     React.useContext(ProfileImagePath);
   const { userInfo, setUserInfo } = React.useContext(UserInfo);
   const { userLoggedIn, setLoggedIn } = React.useContext(UserLoggedIn);
+  const { googleInfo, setGoogleInfo } = React.useContext(GoogleInfo);
   const rating =
     userInfo.raters > 0
       ? Math.round((userInfo.rating * 100) / userInfo.raters) / 100 + "/5"
       : "Inga";
 
   const logOut = async () => {
-    await AsyncStorage.removeItem("userId");
+    // Clear all sorts of cache in app
+    await AsyncStorage.removeItem("userId").then(console.log("cache cleared"));
     setUserInfo([]);
+    setGoogleInfo(null);
     setLoggedIn(false);
   };
 
   const removeAccount = async () => {
     const res = await deleteProfile(userInfo.id);
-    // TODO: Remove profile pic
+    // TODO: Remove profile pic from S3
     await logOut();
   };
 
