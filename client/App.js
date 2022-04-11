@@ -19,7 +19,8 @@ import { NewItemNavigation } from "./Navigation/NewItemNavigation";
 import { getUserProfileById } from "./Services/ServerCommunication";
 import {
   UserInfo,
-  CommunityInfo,
+  MyCommunitysInfo,
+  ShowCommunityIds,
   ProfileImagePath,
   UserLoggedIn,
 } from "./assets/AppContext";
@@ -42,10 +43,16 @@ export default () => {
     [profileImagePath]
   );
 
-  const [community, setCommunity] = useState([]);
+  const [myCommunitysInfo, setMyCommunitysInfo] = useState([]);
   const FirstCommunityValue = useMemo(
-    () => ({ community, setCommunity }),
-    [community]
+    () => ({ myCommunitysInfo, setMyCommunitysInfo }),
+    [myCommunitysInfo]
+  );
+
+  const [showCommunityIds, setShowCommunityIds] = useState([]);
+  const FirstShowValue = useMemo(
+    () => ({ showCommunityIds, setShowCommunityIds }),
+    [showCommunityIds]
   );
 
   useEffect(async () => {
@@ -76,16 +83,21 @@ export default () => {
     <>
       <IconRegistry icons={EvaIconsPack} />
       <UserInfo.Provider value={FirstUservalue}>
-        <CommunityInfo.Provider value={FirstCommunityValue}>
-          <ProfileImagePath.Provider value={FirstProfileImagePath}>
-            <UserLoggedIn.Provider value={FirstLoggedInValue}>
-              <ApplicationProvider {...eva} theme={{ ...eva.light, ...theme }}>
-                <StatusBar barStyle="dark-content" />
-                <CheckWhichStartScreen />
-              </ApplicationProvider>
-            </UserLoggedIn.Provider>
-          </ProfileImagePath.Provider>
-        </CommunityInfo.Provider>
+        <MyCommunitysInfo.Provider value={FirstCommunityValue}>
+          <ShowCommunityIds.Provider value={FirstShowValue}>
+            <ProfileImagePath.Provider value={FirstProfileImagePath}>
+              <UserLoggedIn.Provider value={FirstLoggedInValue}>
+                <ApplicationProvider
+                  {...eva}
+                  theme={{ ...eva.light, ...theme }}
+                >
+                  <StatusBar barStyle="dark-content" />
+                  <CheckWhichStartScreen />
+                </ApplicationProvider>
+              </UserLoggedIn.Provider>
+            </ProfileImagePath.Provider>
+          </ShowCommunityIds.Provider>
+        </MyCommunitysInfo.Provider>
       </UserInfo.Provider>
     </>
   );

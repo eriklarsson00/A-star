@@ -39,6 +39,12 @@ const getOffers = async (communities) => {
   return [...new Set(offers)];
 };
 
+const getCommunities = async () => {
+  let communities = await request("Get", "/communities");
+  console.log(communities);
+  return [...new Set(communities)];
+};
+
 const getRequests = async (communities) => {
   let requests = [];
   communities.forEach(async (community) => {
@@ -50,4 +56,10 @@ const getRequests = async (communities) => {
   return [...new Set(requests)];
 };
 
-export { getOffers, getRequests, getUserProfileByEmail, getUserProfileById };
+export {
+  getOffers,
+  getRequests,
+  getUserProfileByEmail,
+  getUserProfileById,
+  getCommunities,
+};
