@@ -10,6 +10,8 @@ export const ShowCommunityIds = React.createContext();
 /* Information about all the communties the user is in */
 export const MyCommunitysInfo = React.createContext();
 
+export const GoogleInfo = React.createContext();
+
 /* info om användaren. Innehåller ett objekt med fälten som ska finnas i databasen */
 export const UserInfo = React.createContext();
 

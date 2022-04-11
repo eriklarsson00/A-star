@@ -1,4 +1,4 @@
-const host = "http://ec2-3-215-18-23.compute-1.amazonaws.com";
+import { host } from "./ServerHost";
 
 const request = async (type, route, body) => {
 	try {
@@ -11,7 +11,7 @@ const request = async (type, route, body) => {
 		}).then((data) => data.json());
 		return await response;
 	} catch (err) {
-		return err;
+		throw err;
 	}
 };
 
@@ -76,6 +76,13 @@ const addToCommunity = async (profile_id, communities) => {
 		await request("POST", "users/community", upload_obj);
 	}
 };
+const deleteProfile = async (id) => {
+	console.log(id);
+	const res = await request("DELETE", "/users/" + id)
+		.then((res) => console.log(res))
+		.catch((err) => console.log(err));
+	return res;
+};
 
 export {
 	getOffers,
@@ -85,4 +92,5 @@ export {
 	addProfile,
 	getCommunities,
 	addToCommunity,
+	deleteProfile,
 };

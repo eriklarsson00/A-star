@@ -20,78 +20,147 @@ import {
   Input,
 } from "@ui-kitten/components";
 import tw from "twrnc";
+import { useIsFocused } from "@react-navigation/native";
 //import { render } from 'react-dom';
+<<<<<<< HEAD
 import { ShowCommunityIds } from "../assets/AppContext";
+=======
+import { CommunityInfo } from "../assets/AppContext";
+>>>>>>> origin/integrate/users
 import { getOffers } from "../Services/ServerCommunication.js";
+import io from "socket.io-client";
+import { host } from "../Services/ServerHost";
 
 const DiscoverIcon = (props) => <Icon {...props} name="compass-outline" />;
 
-let otherItems = [];
-let ownItems = [];
-let id = 1;
-
-async function getItems() {
-  let offers = await getOffers([1]);
+async function getItems(id, communities) {
+  let offers = await getOffers(communities);
+  let myItems = [];
+  let availableItems = [];
+  let myItemsIndex = 0;
+  let availableItemsIndex = 0;
   offers.forEach((offer) => {
     if (offer.user_id == id) {
+<<<<<<< HEAD
       ownItems.push(offer);
+=======
+      offer.index = myItemsIndex;
+      myItems.push(offer);
+      myItemsIndex++;
+>>>>>>> origin/integrate/users
     } else {
-      otherItems.push(offer);
+      offer.index = availableItemsIndex;
+      availableItems.push(offer);
+      availableItemsIndex++;
     }
   });
+<<<<<<< HEAD
 }
 
 async function getLists() {
   await getItems();
+=======
+>>>>>>> origin/integrate/users
   let arrayList = new Array(2);
   arrayList[0] = {
     //My items
-    data: ownItems,
+    data: myItems,
     myListings: true,
   };
   arrayList[1] = {
     //All available
-    data: otherItems,
+    data: availableItems,
     myListings: false,
   };
   return arrayList;
 }
 
 export const ItemAvailableComponent = () => {
+<<<<<<< HEAD
   const [visible, setVisible] = React.useState(false);
   const [myVisible, setMyVisible] = React.useState(false);
   const { showCommunityIds } = React.useContext(ShowCommunityIds);
+=======
+  const [visible, setVisible] = React.useState([]);
+  const [myVisible, setMyVisible] = React.useState([]);
+  const { community } = React.useContext(CommunityInfo);
+>>>>>>> origin/integrate/users
   const [takeProduct, setTakeProduct] = React.useState(false);
-  //const [refreshing, setRefreshing] = React.useState(false);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const [items, setItems] = React.useState([]);
+  const isFocused = useIsFocused();
 
-  /*React.useEffect(() => {
-    const fetchItems = async () => {setItems(await getLists())}
+  const id = 1;
 
-    fetchItems()
-  }, [])*/
+  //fetch items on focus
+  React.useEffect(() => {
+    const fetchItems = async () => {
+      let newAvailibleVisibles = [];
+      let newMyVisibles = []
+      let offers = await getItems(id, [1, 2, 3]);
+      offers[1].data.forEach(() => {
+        newAvailibleVisibles.push(false);
+      });
+      offers[0].data.forEach(() => {
+        newMyVisibles.push(false)
+      })
+      setMyVisible(newMyVisibles)
+      setVisible(newAvailibleVisibles);
+      setItems(offers);
+    };
 
-  const onRefresh = React.useCallback(() => {
-    // Used when users refreshes a page
-    setRefreshing(true);
-    //TODO: Implement actuall refresh function
-    setRefreshing(false);
+    if (isFocused) fetchItems();
+  }, [isFocused]);
+
+  const socketRef = React.useRef();
+
+  //connect to WebSocket on module load
+  React.useEffect(() => {
+    socketRef.current = io(host);
+
+    socketRef.current.emit("communities", {ids: ["1","2"]});
+
+    socketRef.current.on("offer", (offer) => {
+      console.log(offer);
+      const offers = items;
+      if (offer.user_id == id) {
+        offers[0].data.push(offer);
+      } else {
+        offers[1].data.push(offer);
+      }
+      setItems(offers);
+    });
+
+    return () => {
+      socketRef.current.disconnect();
+    };
   }, []);
+
+  const toggleAvailibleModal = (i) => {
+    visible[i] = !visible[i]
+    setVisible([...visible])
+  };
+
+  const toggleMyModal = (i) => {
+    myVisible[i] = !myVisible[i]
+    setMyVisible([...myVisible])
+  };
 
   const renderAvailableItems = ({ item }) => (
     <View>
       <ListItem
         style={styles.container}
-        onPress={() => setVisible(true)}
-        accessoryLeft={item.imgurl}
+        onPress={() => {
+          toggleAvailibleModal(item.index);
+        }}
+        // accessoryLeft={"https://picsum.photos/150/150"}
         title={`${item.product_text}`}
         description={`${item.quantity}`}
       />
       <Modal //Modal for additional information about a product
-        visible={visible}
+        visible={visible[item.index]}
         backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}
-        onBackdropPress={() => setVisible(false)}
+        onBackdropPress={() => toggleAvailibleModal(item.index)}
       >
         <Card disabled={true} style={{ width: 320, flex: 1 }}>
           <Layout style={tw`py-10`}>
@@ -115,16 +184,14 @@ export const ItemAvailableComponent = () => {
           </Text>
           <Text style={{ marginBottom: 10 }}>Användare som lagt upp</Text>
           <Text style={{ marginBottom: 10 }}>{item.description}</Text>
-          <Button onPress={() => (setTakeProduct(true), setVisible(false))}>
-            Ta vara
-          </Button>
+          <Button onPress={() => setTakeProduct(true)}>Ta vara</Button>
         </Card>
       </Modal>
 
-      <Modal //Modal for setting time & requesting an offer
+      {/* <Modal //Modal for setting time & requesting an offer
         visible={takeProduct}
         backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}
-        onBackdropPress={() => (setTakeProduct(false), setVisible(false))}
+        onBackdropPress={() => setTakeProduct(false)}
       >
         <Card disabled={true} style={{ width: 320, flex: 1 }}>
           <Layout style={tw`py-10`}>
@@ -162,7 +229,7 @@ export const ItemAvailableComponent = () => {
             Ta vara
           </Button>
         </Card>
-      </Modal>
+      </Modal> */}
     </View>
   );
 
@@ -172,15 +239,15 @@ export const ItemAvailableComponent = () => {
     <View>
       <ListItem
         style={styles.container}
-        onPress={() => setMyVisible(true)}
-        accessoryLeft={item.imgurl}
+        onPress={() => toggleMyModal(item.index)}
+        // accessoryLeft={"https://picsum.photos/150/150"}
         title={`${item.product_text} ${item.quantity}`}
         description={`${item.description}`}
       />
       <Modal
-        visible={myVisible}
+        visible={myVisible[item.index]}
         backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.01)" }}
-        onBackdropPress={() => setMyVisible(false)}
+        onBackdropPress={() => toggleMyModal(item.index)}
       >
         <Card disabled={true}>
           <Text> Min vara {item.title} </Text>

@@ -26,6 +26,7 @@ import {
 	ShowCommunityIds,
 	MyCommunitysInfo,
 	UserInfo,
+	GoogleInfo,
 	UserLoggedIn,
 } from "../assets/AppContext";
 import { addProfile, getCommunities } from "../Services/ServerCommunication";
@@ -37,15 +38,21 @@ async function getAllCommunities() {
 
 export const CreateUserScreen = () => {
 	//STATE
-	const [firstName, setFirstName] = React.useState("");
-	const [lastName, setLastName] = React.useState("");
+
 	const [phoneNumber, setPhoneNumber] = React.useState("");
 	const [multiSelectedIndex, setMultiSelectedIndex] = React.useState([]);
 	const [adress, setAdress] = React.useState("");
 	const [visible, setVisible] = React.useState(false);
 	const [dataBaseCommunities, setDataBaseCommunities] = React.useState([]);
+	const [firstName, setFirstName] = React.useState(
+		googleInfo?.given_name ?? ""
+	);
+	const [lastName, setLastName] = React.useState(
+		googleInfo?.family_name ?? ""
+	);
 
 	//CONTEXT
+	const { googleInfo, setGoogleInfo } = React.useContext(GoogleInfo);
 	const { userInfo, setUserInfo } = React.useContext(UserInfo);
 	const { userLoggedIn, setLoggedIn } = React.useContext(UserLoggedIn);
 	const { profileImagePath, setProfileImagePath } =
@@ -73,7 +80,7 @@ export const CreateUserScreen = () => {
 			firstname: firstName,
 			lastname: lastName,
 			number: phoneNumber,
-			email: userInfo.email,
+			email: googleInfo?.email ?? null,
 			location: "",
 			imgurl: "", //TODO fixa bucket-bild
 			rating: 0, //TODO : Start rating?
