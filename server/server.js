@@ -198,7 +198,7 @@ app.route("/transactions/lister/:id").get(transactions.getListerTransactions);
 
 app.post("/Profile", upload.single("image"), (req, res) => {
   try {
-    uploadImageOnS3(req.file, "matsamverkan/profile");
+    uploadImageOnS3(req.file, "/profilePictures/" + req.file.filename);
     console.log(req.file);
     res.send("Single File test");
   } catch (err) {
