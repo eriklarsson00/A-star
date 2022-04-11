@@ -196,23 +196,32 @@ app.route("/transactions/lister/:id").get(transactions.getListerTransactions);
 
 //*************************IMAGES*********************
 
-app.post("/Profile", upload.single("image"), (req, res) => {
+app.post("/users/profile/:id", upload.single("image"), (req, res) => {
+  const file = req.file;
+  const id = parseInt(req.params.id);
+
+  if (!file || isNaN(id)) {
+    res.status(400).json("File to upload is not present or id is malformed");
+    return;
+  }
+
   try {
-    uploadImageOnS3(req.file, "profilePictures/" + req.file.filename);
-    console.log(req.file);
-    res.json(
-      "https://matsamverkan.s3.us-east-1.amazonaws.com/" + req.file.filename
+    uploadImageOnS3(file, "profilePictures/" + file.filename).then(
+      async (data) => {
+        const loc = data.Location;
+
+        const status = await users.updateProfilePicture(id, loc);
+        res.status(status).json(loc);
+      }
     );
   } catch (err) {
-    res.status(500);
-    res.json("Upload failed: " + err);
+    res.status(500).json("Upload failed: " + err);
   }
 });
 
 app.post("/Image", upload.single("image"), (req, res) => {
   try {
     uploadImageOnS3(req.file, "images/" + req.file.filename);
-    console.log(req.file);
     res.json(
       "https://matsamverkan.s3.us-east-1.amazonaws.com/" + req.file.filename
     );

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, Button } from "react-native";
-import { ProfileImagePath } from "../assets/AppContext";
+import { ProfileImagePath, UserInfo } from "../assets/AppContext";
 import * as ImageManipulator from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";
 
@@ -9,6 +9,7 @@ export default function ImagePickerComp(props) {
   const [pickedImagePath, setPickedImagePath] = useState(null);
   const { profileImagePath, setProfileImagePath } =
     React.useContext(ProfileImagePath);
+  const { userInfo, setUserInfo } = React.useContext(UserInfo);
 
   // This function is triggered when the "Select an image" button pressed
   const showImagePicker = async () => {
@@ -25,9 +26,6 @@ export default function ImagePickerComp(props) {
       quality: 0,
     });
 
-    // Explore the result
-    console.log(result);
-
     if (!result.cancelled) {
       setPickedImagePath(result.uri);
       if (props.context == "Profile") {
@@ -35,7 +33,6 @@ export default function ImagePickerComp(props) {
       }
       setPickedImagePath(result.uri);
       pushToServer(result);
-      console.log(result.uri);
     }
   };
 
@@ -51,15 +48,11 @@ export default function ImagePickerComp(props) {
 
     const result = await ImagePicker.launchCameraAsync();
 
-    // Explore the result
-    console.log(result);
-
     if (!result.cancelled) {
       setPickedImagePath(result.uri);
       if (props.context == "Profile") {
         setProfileImagePath(result.uri);
       }
-      console.log(result.uri);
       pushToServer(result);
     }
   };
@@ -72,20 +65,20 @@ export default function ImagePickerComp(props) {
       type: image.type,
       uri: image.uri,
     });
-    console.log("body:");
-    console.log(body);
-    let imagePath = props.context;
-    console.log("imagePath = " + imagePath);
-    var ip = "http://ec2-3-215-18-23.compute-1.amazonaws.com/" + imagePath;
 
-    fetch(ip, {
+    var url =
+      "http://ec2-3-215-18-23.compute-1.amazonaws.com/users/profile/" +
+      userInfo.id;
+
+    fetch(url, {
       method: "POST",
       body: body,
       headers: {
         "Content-Type": "multipart/form-data",
       },
     })
-      .then((response) => console.log("response: " + res + "HEJ"))
+      .then((data) => data.json())
+      .then((res) => console.log(res))
       .catch((err) => console.log(err));
   };
 

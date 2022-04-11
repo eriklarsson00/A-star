@@ -92,6 +92,26 @@ function updateUser(req, res) {
     });
 }
 
+async function updateProfilePicture(inputId, location) {
+  const id = parseInt(inputId);
+  let status = 500;
+
+  if (isNaN(id) || !location) {
+    return 400;
+  }
+
+  await knex("Users")
+    .where("id", id)
+    .update({ imgurl: location })
+    .catch((err) => {
+      status = 500;
+    })
+    .then(() => {
+      status = 200;
+    });
+  return status;
+}
+
 function deleteUser(req, res) {
   const id = parseInt(req.params.id);
 
@@ -176,6 +196,7 @@ export {
   getUserEmail,
   addUser,
   updateUser,
+  updateProfilePicture,
   deleteUser,
   addUserToCommunity,
   getUserCommunities,
