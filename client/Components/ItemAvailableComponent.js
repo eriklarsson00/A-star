@@ -21,7 +21,7 @@ import {
 } from "@ui-kitten/components";
 import tw from "twrnc";
 //import { render } from 'react-dom';
-import { CommunityInfo} from "../assets/AppContext";
+import { ShowCommunityIds } from "../assets/AppContext";
 import { getOffers } from "../Services/ServerCommunication.js";
 
 const DiscoverIcon = (props) => <Icon {...props} name="compass-outline" />;
@@ -33,47 +33,13 @@ let id = 1;
 async function getItems() {
   let offers = await getOffers([1]);
   offers.forEach((offer) => {
-    if ((offer.user_id == id)) {
+    if (offer.user_id == id) {
       ownItems.push(offer);
     } else {
       otherItems.push(offer);
     }
   });
 }
-
-// const items = getItems();
-// function getItems() { //TODO: Get the users actuall listning items
-//     return new Array(10).fill({
-//         user_id : 1,
-//         product_id :1,
-//         product_text : "Apelsin",
-//         description: "Beskrivning av varan, den kanske är såhär lång?",
-//         quantity: "3 st",
-//         time_of_creation: "Today 13.37",
-//         time_of_purchase: "Date",
-//         time_of_expiration: "2022-04-01",
-//         imgurl : <DiscoverIcon />,
-//         broken_pkg : true,
-//     });
-// };
-
-// const myItems = getMyItems();
-// function getMyItems() { // TODO: Get the actuall offers in the communitys
-//   return new Array(3).fill({
-//     user_id : 1,
-//     product_id :1,
-//     product_text : "Apelsin",
-//     description: "Beskrivning av varan",
-//     quantity: "3 st",
-//     time_of_creation: "Today 13.37",
-//     time_of_purchase: "Date",
-//     time_of_expiration: "",
-//     imgurl : <DiscoverIcon />,
-//     broken_pkg : true,
-//   });
-// };
-
-// const lists = getLists();
 
 async function getLists() {
   await getItems();
@@ -94,7 +60,7 @@ async function getLists() {
 export const ItemAvailableComponent = () => {
   const [visible, setVisible] = React.useState(false);
   const [myVisible, setMyVisible] = React.useState(false);
-  const { community } = React.useContext(CommunityInfo);
+  const { showCommunityIds } = React.useContext(ShowCommunityIds);
   const [takeProduct, setTakeProduct] = React.useState(false);
   //const [refreshing, setRefreshing] = React.useState(false);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
@@ -174,19 +140,27 @@ export const ItemAvailableComponent = () => {
           <Text style={{ marginBottom: 10 }}>Jag kan hämta varan: </Text>
           <RadioGroup
             selectedIndex={selectedIndex}
-            onChange={index => setSelectedIndex(index)}
+            onChange={(index) => setSelectedIndex(index)}
           >
             <Radio>Idag</Radio>
             <Radio>Imorgon</Radio>
             <Radio>Inom de närmaste dagarna</Radio>
             <Radio>Annat datum: </Radio>
           </RadioGroup>
-            <Input 
-              style={{marginBottom:10,}}
-              placeholder = 'Annat datum'
-              disabled={selectedIndex !== 3}
-            />
-          <Button onPress={() => (setTakeProduct(false), setVisible(false), console.log(selectedIndex))}>Ta vara</Button>
+          <Input
+            style={{ marginBottom: 10 }}
+            placeholder="Annat datum"
+            disabled={selectedIndex !== 3}
+          />
+          <Button
+            onPress={() => (
+              setTakeProduct(false),
+              setVisible(false),
+              console.log(selectedIndex)
+            )}
+          >
+            Ta vara
+          </Button>
         </Card>
       </Modal>
     </View>
@@ -218,11 +192,7 @@ export const ItemAvailableComponent = () => {
   const renderLists = ({ item }) => (
     <View>
       <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-        {item.myListings
-          ? "Mina varor"
-          : community.map((name) => (
-              <Text category={"h5"}>Tillgängligt i {name} </Text>
-            ))}
+        {item.myListings ? "Mina varor" : "TODO: Fixa detta"}
       </Text>
       <List
         data={item.data}
@@ -253,6 +223,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   spaceBetween: {
-    marginBottom:10,
-  }
+    marginBottom: 10,
+  },
 });
