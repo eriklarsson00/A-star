@@ -40,13 +40,10 @@ const getOffers = async (communities) => {
 };
 
 const getRequests = async (communities) => {
-  let requests = [];
-  communities.forEach(async (community) => {
-    requests = [
-      ...requests,
-      ...(await request("GET", "/requests/active/" + community)),
-    ];
-  });
+  let requests = await request("GET", "/requests");
+  // communities.forEach(async (community) => {
+  //   requests = [...requests, ...await request("GET", "/requests/active/" + community)];
+  // });
   return [...new Set(requests)];
 };
 

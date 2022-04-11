@@ -27,65 +27,34 @@ import { getOffers } from "../Services/ServerCommunication.js";
 import io from "socket.io-client";
 import { host } from "../Services/ServerHost";
 
-const DiscoverIcon = (props) => <Icon {...props} name="compass-outline" />;
-
-async function getItems(id, communities) {
-  let offers = await getOffers(communities);
-  let myItems = [];
-  let availableItems = [];
-  let myItemsIndex = 0;
-  let availableItemsIndex = 0;
-  offers.forEach((offer) => {
-    if (offer.user_id == id) {
-      offer.index = myItemsIndex;
-      myItems.push(offer);
-      myItemsIndex++;
-    } else {
-      offer.index = availableItemsIndex;
-      availableItems.push(offer);
-      availableItemsIndex++;
-    }
-  });
-  let arrayList = new Array(2);
-  arrayList[0] = {
-    //My items
-    data: myItems,
-    myListings: true,
-  };
-  arrayList[1] = {
-    //All available
-    data: availableItems,
-    myListings: false,
-  };
-  return arrayList;
-}
-
 export const ItemAvailableComponent = () => {
-  const [visible, setVisible] = React.useState([]);
-  const [myVisible, setMyVisible] = React.useState([]);
   const { community } = React.useContext(CommunityInfo);
   const [takeProduct, setTakeProduct] = React.useState(false);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
-  const [items, setItems] = React.useState([]);
+  const [offers, setOffers] = React.useState([]);
+  const [myOffers, setMyOffers] = React.useState([]);
   const isFocused = useIsFocused();
 
   const id = 1;
+  const communities = [1, 2];
 
   //fetch items on focus
+
   React.useEffect(() => {
     const fetchItems = async () => {
-      let newAvailibleVisibles = [];
-      let newMyVisibles = []
-      let offers = await getItems(id, [1, 2, 3]);
-      offers[1].data.forEach(() => {
-        newAvailibleVisibles.push(false);
+      let myItems = [];
+      let otherItems = [];
+      let items = await getOffers(communities).catch((e) => console.log(e));
+      items.forEach((item) => {
+        item.visible = false;
+        if (item.user_id == id) {
+          myItems.push(item);
+        } else {
+          otherItems.push(item);
+        }
       });
-      offers[0].data.forEach(() => {
-        newMyVisibles.push(false)
-      })
-      setMyVisible(newMyVisibles)
-      setVisible(newAvailibleVisibles);
-      setItems(offers);
+      setMyOffers(myItems);
+      setOffers(otherItems);
     };
 
     if (isFocused) fetchItems();
@@ -97,17 +66,23 @@ export const ItemAvailableComponent = () => {
   React.useEffect(() => {
     socketRef.current = io(host);
 
-    socketRef.current.emit("communities", {ids: ["1","2"]});
+    socketRef.current.emit("communities", { ids: ["1", "2"] });
 
     socketRef.current.on("offer", (offer) => {
-      console.log(offer);
-      const offers = items;
+      offer.visible = false;
       if (offer.user_id == id) {
-        offers[0].data.push(offer);
+        setMyOffers([...myOffers, offer]);
       } else {
-        offers[1].data.push(offer);
+        setOffers([...offers, offer]);
       }
-      setItems(offers);
+    });
+
+    socketRef.current.on("deleteOffer", (id) => {
+      console.log(id);
+      removeOffer(myOffers, id);
+      removeOffer(offers, id);
+      setOffers([...offers]);
+      setMyOffers([...myOffers]);
     });
 
     return () => {
@@ -115,14 +90,23 @@ export const ItemAvailableComponent = () => {
     };
   }, []);
 
-  const toggleAvailibleModal = (i) => {
-    visible[i] = !visible[i]
-    setVisible([...visible])
+  const removeOffer = (array, id) => {
+    return array.filter((offer) => offer.id != id);
   };
 
-  const toggleMyModal = (i) => {
-    myVisible[i] = !myVisible[i]
-    setMyVisible([...myVisible])
+  const toggleVisible = (array, item) => {
+    return array.map((offer) => {
+      if (offer == item) {
+        offer.visible = !offer.visible;
+      }
+    });
+  };
+
+  const toggleModal = (item) => {
+    toggleVisible(offers, item);
+    toggleVisible(myOffers, item);
+    setOffers([...offers]);
+    setMyOffers([...myOffers]);
   };
 
   const renderAvailableItems = ({ item }) => (
@@ -130,16 +114,16 @@ export const ItemAvailableComponent = () => {
       <ListItem
         style={styles.container}
         onPress={() => {
-          toggleAvailibleModal(item.index);
+          toggleModal(item);
         }}
         // accessoryLeft={"https://picsum.photos/150/150"}
         title={`${item.product_text}`}
         description={`${item.quantity}`}
       />
       <Modal //Modal for additional information about a product
-        visible={visible[item.index]}
+        visible={item.visible}
         backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}
-        onBackdropPress={() => toggleAvailibleModal(item.index)}
+        onBackdropPress={() => toggleModal(item)}
       >
         <Card disabled={true} style={{ width: 320, flex: 1 }}>
           <Layout style={tw`py-10`}>
@@ -167,7 +151,7 @@ export const ItemAvailableComponent = () => {
         </Card>
       </Modal>
 
-      {/* <Modal //Modal for setting time & requesting an offer
+      {/* <Modal //Modal for setting time & offering an offer
         visible={takeProduct}
         backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}
         onBackdropPress={() => setTakeProduct(false)}
@@ -218,15 +202,15 @@ export const ItemAvailableComponent = () => {
     <View>
       <ListItem
         style={styles.container}
-        onPress={() => toggleMyModal(item.index)}
+        onPress={() => toggleModal(item)}
         // accessoryLeft={"https://picsum.photos/150/150"}
         title={`${item.product_text} ${item.quantity}`}
         description={`${item.description}`}
       />
       <Modal
-        visible={myVisible[item.index]}
+        visible={item.visible}
         backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.01)" }}
-        onBackdropPress={() => toggleMyModal(item.index)}
+        onBackdropPress={() => toggleModal(item)}
       >
         <Card disabled={true}>
           <Text> Min vara {item.title} </Text>
@@ -258,9 +242,20 @@ export const ItemAvailableComponent = () => {
             refreshing={refreshing}
             onRefresh={onRefresh}
           />}>*/
-    <View style={{ flex: 1 }}>
-      <List data={items} renderItem={renderLists} />
-    </View>
+    <ScrollView style={{ flex: 1 }}>
+      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
+        Mina varor
+      </Text>
+      <List scrollEnabled={false} data={myOffers} renderItem={renderMyItems} />
+      {community.map((name) => (
+              <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>Tillgängligt i {name} </Text>
+            ))}
+      <List
+        scrollEnabled={false}
+        data={offers}
+        renderItem={renderAvailableItems}
+      />
+    </ScrollView>
     // </ScrollView>
   );
 };
