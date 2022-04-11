@@ -8,9 +8,6 @@ const path = require("path");
 const fs = require("fs");
 
 const fileStorageEngine = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "../Images");
-  },
   filename: (req, file, cb) => {
     cb(null, Date.now() + "--" + file.originalname);
   },
@@ -23,7 +20,6 @@ const handleError = (err, res) => {
 };
 
 const uploadImageOnS3 = async (file, bucketPath) => {
-  console.log("Inne i uppload image to S3\n");
   const s3bucket = new S3({
     accessKeyId: process.env.AWS_accessID,
     secretAccessKey: process.env.AWS_secretKEY,
@@ -34,7 +30,6 @@ const uploadImageOnS3 = async (file, bucketPath) => {
   let contentDeposition = 'inline;filename="' + file.filename + '"';
   const base64 = await fs.readFileSync(file.path, "base64");
   const arrayBuffer = new Buffer.from(base64, "base64");
-  console.log("bucketPath = " + bucketPath);
   s3bucket.createBucket(() => {
     const params = {
       Bucket: "matsamverkan",

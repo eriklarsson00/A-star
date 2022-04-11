@@ -77,7 +77,7 @@ import * as requests from "./routes/requests.js";
 import * as transactions from "./routes/transactions.js";
 import * as products from "./routes/products.js";
 import * as ci from "./routes/ci.js";
-import * as uploadS3 from "./routes/upload.js";
+import { upload, uploadImageOnS3 } from "./routes/upload.js";
 
 //*************************CI*************************
 
@@ -137,7 +137,7 @@ app
     communities.forEach((community) => {
       io.sockets.to(community).emit("offer", req.body.offer);
     });
-    offers.addOffer(req, res);
+    addOffer(req, res);
   });
 
 app
@@ -162,7 +162,7 @@ app
     communities.forEach((community) => {
       io.sockets.to(community).emit("request", req.body.request);
     });
-    requests.addRequest(req, res);
+    addRequest(req, res);
   });
 
 app
@@ -196,21 +196,25 @@ app.route("/transactions/lister/:id").get(transactions.getListerTransactions);
 
 //*************************IMAGES*********************
 
-app.post("/Image", async (req, res) => {
+app.post("/Profile", upload.single("image"), (req, res) => {
   try {
-    await uploadImageOnS3(req.file, "/images");
-    res.send("Succesfully sent to images");
+    uploadImageOnS3(req.file);
+    console.log(req.file);
+    res.send("Single File test");
   } catch (err) {
-    res.send("Upload failed", err);
+    res.send("Upload failed: " + err);
   }
 });
 
-app.post("/Profile", uploadS3.upload.single("image"), (req, res) => {
-  uploadImageOnS3(req.file);
-  console.log(req.file);
-  res.send("Single File test");
+app.post("/Image", upload.single("image"), (req, res) => {
+  try {
+    uploadImageOnS3(req.file);
+    console.log(req.file);
+    res.send("Single File test");
+  } catch (err) {
+    res.send("Upload failed: " + err);
+  }
 });
-
 //*************************SERVER*************************
 
 if (sserver) {

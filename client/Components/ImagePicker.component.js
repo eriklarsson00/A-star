@@ -9,7 +9,7 @@ export default function ImagePickerComp(props) {
   // The path of the picked image
 
   const [pickedImagePath, setPickedImagePath] = useState("");
-  const [ProfileImagePath, setProfileImagePath] = useContext(ProfileImagePath);
+  const [profileImagePath, setProfileImagePath] = useContext(ProfileImagePath);
   // This function is triggered when the "Select an image" button pressed
   const showImagePicker = async () => {
     // Ask the user for the permission to access the media library
@@ -79,6 +79,7 @@ export default function ImagePickerComp(props) {
       uri: image.uri,
     });
     let imagePath = props.context;
+    console.log("imagePath = " + imagePath);
     var ip = "http://ec2-3-215-18-23.compute-1.amazonaws.com/" + imagePath;
 
     fetch(ip, {
