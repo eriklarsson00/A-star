@@ -1,28 +1,38 @@
 import React from "react";
 import { SafeAreaView, Text, StyleSheet, View } from "react-native";
-import {
-  TopNavigation,
-  Button,
-  useTheme,
-  Input,
-  CheckBox,
-  Layout,
-  Icon,
-} from "@ui-kitten/components";
+import { Button, useTheme, Layout, Icon, List } from "@ui-kitten/components";
 import tw from "twrnc";
 import { CreatedNewItem } from "../Components/CreatedNewItem";
 import { InputNewItem } from "../Components/InputNewItem";
 
 const CreateNewItemScreen = () => {
-  const [product_text, setProduct_test] = React.useState("");
-  const [description, setDescription] = React.useState("");
+  const [productInfo, setProductInfo] = React.useState([
+    {
+      id: 0,
+      product_text: "hej",
+      description: "nej",
+      quantity: "12",
+      time_of_creation: "12",
+      time_of_purchase: "12",
+      time_of_expiration: "2",
+      imgurl: "",
+      broken_pkg: false,
+    },
+    {
+      id: 1,
+      product_text: "nej",
+      description: "who",
+      quantity: "12",
+      time_of_creation: "12",
+      time_of_purchase: "12",
+      time_of_expiration: "2",
+      imgurl: "",
+      broken_pkg: true,
+    },
+  ]);
   const [productVisible, setProductVisible] = React.useState(true);
   const [quantity, setQuantity] = React.useState("");
-  const [time_of_creation, setTime_of_creation] = React.useState("");
-  const [time_of_purchase, setTime_of_purchase] = React.useState("");
-  const [time_of_expiration, setTime_of_expiration] = React.useState("");
-  const [imgurl, setImgurl] = React.useState("");
-  const [broken_pkg, setBroken_pkg] = React.useState(false);
+  const [productQuantity, setProductQuantity] = React.useState([]);
 
   const theme = useTheme();
 
@@ -30,33 +40,63 @@ const CreateNewItemScreen = () => {
     <Icon style={styles.icon} fill="black" name="plus-circle-outline" />
   );
 
-  const textHandler = (input) => {
-    setProduct_test(input);
-  };
   const quantityHandler = (input) => {
     setQuantity(input);
   };
+  const infoHandler = (input) => {
+    setProductInfo(input);
+  };
+
+  const printInfo = () => {
+    console.log("Skickat över");
+    console.log(productInfo);
+  };
+
+  const addComp = ({ item, index }) => (
+    <CreatedNewItem
+      product_text={productInfo.product_text}
+      quantity={productInfo.quantity}
+      setVisible={setProductVisible}
+      containerStyle={styles.list_style}
+    />
+  );
+
+  const giveKey = ({ item, index }) => reuturn(item);
 
   return (
     <Layout style={styles.container}>
-      {productVisible == false && (
-        <CreatedNewItem
-          product_text={product_text}
-          quantity={quantity}
-          setVisible={setProductVisible}
-        />
-      )}
-      {productVisible && (
-        <InputNewItem
-          setVisible={setProductVisible}
-          setProductText={textHandler}
-          setQuantity={quantityHandler}
-          quantity={quantity}
-          productText={product_text}
-        />
-      )}
+      <List
+        style={styles.container_list}
+        data={productInfo}
+        renderItem={addComp}
+        key={giveKey}
+      />
+
+      {/* {productVisible == false && ( */}
+      {/* <CreatedNewItem
+        product_text={productInfo.product_text}
+        quantity={productInfo.quantity}
+        setVisible={setProductVisible}
+      /> */}
+
+      {/* {productVisible && ( */}
+      <InputNewItem
+        setVisible={setProductVisible}
+        setProductInfo={infoHandler}
+        // setProductText={textHandler}
+        // setQuantity={quantityHandler}
+        // quantity={quantity}
+        // productText={product_text}
+      />
+
       <Layout style={{ alignSelf: "left", paddingBottom: 15 }}>
-        <Button appearance="ghost" accessoryLeft={PlusIcon}>
+        <Button
+          appearance="ghost"
+          accessoryLeft={PlusIcon}
+          onPress={() => {
+            printInfo();
+          }}
+        >
           Lägg till en ny vara{" "}
         </Button>
       </Layout>
@@ -71,7 +111,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     height: "100%",
-    paddingTop: 50,
   },
   checkbox: {
     paddingTop: 10,
@@ -95,5 +134,11 @@ const styles = StyleSheet.create({
   icon: {
     width: 30,
     height: 30,
+  },
+  container_list: {
+    height: 200,
+  },
+  list_style: {
+    backgroundColor: "red",
   },
 });

@@ -13,6 +13,18 @@ import {
 import tw from "twrnc";
 
 export const InputNewItem = (props) => {
+  const [allProducts, setAllProducts] = React.useState([]);
+  const [productInfo, setProductInfo] = React.useState({
+    product_text: "",
+    description: "",
+    quantity: "",
+    time_of_creation: "",
+    time_of_purchase: "",
+    time_of_expiration: "",
+    imgurl: "",
+    broken_pkg: false,
+  });
+
   const [description, setDescription] = React.useState("");
   const [time_of_creation, setTime_of_creation] = React.useState("");
   const [time_of_purchase, setTime_of_purchase] = React.useState("");
@@ -27,18 +39,8 @@ export const InputNewItem = (props) => {
   );
 
   const createItem = () => {
-    let itemData = {
-      product_text: product_text,
-      description: description,
-      quantity: quantity,
-      time_of_creation: time_of_creation,
-      time_of_purchase: time_of_purchase,
-      time_of_expiration: time_of_expiration,
-      imgurl: "",
-      broken_pkg: false,
-    };
-    console.log(itemData);
-    //TODO: skicka in i databasen
+    console.log("HEJSANNNN WOOW");
+    console.log(productInfo);
   };
 
   const itemHandler = (input) => {
@@ -64,6 +66,7 @@ export const InputNewItem = (props) => {
           style={styles.btn}
           appearance="ghost"
           accessoryLeft={CameraIcon}
+          onPress={createItem}
         >
           {" "}
         </Button>
@@ -71,43 +74,57 @@ export const InputNewItem = (props) => {
       <Input
         style={tw`pb-2 pl-5 pr-5`}
         placeholder="Typ av vara"
-        value={props.productText}
-        onChangeText={itemHandler}
+        value={productInfo.product_text}
+        onChangeText={(value) =>
+          setProductInfo({ ...productInfo, product_text: value })
+        }
       />
       <Input
         style={tw`pb-2 pl-5 pr-5`}
         placeholder="Beskrivning av vara"
-        value={description}
-        onChangeText={(nextValue) => setDescription(nextValue)}
+        value={productInfo.description}
+        onChangeText={(value) =>
+          setProductInfo({ ...productInfo, description: value })
+        }
       />
       <Input
         style={tw`pb-2 pl-5 pr-5`}
         placeholder="Antal*"
-        value={props.quantity}
-        onChangeText={quantityHandler}
+        value={productInfo.quantity}
+        onChangeText={(value) =>
+          setProductInfo({ ...productInfo, quantity: value })
+        }
       />
       <Input
         style={tw`pb-2 pl-5 pr-5`}
         placeholder="Datum varan köptes"
-        value={time_of_purchase}
-        onChangeText={(nextValue) => setTime_of_purchase(nextValue)}
+        value={productInfo.time_of_purchase}
+        onChangeText={(value) =>
+          setProductInfo({ ...productInfo, time_of_purchase: value })
+        }
       />
       <Input
         style={tw`pb-2 pl-5 pr-5`}
         placeholder="Datum varan skapades"
-        value={time_of_creation}
-        onChangeText={(nextValue) => setTime_of_creation(nextValue)}
+        value={productInfo.time_of_creation}
+        onChangeText={(value) =>
+          setProductInfo({ ...productInfo, time_of_creation: value })
+        }
       />
       <Input
         style={tw`pb-2 pl-5 pr-5`}
         placeholder="Utgångsdatum"
-        value={time_of_expiration}
-        onChangeText={(nextValue) => setTime_of_expiration(nextValue)}
+        value={productInfo.time_of_expiration}
+        onChangeText={(value) =>
+          setProductInfo({ ...productInfo, time_of_expiration: value })
+        }
       />
       <CheckBox
         style={styles.checkbox}
-        checked={broken_pkg}
-        onChange={(nextChecked) => setBroken_pkg(nextChecked)}
+        checked={productInfo.broken_pkg}
+        onChange={(value) =>
+          setProductInfo({ ...productInfo, broken_pkg: value })
+        }
       >
         {(evaProps) => (
           <Text
@@ -128,6 +145,7 @@ export const InputNewItem = (props) => {
           id="createItem"
           onPress={() => {
             props.setVisible(false);
+            props.setProductInfo(productInfo);
           }}
         >
           Skapa vara
