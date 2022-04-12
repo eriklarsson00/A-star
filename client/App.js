@@ -1,11 +1,11 @@
 import {
-  React,
-  createContext,
-  useState,
-  useMemo,
-  Component,
-  useEffect,
-  Text,
+	React,
+	createContext,
+	useState,
+	useMemo,
+	Component,
+	useEffect,
+	Text,
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StatusBar } from "react-native";
@@ -17,112 +17,110 @@ import { LoginNavigation } from "./Navigation/LoginNavigation";
 import { default as theme } from "./assets/custom-theme.json";
 import { getUserProfileById } from "./Services/ServerCommunication";
 import {
-  UserInfo,
-  MyCommunitysInfo,
-  ShowCommunityIds,
-  ProfileImagePath,
-  UserLoggedIn,
-  GoogleInfo,
+	UserInfo,
+	MyCommunitysInfo,
+	ShowCommunityIds,
+	ProfileImagePath,
+	UserLoggedIn,
+	GoogleInfo,
 } from "./assets/AppContext";
 
 export default () => {
-  const [userLoggedIn, setLoggedIn] = useState(null);
-  const FirstLoggedInValue = useMemo(
-    () => ({ userLoggedIn, setLoggedIn }),
-    [userLoggedIn]
-  );
+	const [userLoggedIn, setLoggedIn] = useState(null);
+	const FirstLoggedInValue = useMemo(
+		() => ({ userLoggedIn, setLoggedIn }),
+		[userLoggedIn]
+	);
 
-  const [userInfo, setUserInfo] = useState([]);
-  const FirstUservalue = useMemo(() => ({ userInfo, setUserInfo }), [userInfo]);
+	const [userInfo, setUserInfo] = useState([]);
+	const FirstUservalue = useMemo(
+		() => ({ userInfo, setUserInfo }),
+		[userInfo]
+	);
 
-  const [googleInfo, setGoogleInfo] = useState();
-  const FirstGooglevalue = useMemo(
-    () => ({ googleInfo, setGoogleInfo }),
-    [googleInfo]
-  );
+	const [googleInfo, setGoogleInfo] = useState();
+	const FirstGooglevalue = useMemo(
+		() => ({ googleInfo, setGoogleInfo }),
+		[googleInfo]
+	);
 
-  const [profileImagePath, setProfileImagePath] = useState(
-    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
-  );
-  const FirstProfileImagePath = useMemo(
-    () => ({ profileImagePath, setProfileImagePath }),
-    [profileImagePath]
-  );
+	const [profileImagePath, setProfileImagePath] = useState(
+		"https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+	);
+	const FirstProfileImagePath = useMemo(
+		() => ({ profileImagePath, setProfileImagePath }),
+		[profileImagePath]
+	);
 
-  const [myCommunitysInfo, setMyCommunitysInfo] = useState([]);
-  const FirstCommunityValue = useMemo(
-    () => ({ myCommunitysInfo, setMyCommunitysInfo }),
-    [myCommunitysInfo]
-  );
+	const [myCommunitysInfo, setMyCommunitysInfo] = useState([]);
+	const FirstCommunityValue = useMemo(
+		() => ({ myCommunitysInfo, setMyCommunitysInfo }),
+		[myCommunitysInfo]
+	);
 
-  const [showCommunityIds, setShowCommunityIds] = useState([]);
-  const FirstShowValue = useMemo(
-    () => ({ showCommunityIds, setShowCommunityIds }),
-    [showCommunityIds]
-  );
+	const [showCommunityIds, setShowCommunityIds] = useState([]);
+	const FirstShowValue = useMemo(
+		() => ({ showCommunityIds, setShowCommunityIds }),
+		[showCommunityIds]
+	);
 
-  const [whichScreen, setWhichScreen] = useState(<LoginNavigation />);
+	const [whichScreen, setWhichScreen] = useState(<LoginNavigation />);
 
-  useEffect(async () => {
-    // Fetch userId from storage (if exists) and get user data from server
-    if (userLoggedIn) {
-      setWhichScreen(<AppNavigator />);
-    } else {
-      setWhichScreen(<LoginNavigation />);
-    }
-    try {
-      const jsonUserId = await AsyncStorage.getItem("userId");
-      if (jsonUserId !== null) {
-        const userId = JSON.parse(jsonUserId);
-        const users = await getUserProfileById(userId);
-        if (users[0]) {
-          setUserInfo(users[0]);
-          setLoggedIn(true);
-          setWhichScreen(<AppNavigator />);
-        } else {
-          console.log("Cannot log in, unknown userId: " + userId);
-          setLoggedIn(false);
-        }
-      } else {
-        setLoggedIn(false);
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  }, [userLoggedIn]);
-
-  /*const CheckWhichStartScreen = () => {
+	useEffect(async () => {
 		if (userLoggedIn) {
-			return <AppNavigator />;
-		} else if (userLoggedIn != null) {
-			return <LoginNavigation />;
+			setWhichScreen(<AppNavigator />);
 		} else {
-			return <></>;
+			setWhichScreen(<LoginNavigation />);
 		}
-	};*/
+	}, [userLoggedIn]);
 
-  return (
-    <>
-      <IconRegistry icons={EvaIconsPack} />
-      <UserInfo.Provider value={FirstUservalue}>
-        <GoogleInfo.Provider value={FirstGooglevalue}>
-          <ShowCommunityIds.Provider value={FirstShowValue}>
-            <ProfileImagePath.Provider value={FirstProfileImagePath}>
-              <MyCommunitysInfo.Provider value={FirstCommunityValue}>
-                <UserLoggedIn.Provider value={FirstLoggedInValue}>
-                  <ApplicationProvider
-                    {...eva}
-                    theme={{ ...eva.light, ...theme }}
-                  >
-                    <StatusBar barStyle="dark-content" />
-                    <>{whichScreen}</>
-                  </ApplicationProvider>
-                </UserLoggedIn.Provider>
-              </MyCommunitysInfo.Provider>
-            </ProfileImagePath.Provider>
-          </ShowCommunityIds.Provider>
-        </GoogleInfo.Provider>
-      </UserInfo.Provider>
-    </>
-  );
+	useEffect(async () => {
+		// Fetch userId from storage (if exists) and get user data from server
+		try {
+			const jsonUserId = await AsyncStorage.getItem("userId");
+			if (jsonUserId !== null) {
+				const userId = JSON.parse(jsonUserId);
+				const users = await getUserProfileById(userId);
+				if (users[0]) {
+					setUserInfo(users[0]);
+					setLoggedIn(true);
+					setWhichScreen(<AppNavigator />);
+
+					// Fetch the users communities
+				} else {
+					console.log("Cannot log in, unknown userId: " + userId);
+					setLoggedIn(false);
+				}
+			} else {
+				setLoggedIn(false);
+			}
+		} catch (e) {
+			console.log(e);
+		}
+	}, [userLoggedIn]);
+
+	return (
+		<>
+			<IconRegistry icons={EvaIconsPack} />
+			<UserInfo.Provider value={FirstUservalue}>
+				<GoogleInfo.Provider value={FirstGooglevalue}>
+					<ShowCommunityIds.Provider value={FirstShowValue}>
+						<ProfileImagePath.Provider value={FirstProfileImagePath}>
+							<MyCommunitysInfo.Provider value={FirstCommunityValue}>
+								<UserLoggedIn.Provider value={FirstLoggedInValue}>
+									<ApplicationProvider
+										{...eva}
+										theme={{ ...eva.light, ...theme }}
+									>
+										<StatusBar barStyle="dark-content" />
+										<>{whichScreen}</>
+									</ApplicationProvider>
+								</UserLoggedIn.Provider>
+							</MyCommunitysInfo.Provider>
+						</ProfileImagePath.Provider>
+					</ShowCommunityIds.Provider>
+				</GoogleInfo.Provider>
+			</UserInfo.Provider>
+		</>
+	);
 };

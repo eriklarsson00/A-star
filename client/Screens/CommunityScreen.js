@@ -33,12 +33,12 @@ export const CommunityScreen = () => {
 	//CONTEXT
 	const { myCommunitysInfo, setMyCommunitysInfo } =
 		React.useContext(MyCommunitysInfo);
-	const { profileImagePath, setProfileImagePath } =
-		React.useContext(ProfileImagePath);
+	const { showCommunityIds, setShowCommunityIds } =
+		React.useContext(ShowCommunityIds);
 	const { userInfo, setUserInfo } = React.useContext(UserInfo);
 
 	//STATE
-	const [visible, setVisible] = React.useState(false);
+	const [addCommunityVisible, setAddCommunityVisible] = React.useState(false);
 	const [joinCommunity, setJoinCommunity] = React.useState(false);
 	const [IncorrectCommunityPassword, setIncorrectCommunityPassword] =
 		React.useState(false);
@@ -70,47 +70,13 @@ export const CommunityScreen = () => {
 		<CommunityComponent id={item.name} />
 	);
 
-	//FUNKTIONER ÖVRIGA
-
-	const giveKey = ({ item, index }) => reuturn(item);
-
-	function tryPassword() {
-		if (communityPasswordInput === chosenCommunity.password) {
-			setMyCommunitysInfo([...myCommunitysInfo, chosenCommunity]);
-			setJoinPrivateCommunity(false);
-			setVisible(false);
-			setIncorrectCommunityPassword(false);
-			setCommunityPasswordInput("");
-		} else {
-			setIncorrectCommunityPassword(true);
-			setCommunityPasswordInput("");
-		}
-	}
-
-	function addCommunity() {
-		setMyCommunityNames([...myCommunityNames, chosenCommunity.name]);
-		setJoinCommunity(false);
-		setVisible(false);
-		setMyCommunitysInfo([...myCommunitysInfo, chosenCommunity]);
-	}
-
-	//IKONER
-	const LockIcon = () => (
-		<Icon style={styles.lockStyle} fill="#8F9BB3" name="lock-outline" />
-	);
-
-	const CrossIcon = () => (
-		<Icon
-			style={styles.crossStyle}
-			fill={theme["color-basic-600"]}
-			name="close-circle-outline"
-		/>
-	);
-
-	const renderIcon = (props) => {
-		return <Icon {...props} name={props.iconName} />;
+	const CloseAddCommunity = () => {
+		return (
+			<TouchableOpacity onPress={() => setAddCommunityVisible(false)}>
+				<CrossIcon />
+			</TouchableOpacity>
+		);
 	};
-
 	const printExistingCommunities = (
 		{ item, index } //DETTA ÄR VAD SOM RENDERAS FÖR VARJE ITEM I LÄGG TILL
 	) => (
@@ -149,9 +115,7 @@ export const CommunityScreen = () => {
 						<Image
 							style={styles.communityImage}
 							source={{
-								uri: userInfo.imgurl
-									? userInfo.imgurl
-									: profileImagePath,
+								uri: "https://www.uppsalahem.se/globalassets/bilder/omradesbilder/7002/Rackarberget_3.jpg?w=320", //item.imgurl,
 								height: 80,
 								width: 80,
 							}}
@@ -181,6 +145,45 @@ export const CommunityScreen = () => {
 		</TouchableOpacity>
 	);
 
+	//FUNKTIONER ÖVRIGA
+
+	const giveKey = ({ item, index }) => reuturn(item);
+
+	function tryPassword() {
+		if (communityPasswordInput === chosenCommunity.password) {
+			addCommunity();
+			setJoinPrivateCommunity(false);
+			setIncorrectCommunityPassword(false);
+			setCommunityPasswordInput("");
+		} else {
+			setIncorrectCommunityPassword(true);
+			setCommunityPasswordInput("");
+		}
+	}
+
+	function addCommunity() {
+		setMyCommunityNames([...myCommunityNames, chosenCommunity.name]);
+		setShowCommunityIds([...showCommunityIds, chosenCommunity.id]);
+		setJoinCommunity(false);
+		setAddCommunityVisible(false);
+		setMyCommunitysInfo([...myCommunitysInfo, chosenCommunity]);
+	}
+
+	//IKONER
+	const LockIcon = () => (
+		<Icon style={styles.lockStyle} fill="#8F9BB3" name="lock-outline" />
+	);
+
+	const CrossIcon = () => (
+		<Icon
+			style={styles.crossStyle}
+			fill={theme["color-basic-600"]}
+			name="close-circle-outline"
+		/>
+	);
+
+	//KODEN FÖR SIDAN
+
 	return (
 		<Layout style={styles.container}>
 			<Layout style={tw`pt-5 pb-2`}>
@@ -192,13 +195,13 @@ export const CommunityScreen = () => {
 				data={myCommunitysInfo}
 				renderItem={printCommunity}
 				key={giveKey}
-				containerStyle={styles.list_style}
-				accessoryLeft={(props) =>
-					renderIcon({ ...{ iconName: "search" }, ...props })
-				}
+				// containerStyle={styles.list_style}
 			/>
 			<Layout style={styles.buttonCont}>
-				<Button style={styles.button} onPress={() => setVisible(true)}>
+				<Button
+					style={styles.button}
+					onPress={() => setAddCommunityVisible(true)}
+				>
 					Lägg till grannskap
 				</Button>
 				<Button
@@ -215,9 +218,9 @@ export const CommunityScreen = () => {
 				</Button>
 			</Layout>
 			<Modal
-				visible={visible}
+				visible={addCommunityVisible}
 				backdropStyle={styles.backdrop}
-				onBackdropPress={() => setVisible(false)}
+				onBackdropPress={() => setAddCommunityVisible(false)}
 			>
 				<Card disabled={true}>
 					<View style={{ flex: 1, flexDirection: "row" }}>
@@ -226,9 +229,7 @@ export const CommunityScreen = () => {
 								Lägg till grannskap
 							</Text>
 						</View>
-						<TouchableOpacity onPress={() => setVisible(false)}>
-							<CrossIcon />
-						</TouchableOpacity>
+						<CloseAddCommunity />
 					</View>
 					<Divider />
 					<List
@@ -240,7 +241,10 @@ export const CommunityScreen = () => {
 						renderItem={printExistingCommunities}
 						key={giveKey}
 					/>
-					<Button style={tw`mt-2`} onPress={() => setVisible(false)}>
+					<Button
+						style={tw`mt-2`}
+						onPress={() => setAddCommunityVisible(false)}
+					>
 						Skapa nytt grannskap
 					</Button>
 					<Divider />
@@ -255,14 +259,7 @@ export const CommunityScreen = () => {
 					<Text style={tw`text-lg font-semibold text-center`}>
 						Vill du gå med i {chosenCommunity.name} ?
 					</Text>
-					<View
-						style={{
-							flex: 1,
-							flexDirection: "row",
-							width: 300,
-							justifyContent: "center",
-						}}
-					>
+					<View style={styles.joinCommunityModal}>
 						<Button
 							style={{ width: 100, marginRight: 15 }}
 							onPress={addCommunity}
@@ -288,14 +285,7 @@ export const CommunityScreen = () => {
 					<Text style={tw`text-lg font-semibold text-center`}>
 						{chosenCommunity.name} är ett privat grannskap
 					</Text>
-					<View
-						style={{
-							flex: 1,
-							flexDirection: "column",
-							width: 300,
-							justifyContent: "center",
-						}}
-					>
+					<View style={styles.joinPrivateCommunityModal}>
 						{IncorrectCommunityPassword && <Text>Fel lösenord!</Text>}
 						<Input
 							label="skriv in lösenord för grannskapet för att gå med"
@@ -304,13 +294,7 @@ export const CommunityScreen = () => {
 								setCommunityPasswordInput(nextValue)
 							}
 						/>
-						<View
-							style={{
-								flex: 1,
-								flexDirection: "row",
-								justifyContent: "center",
-							}}
-						>
+						<View style={styles.joinPrivateCommunityModalButtons}>
 							<Button
 								style={{ width: 100, margin: 15 }}
 								onPress={() => tryPassword()}
@@ -341,6 +325,7 @@ const styles = StyleSheet.create({
 		paddingTop: 50,
 	},
 	container_list: {
+		paddingTop: 10,
 		height: 200,
 	},
 	buttonCont: {
@@ -368,7 +353,6 @@ const styles = StyleSheet.create({
 		width: 130,
 		marginLeft: 10,
 	},
-	communityImage: {},
 	communityImageJoin: {
 		backgroundColor: "red",
 		width: 100,
@@ -382,12 +366,29 @@ const styles = StyleSheet.create({
 		backgroundColor: "white",
 		height: 300,
 	},
-	list_style: {
-		backgroundColor: "red",
-	},
+	// list_style: {
+	// 	backgroundColor: "red",
+	// },
 	lockStyle: {
 		width: 25,
 		height: 25,
+	},
+	joinCommunityModal: {
+		flex: 1,
+		flexDirection: "row",
+		width: 300,
+		justifyContent: "center",
+	},
+	joinPrivateCommunityModal: {
+		flex: 1,
+		flexDirection: "column",
+		width: 300,
+		justifyContent: "center",
+	},
+	joinPrivateCommunityModalButtons: {
+		flex: 1,
+		flexDirection: "row",
+		justifyContent: "center",
 	},
 	touchableStyle: {
 		padding: 10,
