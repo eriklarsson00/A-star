@@ -4,11 +4,14 @@ import { Button, useTheme, Layout, Icon, List } from "@ui-kitten/components";
 import tw from "twrnc";
 import { CreatedNewItem } from "../Components/CreatedNewItem";
 import { InputNewItem } from "../Components/InputNewItem";
+import BarCodeScannerComp from "../Components/BarCodeScanner.component";
 
 const CreateNewItemScreen = () => {
   const [productInfo, setProductInfo] = React.useState([]);
   const [compId, setCompId] = React.useState(0);
   const [count, setCount] = React.useState([0]);
+  const [productName, setProductName] = React.useState("");
+  const [barCodeShow, setBarCodeShow] = React.useState(false);
 
   const theme = useTheme();
 
@@ -16,6 +19,16 @@ const CreateNewItemScreen = () => {
     <Icon style={styles.icon} fill="black" name="plus-circle-outline" />
   );
 
+  // barcodescanner
+  const product = (productName) => {
+    setProductName(productName);
+    console.log(productName);
+  };
+  const barCodeActive = (barCodeShow) => {
+    setBarCodeShow(barCodeShow);
+  };
+
+  // koppla mellan parent och child
   const infoHandler = (input) => {
     setProductInfo((productInfo) => [...productInfo, input]);
   };
@@ -52,56 +65,62 @@ const CreateNewItemScreen = () => {
         id={compId}
         setId={addId}
         setChange={updateItem}
+        func={barCodeActive}
+        product={productName}
       />
     </Layout>
   );
 
   const giveKey = ({ item, index }) => reuturn(item);
 
-  return (
-    <Layout style={styles.container}>
-      <List
-        style={styles.container_list}
-        data={count}
-        renderItem={addComp}
-        key={giveKey}
-      />
+  if (!barCodeShow) {
+    return (
+      <Layout style={styles.container}>
+        <List
+          style={styles.container_list}
+          data={count}
+          renderItem={addComp}
+          key={giveKey}
+        />
 
-      <Layout
-        style={{
-          alignSelf: "left",
-          paddingLeft: 30,
-          backgroundColor: "rgba(255, 250, 240, 0.08)",
-        }}
-      >
-        <Button
-          appearance="ghost"
-          accessoryLeft={PlusIcon}
-          onPress={() => {
-            newComp();
+        <Layout
+          style={{
+            alignSelf: "left",
+            paddingLeft: 30,
+            backgroundColor: "rgba(255, 250, 240, 0.08)",
           }}
         >
-          Lägg till en ny vara{" "}
-        </Button>
-      </Layout>
-      <Layout
-        style={{
-          paddingBottom: 15,
-          backgroundColor: "rgba(255, 250, 240, 0.08)",
-        }}
-      >
-        <Button
-          style={{ width: 300, alignSelf: "center" }}
-          onPress={() => {
-            print();
+          <Button
+            appearance="ghost"
+            accessoryLeft={PlusIcon}
+            onPress={() => {
+              newComp();
+            }}
+          >
+            Lägg till en ny vara{" "}
+          </Button>
+        </Layout>
+        <Layout
+          style={{
+            paddingBottom: 15,
+            backgroundColor: "rgba(255, 250, 240, 0.08)",
           }}
         >
-          {" "}
-          Skapa Inlägg
-        </Button>
+          <Button
+            style={{ width: 300, alignSelf: "center" }}
+            onPress={() => {
+              print();
+            }}
+          >
+            {" "}
+            Skapa Inlägg
+          </Button>
+        </Layout>
       </Layout>
-    </Layout>
-  );
+    );
+  } else {
+    return <BarCodeScannerComp func={barCodeActive} productInfo={product} />;
+  }
 };
 
 export default CreateNewItemScreen;
