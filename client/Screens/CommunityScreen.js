@@ -204,10 +204,11 @@ export const CommunityScreen = () => {
 				<Button
 					style={styles.button}
 					onPress={() => {
+						console.log("här börjar allt");
 						console.log(myCommunitysInfo);
-						console.log(dataBaseCommunities);
-						console.log(myCommunitysInfo[0]);
 						console.log(myCommunityNames);
+						console.log("Databasecommunities");
+						console.log(dataBaseCommunities);
 					}}
 				>
 					console <Text>{myCommunitysInfo.length}</Text>
@@ -232,7 +233,9 @@ export const CommunityScreen = () => {
 					<Divider />
 					<List
 						style={styles.dataBaseList}
-						data={dataBaseCommunities}
+						data={dataBaseCommunities.filter(
+							(comm) => !myCommunityNames.includes(comm.name)
+						)}
 						ItemSeparatorComponent={Divider}
 						renderItem={printExistingCommunities}
 						key={giveKey}
