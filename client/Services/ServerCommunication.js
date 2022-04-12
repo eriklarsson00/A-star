@@ -37,6 +37,7 @@ const getOffers = async (communities) => {
   //   offers = await request("GET", "/offers/active/" + community);
   // });
   return [...new Set(offers)];
+
 };
 
 const getCommunities = async () => {
@@ -59,6 +60,10 @@ const addProfile = async (profile, communities) => {
   const updatedProfile = await getUserProfileByEmail(profile.email);
   await addToCommunity(updatedProfile[0].id, communities);
   return updatedProfile;
+};
+
+const addTransaction = async (transaction) => {
+  return await request("POST", "/transactions", transaction);
 };
 
 const addToCommunity = async (profile_id, communities) => {
@@ -85,5 +90,6 @@ export {
   addProfile,
   getCommunities,
   addToCommunity,
+  addTransaction,
   deleteProfile,
 };
