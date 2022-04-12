@@ -12,8 +12,9 @@ import {
 } from "@ui-kitten/components";
 import tw from "twrnc";
 
+//TODO: Inte kunna "skapa" en vara utan att ha skrivit ett namn eller påbörjat att skapa den
+
 export const InputNewItem = (props) => {
-  const [allProducts, setAllProducts] = React.useState([]);
   const [productInfo, setProductInfo] = React.useState({
     id: 0,
     product_text: "",
@@ -25,35 +26,34 @@ export const InputNewItem = (props) => {
     imgurl: "",
     broken_pkg: false,
   });
-
   const [productVisible, setProductVisible] = React.useState(true);
+  const [created, setCreated] = React.useState(false);
 
   const theme = useTheme();
   const CameraIcon = () => (
     <Icon style={styles.lockStyle} fill="black" name="camera-outline" />
   );
 
-  const EditIcon = () => (
-    <Icon style={styles.icon2} fill="grey" name="edit-outline" />
+  const CollapseIcon = () => (
+    <Icon style={styles.icon2} fill="grey" name="collapse-outline" />
   );
 
-  const createItem = () => {
-    console.log("HEJSANNNN WOOW");
-    console.log(productInfo);
-  };
-
-  const itemHandler = (input) => {
-    props.setProductText(input);
-  };
-
   const handleInfo = () => {
-    setProductInfo({ ...productInfo, id: props.id });
+    if (!created) {
+      props.setId(1);
+      setCreated(true);
+    }
     setProductVisible(false);
     props.setProductInfo(productInfo);
   };
 
+  const handleChange = () => {
+    props.setChange(productInfo.id, productInfo);
+    setProductVisible(false);
+  };
+
   return (
-    <Layout>
+    <Layout style={{ backgroundColor: theme["color-basic-300"] }}>
       {productVisible && (
         <Layout
           style={{
@@ -65,21 +65,36 @@ export const InputNewItem = (props) => {
             paddingBottom: 15,
           }}
         >
-          <Layout style={tw`pl-5 pb-5`}>
-            <Button
-              style={styles.btn}
-              appearance="ghost"
-              accessoryLeft={CameraIcon}
-            >
-              {" "}
-            </Button>
+          <Layout style={{ flexDirection: "row" }}>
+            <Layout style={tw`pl-5 pb-5`}>
+              <Button
+                style={styles.btn}
+                appearance="ghost"
+                accessoryLeft={CameraIcon}
+              >
+                {" "}
+              </Button>
+            </Layout>
+            <Layout style={styles.collapse}>
+              <Button
+                appearance="ghost"
+                accessoryLeft={CollapseIcon}
+                onPress={() => {
+                  setProductVisible(false);
+                }}
+              ></Button>
+            </Layout>
           </Layout>
           <Input
             style={tw`pb-2 pl-5 pr-5`}
             placeholder="Typ av vara"
             value={productInfo.product_text}
             onChangeText={(value) =>
-              setProductInfo({ ...productInfo, product_text: value })
+              setProductInfo({
+                ...productInfo,
+                product_text: value,
+                id: created ? productInfo.id : props.id,
+              })
             }
           />
           <Input
@@ -143,20 +158,41 @@ export const InputNewItem = (props) => {
             )}
           </CheckBox>
           <Layout style={{ paddingLeft: 228 }}>
-            <Button
-              style={{ width: 120 }}
-              id="createItem"
-              onPress={() => {
-                handleInfo();
-              }}
-            >
-              Skapa vara
-            </Button>
+            {created && (
+              <Button
+                style={{ width: 120 }}
+                id="createItem"
+                onPress={() => {
+                  handleChange();
+                }}
+              >
+                Ändra vara
+              </Button>
+            )}
+            {!created && (
+              <Button
+                style={{ width: 120 }}
+                id="createItem"
+                onPress={() => {
+                  handleInfo();
+                }}
+              >
+                Skapa vara
+              </Button>
+            )}
           </Layout>
         </Layout>
       )}
       {!productVisible && (
-        <Layout style={styles.item2}>
+        <Layout
+          style={{
+            width: 370,
+            alignSelf: "center",
+            paddingBottom: 5,
+            paddingTop: 5,
+            backgroundColor: theme["color-basic-300"],
+          }}
+        >
           <Button
             style={{
               borderColor: theme["color-primary-300"],
@@ -212,15 +248,15 @@ const styles = StyleSheet.create({
     width: 200,
     height: 50,
   },
-  item2: {
-    width: 370,
-    alignSelf: "center",
-    paddingBottom: 5,
-    paddingTop: 5,
-    backgroundColor: "rgba(255, 250, 240, 0.08)",
-  },
+
   icon2: {
     width: 30,
     height: 30,
+  },
+  collapse: {
+    width: 30,
+    paddingLeft: 220,
+    height: 10,
+    paddingBottom: 10,
   },
 });

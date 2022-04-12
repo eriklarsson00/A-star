@@ -6,32 +6,8 @@ import { CreatedNewItem } from "../Components/CreatedNewItem";
 import { InputNewItem } from "../Components/InputNewItem";
 
 const CreateNewItemScreen = () => {
-  const [productInfo, setProductInfo] = React.useState([
-    // {
-    //   id: 0,
-    //   product_text: "hej",
-    //   description: "nej",
-    //   quantity: "12",
-    //   time_of_creation: "12",
-    //   time_of_purchase: "12",
-    //   time_of_expiration: "2",
-    //   imgurl: "",
-    //   broken_pkg: false,
-    // },
-    // {
-    //   id: 1,
-    //   product_text: "Moo",
-    //   description: "who",
-    //   quantity: "4",
-    //   time_of_creation: "12",
-    //   time_of_purchase: "12",
-    //   time_of_expiration: "2",
-    //   imgurl: "",
-    //   broken_pkg: true,
-    // },
-  ]);
-  const [productVisible, setProductVisible] = React.useState(true);
-  const [quantity, setQuantity] = React.useState("");
+  const [productInfo, setProductInfo] = React.useState([]);
+  const [compId, setCompId] = React.useState(0);
   const [count, setCount] = React.useState([0]);
 
   const theme = useTheme();
@@ -41,8 +17,10 @@ const CreateNewItemScreen = () => {
   );
 
   const infoHandler = (input) => {
-    console.log("ID NUMMEE  " + count);
     setProductInfo((productInfo) => [...productInfo, input]);
+  };
+  const addId = (input) => {
+    setCompId(compId + input);
   };
 
   const print = () => {
@@ -54,16 +32,26 @@ const CreateNewItemScreen = () => {
     setCount((count) => [...count, length]);
   };
 
+  const updateItem = (inputId, updatedItem) => {
+    for (let i = 0; i < productInfo.length; i++) {
+      if (productInfo[i].id === inputId) {
+        console.log("productInfo[i].id = " + productInfo[i].id);
+        let newProductInfo = [...productInfo];
+        newProductInfo[i] = updatedItem;
+        setProductInfo(newProductInfo);
+        return;
+      }
+    }
+    console.log("ERROR: no item with inputId found");
+  };
+
   const addComp = ({ item, index }) => (
     <Layout>
       <InputNewItem
-        // setVisible={setProductVisible}
         setProductInfo={infoHandler}
-        id={index}
-        // setProductText={textHandler}
-        // setQuantity={quantityHandler}
-        // quantity={quantity}
-        // productText={product_text}
+        id={compId}
+        setId={addId}
+        setChange={updateItem}
       />
     </Layout>
   );
@@ -82,7 +70,7 @@ const CreateNewItemScreen = () => {
       <Layout
         style={{
           alignSelf: "left",
-          paddingBottom: 15,
+          paddingLeft: 30,
           backgroundColor: "rgba(255, 250, 240, 0.08)",
         }}
       >
