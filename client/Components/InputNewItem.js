@@ -1,5 +1,5 @@
 import React from "react";
-import { SafeAreaView, Text, StyleSheet } from "react-native";
+import { SafeAreaView, Text, StyleSheet, TouchableOpacity } from "react-native";
 import {
   TopNavigation,
   Button,
@@ -12,12 +12,14 @@ import {
   Modal,
 } from "@ui-kitten/components";
 import tw from "twrnc";
+import ImagePicker from "./ImagePicker"
 import BarCodeScannerComp from "./BarCodeScanner.component"
-
 export const InputNewItem = (props) => {
+ 
+ 
   const [allProducts, setAllProducts] = React.useState([]);
   const [productInfo, setProductInfo] = React.useState({
-    product_text: "",
+    product_text: props.product,
     description: "",
     quantity: "",
     time_of_creation: "",
@@ -36,23 +38,33 @@ export const InputNewItem = (props) => {
   const [imgurl, setImgurl] = React.useState("");
   const [broken_pkg, setBroken_pkg] = React.useState(false);
   const [productVisible, setProductVisible] = React.useState(true);
-
+  const [barcodeProduct, setBarcodeProduct] = React.useState("");
+  const product = props.product;
   const theme = useTheme();
   const CameraIcon = () => (
     <Icon style={styles.lockStyle} fill="black" name="camera-outline" />
   );
 
+   
   const createItem = () => {
     console.log("HEJSANNNN WOOW");
     console.log(productInfo);
   };
-
+  
   const itemHandler = (input) => {
     props.setProductText(input);
   };
   const quantityHandler = (input) => {
     props.setQuantity(input);
   };
+  
+  const barcodeText = () => {
+    if (!product) {
+      setProductInfo({ ...productInfo, product_text: product })
+    }
+  }
+  
+  
 
   if (barCodeShow === false) {
     return (
@@ -203,4 +215,10 @@ const styles = StyleSheet.create({
     width: 200,
     height: 50,
   },
+  AddIconContainer: {
+        position: 'absolute',
+        marginTop: 110,
+        backgroundColor: 'white',
+        borderRadius: 50
+    },
 });

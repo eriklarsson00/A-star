@@ -81,6 +81,7 @@ const CreateNewItemScreen = () => {
 					data={productInfo}
 					renderItem={addComp}
 					key={giveKey}
+					
 				/>
 
 				{/* {productVisible == false && ( */}
@@ -95,6 +96,7 @@ const CreateNewItemScreen = () => {
 					func={barCodeActive}
 					setVisible={setProductVisible}
 					setProductInfo={infoHandler}
+					product={productName}
 				// setProductText={textHandler}
 				// setQuantity={quantityHandler}
 				// quantity={quantity}

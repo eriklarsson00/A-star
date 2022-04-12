@@ -4,29 +4,44 @@ import { BarCodeScanner } from 'expo-barcode-scanner';
 
 export default function BarCodeScannerComp(props) {
   
-  console.log("Kommer vi in");
+  
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
-  const [productName, setProductName] = useState("");
+  const [productName, setProductName] = useState(null);
+
+
   useEffect(() => {
     (async () => {
+      if (productName) {
+        productAlert(productName);
+        console.log("effekt" + "" + productName);
+        return;
+      }
+    })();
+  }, [productName]);
+
+  useEffect(() => {
+    (async () => {  
       const { status } = await BarCodeScanner.requestPermissionsAsync();
       setHasPermission(status === 'granted');
+      
     })();
   }, []);
 
 
-  const createTwoButtonAlert = () =>
+ 
+
+  const productAlert = (product) =>
     Alert.alert(
-      "Alert Title",
-      "My Alert Msg",
+      "Vara",
+      product.brandName + " " + product.functionalName,
       [
         {
-          text: "Cancel",
+          text: "Avbryt",
           onPress: () => console.log("Cancel Pressed"),
           style: "cancel"
         },
-        { text: "OK", onPress: () => {props.productInfo(productName)} }
+        { text: "Lägg till", onPress: () => {props.productInfo(productName)} }
       ]
     );
 
@@ -38,18 +53,7 @@ export default function BarCodeScannerComp(props) {
       .then((response) => response.json())
       .then((product) => {
         setProductName(product.brandName + " " + product.functionalName);
-        Alert.alert(
-      "Alert Title",
-      "My Alert Msg",
-      [
-        {
-          text: "Cancel",
-          onPress: () => console.log("Cancel Pressed"),
-          style: "cancel"
-        },
-        { text: "OK", onPress: () => {props.productInfo(productName)} }
-      ]
-    );
+        console.log("After set" + "" + productName);
       });
   };
 
