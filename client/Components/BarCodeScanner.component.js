@@ -73,7 +73,8 @@ export default function BarCodeScannerComp(props) {
         <Button title={"Tap to Scan Again"} onPress={() => setScanned(false)} />
       )}
       <Button
-        title="hej"
+        style={styles.button}
+        title="Gå tillbaka"
         onPress={() => {
           props.func(false);
         }}
@@ -88,5 +89,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+  },
+  button: {
+    flex: 1,
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
   },
 });

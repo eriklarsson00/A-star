@@ -37,7 +37,6 @@ const getOffers = async (communities) => {
   //   offers = await request("GET", "/offers/active/" + community);
   // });
   return [...new Set(offers)];
-
 };
 
 const getCommunities = async () => {
@@ -82,6 +81,47 @@ const deleteProfile = async (id) => {
   return res;
 };
 
+const pushToServer = async (result) => {
+  const image = await resizeImage(result, props.resize);
+  const body = new FormData();
+  body.append("image", {
+    name: "photo.jpg",
+    type: image.type,
+    uri: image.uri,
+  });
+
+  var url =
+    "http://ec2-3-215-18-23.compute-1.amazonaws.com/users/profile/" +
+    userInfo.id;
+
+  fetch(url, {
+    method: "POST",
+    body: body,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  })
+    .then((data) => data.json())
+    .then((res) => console.log(res))
+    .catch((err) => console.log(err));
+};
+
+resizeImage = async (result, resize = 1) => {
+  const manipResult = await ImageManipulator.manipulateAsync(
+    result.uri,
+    [
+      {
+        resize: {
+          width: result.width * resize,
+          height: result.height * resize,
+        },
+      },
+    ],
+    { compress: 1 }
+  );
+  return manipResult;
+};
+
 export {
   getOffers,
   getRequests,
@@ -92,4 +132,5 @@ export {
   addToCommunity,
   addTransaction,
   deleteProfile,
+  pushToServer,
 };

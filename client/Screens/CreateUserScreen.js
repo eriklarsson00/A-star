@@ -48,6 +48,7 @@ export const CreateUserScreen = () => {
     googleInfo?.given_name ?? ""
   );
   const [lastName, setLastName] = React.useState(googleInfo?.family_name ?? "");
+  const [result, setResult] = React.useState(null);
 
   //CONTEXT
   const { googleInfo, setGoogleInfo } = React.useContext(GoogleInfo);
@@ -94,6 +95,10 @@ export const CreateUserScreen = () => {
     setLoggedIn(true);
   }
 
+  const updateResult = (result) => {
+    setResult(result);
+  };
+
   const theme = useTheme();
 
   const groupDisplayValues = multiSelectedIndex.map((index) => {
@@ -124,7 +129,7 @@ export const CreateUserScreen = () => {
         onBackdropPress={() => setVisible(false)}
       >
         <Card disabled={true}>
-          <ImagePicker context="Profile" />
+          <ImagePicker context="Profile" updateResult={updateResult} />
           <Button style={tw`mt-2 w-50`} onPress={() => setVisible(false)}>
             Klar
           </Button>

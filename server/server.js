@@ -207,9 +207,9 @@ app.route("/transactions/lister/:id").get(transactions.getListerTransactions);
 
 //*************************IMAGES*********************
 
-app.post("/Image", upload.single("image"), (req, res) => {
+app.post("/itemimages", upload.single("image"), (req, res) => {
   try {
-    uploadImageOnS3(req.file, "images/" + req.file.filename);
+    uploadImageOnS3(req.file, "itemImages/" + req.file.filename);
     res.json(
       "https://matsamverkan.s3.us-east-1.amazonaws.com/" + req.file.filename
     );

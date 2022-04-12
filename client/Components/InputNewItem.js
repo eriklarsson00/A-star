@@ -1,5 +1,11 @@
 import React from "react";
-import { SafeAreaView, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  SafeAreaView,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+} from "react-native";
 import {
   TopNavigation,
   Button,
@@ -8,12 +14,13 @@ import {
   CheckBox,
   Layout,
   Icon,
-  Image,
   Modal,
+  Card,
 } from "@ui-kitten/components";
 import tw from "twrnc";
 import ImagePicker from "./ImagePicker";
 import BarCodeScannerComp from "./BarCodeScanner.component";
+import { ProfileImagePath, ItemImagePath } from "../assets/AppContext";
 
 //TODO: Inte kunna "skapa" en vara utan att ha skrivit ett namn eller påbörjat att skapa den
 
@@ -32,16 +39,24 @@ export const InputNewItem = (props) => {
   const [productVisible, setProductVisible] = React.useState(true);
   const [created, setCreated] = React.useState(false);
   const [barCodeShow, setBarCodeShow] = React.useState(false);
+  const { itemImagePath, setItemImagePath } = React.useContext(ItemImagePath);
+  const { profileImagePath, setProfileImagePath } =
+    React.useContext(ProfileImagePath);
+  const [visible, setVisible] = React.useState(false);
 
   const product = props.product;
   const theme = useTheme();
 
-  const CameraIcon = () => (
-    <Icon style={styles.lockStyle} fill="black" name="camera-outline" />
+  const BarIcon = () => (
+    <Icon style={styles.lockStyle} fill="black" name="bar-chart-2-outline" />
   );
 
   const CollapseIcon = () => (
     <Icon style={styles.icon2} fill="grey" name="collapse-outline" />
+  );
+
+  const AddIcon = () => (
+    <Icon style={styles.lockStyle} fill="#8F9BB3" name="plus-circle-outline" />
   );
 
   const handleInfo = () => {
@@ -56,6 +71,23 @@ export const InputNewItem = (props) => {
   const handleChange = () => {
     props.setChange(productInfo.id, productInfo);
     setProductVisible(false);
+  };
+
+  const ChoseImageModal = () => {
+    return (
+      <Modal
+        visible={visible}
+        backdropStyle={styles.backdrop}
+        onBackdropPress={() => setVisible(false)}
+      >
+        <Card disabled={true}>
+          <ImagePicker context="ItemImage" />
+          <Button style={tw`mt-2 w-50`} onPress={() => setVisible(false)}>
+            Klar
+          </Button>
+        </Card>
+      </Modal>
+    );
   };
 
   const barcodeText = () => {
@@ -79,11 +111,23 @@ export const InputNewItem = (props) => {
             }}
           >
             <Layout style={{ flexDirection: "row" }}>
-              <Layout style={tw`pl-5 pb-5`}>
+              <TouchableOpacity
+                onPress={() => {
+                  setVisible(true);
+                }}
+                style={styles.AddIconContainer}
+              >
+                <Image
+                  style={{ width: 70, height: 70 }}
+                  source={{ uri: itemImagePath, height: 150, width: 150 }}
+                />
+                <ChoseImageModal />
+              </TouchableOpacity>
+              <Layout style={tw`pl-5 pb-5 pr-5`}>
                 <Button
                   style={styles.btn}
                   appearance="ghost"
-                  accessoryLeft={CameraIcon}
+                  accessoryLeft={BarIcon}
                   onPress={() => {
                     props.func(true);
                   }}
@@ -273,8 +317,18 @@ const styles = StyleSheet.create({
   },
   collapse: {
     width: 30,
-    paddingLeft: 220,
+    paddingLeft: 100,
     height: 10,
     paddingBottom: 10,
+  },
+  backdrop: {
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  AddIconContainer: {
+    backgroundColor: "white",
+    justifyContent: "center",
+    alignContent: "center",
+    paddingLeft: 20,
+    borderColor: "black",
   },
 });
