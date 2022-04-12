@@ -11,130 +11,101 @@ import {
   Card,
   Select,
   SelectItem,
-  IndexPath,
 } from "@ui-kitten/components";
 import tw from "twrnc";
 import ImagePicker from "../Components/ImagePicker";
 import {
   ProfileImagePath,
-  CommunityInfo,
+  ShowCommunityIds,
+  MyCommunitysInfo,
   UserInfo,
   UserLoggedIn,
   GoogleInfo,
 } from "../assets/AppContext";
-import { addProfile } from "../Services/ServerCommunication";
+import { addProfile, getCommunities } from "../Services/ServerCommunication";
+
+async function getAllCommunities() {
+  let communities = await getCommunities();
+  return communities.filter((community) => community.private == 0);
+}
 
 export const CreateUserScreen = () => {
-  const { userInfo, setUserInfo } = React.useContext(UserInfo);
+  //CONTEXT
   const { googleInfo, setGoogleInfo } = React.useContext(GoogleInfo);
+  const { userInfo, setUserInfo } = React.useContext(UserInfo);
   const { userLoggedIn, setLoggedIn } = React.useContext(UserLoggedIn);
+  const { profileImagePath, setProfileImagePath } =
+    React.useContext(ProfileImagePath);
+  const { showCommunities, setShowCommunities } =
+    React.useContext(ShowCommunityIds);
+  const { myCommunities, setMyCommunities } =
+    React.useContext(MyCommunitysInfo);
+
+  //STATE
   const [firstName, setFirstName] = React.useState(
     googleInfo?.given_name ?? ""
   );
   const [lastName, setLastName] = React.useState(googleInfo?.family_name ?? "");
   const [phoneNumber, setPhoneNumber] = React.useState("");
+  const [multiSelectedIndex, setMultiSelectedIndex] = React.useState([]);
   const [adress, setAdress] = React.useState("");
-  const { profileImagePath, setProfileImagePath } =
-    React.useContext(ProfileImagePath);
-  const { community, setCommunity } = React.useContext(CommunityInfo);
-
-  const [selectedIndex, setSelectedIndex] = React.useState([
-    new IndexPath(0),
-    new IndexPath(1),
-  ]);
   const [visible, setVisible] = React.useState(false);
+  const [dataBaseCommunities, setDataBaseCommunities] = React.useState([]);
+
+  React.useEffect(() => {
+    const getComm = async () => {
+      setDataBaseCommunities(await getAllCommunities());
+    };
+    getComm();
+  }, []);
 
   async function createProfile() {
+    let communities = multiSelectedIndex.map(
+      (item) => dataBaseCommunities[item.row]
+    );
+    let communityIDs = multiSelectedIndex.map(
+      (item) => dataBaseCommunities[item.row].id
+    );
     let accountData = {
       firstname: firstName,
       lastname: lastName,
       number: phoneNumber,
-      email: googleInfo?.email ?? null,
+      email: googleInfo.email,
       location: "",
       imgurl: "", //TODO fixa bucket-bild
-      rating: 0,
+      rating: 0, //TODO : Start rating?
       adress: adress,
       raters: 0,
       given: 0,
       taken: 0,
     };
-    let updatedProfile = await addProfile(accountData);
+    let updatedProfile = await addProfile(accountData, communityIDs);
     setUserInfo(updatedProfile);
+    setShowCommunities(communityIDs);
+    setMyCommunities(communities);
     setLoggedIn(true);
   }
 
   const theme = useTheme();
-  const dataBaseCommunities = [
-    {
-      id: 0,
-      memberAmount: 104,
-      name: "Rackarberget",
-      description: "beskrivning",
-      location: "plats",
-      imgurl:
-        "https://www.uppsalahem.se/globalassets/bilder/omradesbilder/7002/Rackarberget_3.jpg?w=320",
-      private: false,
-      password: "psw",
-    },
-    {
-      id: 2,
-      memberAmount: 50,
-      name: "Ultuna",
-      description: "beskrivning",
-      location: "plats",
-      imgurl:
-        "https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg",
-      private: false,
-      password: "psw",
-    },
-    {
-      id: 3,
-      memberAmount: 60,
-      name: "Djäknegatan",
-      description: "beskrivning",
-      location: "plats",
-      imgurl:
-        "https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg",
-      private: false,
-      password: "psw",
-    },
-    {
-      id: 4,
-      memberAmount: 62,
-      name: "Innerstan",
-      description: "beskrivning",
-      location: "plats",
-      imgurl:
-        "https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg",
-      private: false,
-      password: "psw",
-    },
-    {
-      id: 6,
-      memberAmount: 24,
-      name: "Kantorn",
-      description: "beskrivning",
-      location: "plats",
-      imgurl:
-        "https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg",
-      private: false,
-      password: "psw",
-    },
-    {
-      id: 6,
-      memberAmount: 13,
-      name: "Rosendal",
-      description: "beskrivning",
-      location: "plats",
-      imgurl:
-        "https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg",
-      private: false,
-      password: "psw",
-    },
-  ];
 
+  const groupDisplayValues = multiSelectedIndex.map((index) => {
+    var community = dataBaseCommunities[index.row];
+    return community.name;
+  });
   const AddIcon = () => (
     <Icon style={styles.lockStyle} fill="#8F9BB3" name="plus-circle-outline" />
+  );
+  const StarIcon = (url) => (
+    <>
+      <Image
+        style={tw`rounded-full`}
+        source={{
+          uri: url,
+          height: 40,
+          width: 40,
+        }}
+      />
+    </>
   );
 
   const ChoseImageModal = () => {
@@ -158,14 +129,23 @@ export const CreateUserScreen = () => {
     return (
       <Layout style={{ height: 128, width: "100%" }} level="1">
         <Select
+          value={groupDisplayValues.join(", ")}
           multiSelect={true}
           label="Välj grannskap"
           placeholder="Välj grannskap"
-          selectedIndex={selectedIndex}
-          onSelect={(index) => setSelectedIndex(index)}
+          selectedIndex={multiSelectedIndex}
+          onSelect={(index) => {
+            setMultiSelectedIndex(index);
+          }}
         >
-          {dataBaseCommunities.map(() => {
-            return <SelectItem key="majklockan" title={"hej"} />;
+          {dataBaseCommunities.map((item) => {
+            return (
+              <SelectItem
+                key="majklockan"
+                accessoryLeft={StarIcon(item.imgurl)}
+                title={item.name}
+              />
+            );
           })}
         </Select>
       </Layout>
@@ -214,7 +194,7 @@ export const CreateUserScreen = () => {
         <SelectCommunity />
         <Button
           id="createProfile"
-          onPress={createProfile}
+          onPress={() => createProfile()}
           disabled={
             firstName === "" ||
             lastName === "" ||
@@ -243,8 +223,6 @@ const styles = StyleSheet.create({
     flex: 1,
     height: "100%",
     paddingTop: 50,
-    paddingLeft: 20,
-    paddingRight: 20,
   },
   createUserContainer: {
     flex: 1,
