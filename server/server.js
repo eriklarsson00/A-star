@@ -103,6 +103,12 @@ app.route("/users/community").post(users.addUserToCommunity);
 
 app.route("/users/community/:id").get(users.getUserCommunities);
 
+app.post(
+  "/users/profile/:id",
+  upload.single("image"),
+  users.updateProfilePicture
+);
+
 //*************************LOGIN*************************
 
 app.route("/login").post(login.userExists);
@@ -196,29 +202,6 @@ app.route("/transactions/lister/:id").get(transactions.getListerTransactions);
 
 //*************************IMAGES*********************
 
-app.post("/users/profile/:id", upload.single("image"), (req, res) => {
-  const file = req.file;
-  const id = parseInt(req.params.id);
-
-  if (!file || isNaN(id)) {
-    res.status(400).json("File to upload is not present or id is malformed");
-    return;
-  }
-
-  try {
-    uploadImageOnS3(file, "profilePictures/" + file.filename).then(
-      async (data) => {
-        const loc = data.Location;
-
-        const status = await users.updateProfilePicture(id, loc);
-        res.status(status).json(loc);
-      }
-    );
-  } catch (err) {
-    res.status(500).json("Upload failed: " + err);
-  }
-});
-
 app.post("/Image", upload.single("image"), (req, res) => {
   try {
     uploadImageOnS3(req.file, "images/" + req.file.filename);
@@ -233,19 +216,11 @@ app.post("/Image", upload.single("image"), (req, res) => {
 //*************************SERVER*************************
 
 if (sserver) {
-  sserver.listen(process.env.SERVER_PORT_HTTPS, () => {
-    console.log(
-      "Listening to port " +
-        process.env.SERVER_PORT_HTTPS +
-        " with auto reload!"
-    );
-  });
+  const httpsMsg = `Listening to port ${process.env.SERVER_PORT_HTTPS} with auto reload!`;
+  sserver.listen(process.env.SERVER_PORT_HTTPS, () => console.log(httpsMsg));
 }
 
-server.listen(process.env.SERVER_PORT_HTTP, () => {
-  console.log(
-    "Listening to port " + process.env.SERVER_PORT_HTTP + " with auto reload!"
-  );
-});
+const httpMsg = `Listening to port ${process.env.SERVER_PORT_HTTP} with auto reload!`;
+server.listen(process.env.SERVER_PORT_HTTP, () => console.log(httpMsg));
 
 export { server }; // Needed for testing purposes

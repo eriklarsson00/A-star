@@ -92,24 +92,32 @@ function updateUser(req, res) {
     });
 }
 
-async function updateProfilePicture(inputId, location) {
-  const id = parseInt(inputId);
-  let status = 500;
+async function updateProfilePicture(req, res) {
+  const file = req.file;
+  const id = parseInt(req.params.id);
 
-  if (isNaN(id) || !location) {
-    return 400;
+  if (!file || isNaN(id)) {
+    res.status(400).json("File to upload is not present or id is malformed");
+    return;
   }
 
-  await knex("Users")
-    .where("id", id)
-    .update({ imgurl: location })
-    .catch((err) => {
-      status = 500;
-    })
-    .then(() => {
-      status = 200;
-    });
-  return status;
+  uploadImageOnS3(file, "profilePictures/" + file.filename).then((data) => {
+    const loc = data.Location;
+
+    if (!loc) {
+      return res.status(500).json("Could not upload image to S3");
+    }
+
+    knex("Users")
+      .where("id", id)
+      .update({ imgurl: location })
+      .catch((err) => {
+        res.status(500).json(err);
+      })
+      .then(() => {
+        res.json(loc);
+      });
+  });
 }
 
 function deleteUser(req, res) {
