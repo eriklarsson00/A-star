@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
-import { ScrollView } from "react-native";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, FlatList } from "react-native";
 import {
   Text,
   List,
@@ -119,6 +118,30 @@ export const ItemRequestedComponent = () => {
     </View>
   );
 
+  const flatListHeader = () => {
+    return (
+      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
+        Mina efterfrågningar
+      </Text>
+    );
+  };
+
+  const flatListFooter = () => {
+    return (
+      <>
+        <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
+          Efterfrågade varor
+        </Text>
+        <List
+          scrollEnabled={false}
+          data={requests}
+          ItemSeparatorComponent={Divider}
+          renderItem={renderItem}
+        />
+      </>
+    );
+  };
+
   const LoadingView = () => (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Spinner size={"giant"} />
@@ -126,34 +149,20 @@ export const ItemRequestedComponent = () => {
   );
 
   const LoadedView = () => (
-    <ScrollView>
-      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-        Mina efterfrågningar
-      </Text>
-      <List
-        scrollEnabled={false}
-        data={myRequests}
-        ItemSeparatorComponent={Divider}
-        renderItem={renderItem}
-      />
-      {community.length != 0 ? (
+    <FlatList
+      data={myRequests}
+      ItemSeparatorComponent={Divider}
+      renderItem={renderItem}
+      ListHeaderComponent={flatListHeader}
+      ListFooterComponent={flatListFooter}
+    >
+      {community &&
         community.map((name) => (
           <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
             Efterfrågas i {name}{" "}
           </Text>
-        ))
-      ) : (
-        <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-          Efterfrågade varor
-        </Text>
-      )}
-      <List
-        scrollEnabled={false}
-        data={requests}
-        ItemSeparatorComponent={Divider}
-        renderItem={renderItem}
-      />
-    </ScrollView>
+        ))}
+    </FlatList>
   );
 
   return loading ? <LoadingView /> : <LoadedView />;

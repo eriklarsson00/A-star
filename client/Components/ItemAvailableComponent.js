@@ -132,29 +132,6 @@ export const ItemAvailableComponent = () => {
     toggleModal(item);
   };
 
-  const flatListHeader = () => {
-    return (
-      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-        Mina varor
-      </Text>
-    );
-  };
-
-  const flatListFooter = () => {
-    return (
-      <View>
-        <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-          Tillgängliga varor
-        </Text>
-        <List
-          scrollEnabled={false}
-          data={offers}
-          renderItem={renderAvailableItems}
-        />
-      </View>
-    );
-  };
-
   const renderAvailableItems = ({ item }) => {
     let infoModal = (
       <ProductInfoModal
@@ -214,6 +191,29 @@ export const ItemAvailableComponent = () => {
       </Modal>
     </View>
   );
+
+  const flatListHeader = () => {
+    return (
+      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
+        Mina varor
+      </Text>
+    );
+  };
+
+  const flatListFooter = () => {
+    return (
+      <View>
+        <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
+          Tillgängliga varor
+        </Text>
+        <List
+          scrollEnabled={false}
+          data={offers}
+          renderItem={renderAvailableItems}
+        />
+      </View>
+    );
+  };
 
   const LoadingView = () => (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
