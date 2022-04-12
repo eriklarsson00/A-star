@@ -70,10 +70,9 @@ export const CreateUserScreen = () => {
 	}, []);
 
 	async function createProfile() {
-		console.log("uppdaterad");
-		// setMyCommunitysInfo(
-		// 	multiSelectedIndex.map((item) => dataBaseCommunities[item.row])
-		// );
+		setMyCommunitysInfo(
+			multiSelectedIndex.map((item) => dataBaseCommunities[item.row])
+		);
 		let communityIDs = multiSelectedIndex.map(
 			(item) => dataBaseCommunities[item.row].id
 		);
@@ -94,9 +93,7 @@ export const CreateUserScreen = () => {
 		let updatedProfile = await addProfile(accountData, communityIDs);
 		setUserInfo(updatedProfile);
 		setShowCommunityIds(communityIDs);
-		console.log("sluet");
-
-		//setLoggedIn(true);
+		setLoggedIn(true);
 	}
 
 	const theme = useTheme();

@@ -65,8 +65,15 @@ export default () => {
 		[showCommunityIds]
 	);
 
+	const [whichScreen, setWhichScreen] = useState(<LoginNavigation />);
+
 	useEffect(async () => {
 		// Fetch userId from storage (if exists) and get user data from server
+		if (userLoggedIn) {
+			setWhichScreen(<AppNavigator />);
+		} else {
+			setWhichScreen(<LoginNavigation />);
+		}
 		try {
 			const jsonUserId = await AsyncStorage.getItem("userId");
 			if (jsonUserId !== null) {
@@ -75,6 +82,7 @@ export default () => {
 				if (users[0]) {
 					setUserInfo(users[0]);
 					setLoggedIn(true);
+					setWhichScreen(<AppNavigator />);
 				} else {
 					console.log("Cannot log in, unknown userId: " + userId);
 					setLoggedIn(false);
@@ -85,9 +93,9 @@ export default () => {
 		} catch (e) {
 			console.log(e);
 		}
-	}, []);
+	}, [userLoggedIn]);
 
-	const CheckWhichStartScreen = () => {
+	/*const CheckWhichStartScreen = () => {
 		if (userLoggedIn) {
 			return <AppNavigator />;
 		} else if (userLoggedIn != null) {
@@ -95,31 +103,30 @@ export default () => {
 		} else {
 			return <></>;
 		}
-	};
+	};*/
 
 	return (
 		<>
 			<IconRegistry icons={EvaIconsPack} />
-			<UserLoggedIn.Provider value={FirstLoggedInValue}>
-				<UserInfo.Provider value={FirstUservalue}>
-					<GoogleInfo.Provider value={FirstGooglevalue}>
-						<ShowCommunityIds.Provider value={FirstShowValue}>
-							<ProfileImagePath.Provider value={FirstProfileImagePath}>
-								<MyCommunitysInfo.Provider value={FirstCommunityValue}>
+			<UserInfo.Provider value={FirstUservalue}>
+				<GoogleInfo.Provider value={FirstGooglevalue}>
+					<ShowCommunityIds.Provider value={FirstShowValue}>
+						<ProfileImagePath.Provider value={FirstProfileImagePath}>
+							<MyCommunitysInfo.Provider value={FirstCommunityValue}>
+								<UserLoggedIn.Provider value={FirstLoggedInValue}>
 									<ApplicationProvider
 										{...eva}
 										theme={{ ...eva.light, ...theme }}
 									>
 										<StatusBar barStyle="dark-content" />
-
-										<CheckWhichStartScreen />
+										<>{whichScreen}</>
 									</ApplicationProvider>
-								</MyCommunitysInfo.Provider>
-							</ProfileImagePath.Provider>
-						</ShowCommunityIds.Provider>
-					</GoogleInfo.Provider>
-				</UserInfo.Provider>
-			</UserLoggedIn.Provider>
+								</UserLoggedIn.Provider>
+							</MyCommunitysInfo.Provider>
+						</ProfileImagePath.Provider>
+					</ShowCommunityIds.Provider>
+				</GoogleInfo.Provider>
+			</UserInfo.Provider>
 		</>
 	);
 };
