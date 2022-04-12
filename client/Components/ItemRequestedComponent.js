@@ -1,24 +1,19 @@
 import React, { useEffect } from "react";
-import { ScrollView } from "react-native";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, FlatList } from "react-native";
 import {
   Text,
-  Layout,
   List,
   Divider,
   ListItem,
-  Icon,
   Modal,
   Card,
 } from "@ui-kitten/components";
 import { useIsFocused } from "@react-navigation/native";
-import tw from "twrnc";
 import { io } from "socket.io-client";
 import { getRequests } from "../Services/ServerCommunication";
 import { host } from "../Services/ServerHost";
 
 export const ItemRequestedComponent = () => {
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
   const [myRequests, setMyRequests] = React.useState([]);
   const [requests, setRequests] = React.useState([]);
   const isFocused = useIsFocused();
@@ -116,27 +111,39 @@ export const ItemRequestedComponent = () => {
     </View>
   );
 
-  return (
-    <ScrollView>
+  const flatListHeader = () => {
+    return (
       <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
         Mina efterfrågningar
       </Text>
-      <List
-        scrollEnabled={false}
-        data={myRequests}
-        ItemSeparatorComponent={Divider}
-        renderItem={renderItem}
-      />
-      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-        Efterfrågas
-      </Text>
-      <List
-        scrollEnabled={false}
-        data={requests}
-        ItemSeparatorComponent={Divider}
-        renderItem={renderItem}
-      />
-    </ScrollView>
+    );
+  };
+
+  const flatListFooter = () => {
+    return (
+      <>
+        <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
+          Efterfrågas
+        </Text>
+        <List
+          scrollEnabled={false}
+          data={requests}
+          ItemSeparatorComponent={Divider}
+          renderItem={renderItem}
+        />
+      </>
+    );
+  };
+
+  return (
+    <FlatList
+      style={{ flex: 1 }}
+      data={myRequests}
+      ItemSeparatorComponent={Divider}
+      renderItem={renderItem}
+      ListHeaderComponent={flatListHeader}
+      ListFooterComponent={flatListFooter}
+    />
   );
 };
 

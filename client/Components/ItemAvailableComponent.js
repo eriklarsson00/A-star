@@ -5,6 +5,7 @@ import {
   Image,
   RefreshControl,
   ScrollView,
+  FlatList,
 } from "react-native";
 import {
   Text,
@@ -230,6 +231,24 @@ export const ItemAvailableComponent = () => {
     </View>
   );
 
+  const flatListHeader = () => {
+    return (
+      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
+        Mina varor
+      </Text>
+    );
+  };
+
+  const flatListFooter = () => {
+    return (
+      <List
+        scrollEnabled={false}
+        data={offers}
+        renderItem={renderAvailableItems}
+      />
+    );
+  };
+
   return (
     /* <ScrollView
         refreshControl={
@@ -237,24 +256,20 @@ export const ItemAvailableComponent = () => {
             refreshing={refreshing}
             onRefresh={onRefresh}
           />}>*/
-    <ScrollView style={{ flex: 1 }}>
-      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-        Mina varor
-      </Text>
-      <List scrollEnabled={false} data={myOffers} renderItem={renderMyItems} />
+    <FlatList
+      style={{ flex: 1 }}
+      data={myOffers}
+      renderItem={renderMyItems}
+      ListHeaderComponent={flatListHeader}
+      ListFooterComponent={flatListFooter}
+    >
       {community &&
         community.map((name) => (
           <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
             Tillgängligt i {name}{" "}
           </Text>
         ))}
-      <List
-        scrollEnabled={false}
-        data={offers}
-        renderItem={renderAvailableItems}
-      />
-    </ScrollView>
-    // </ScrollView>
+    </FlatList>
   );
 };
 
