@@ -154,6 +154,10 @@ app
     io.sockets.emit("deleteOffer", req.params.id);
   });
 
+app.route("/offers/user/:id").get(offers.getUserOffers);
+
+app.route("/offers/other/:user").get(offers.getOtherOffersCommunity);
+
 //*************************REQUESTS*************************
 
 app.route("/requests/active").get(requests.getActiveRequests);
