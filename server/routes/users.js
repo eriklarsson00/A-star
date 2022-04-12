@@ -1,5 +1,6 @@
 import { createRequire } from "module";
 import { checkIntID, checkEmptyBody, checkEmptyParam } from "./common.js";
+import { uploadImageOnS3 } from "./upload";
 const require = createRequire(import.meta.url);
 
 const knex = require("knex")({
