@@ -57,9 +57,9 @@ export const CreateUserScreen = () => {
 	const { userLoggedIn, setLoggedIn } = React.useContext(UserLoggedIn);
 	const { profileImagePath, setProfileImagePath } =
 		React.useContext(ProfileImagePath);
-	const { showCommunities, setShowCommunities } =
+	const { showCommunityIds, setShowCommunityIds } =
 		React.useContext(ShowCommunityIds);
-	const { myCommunities, setMyCommunities } =
+	const { myCommunitysInfo, setMyCommunitysInfo } =
 		React.useContext(MyCommunitysInfo);
 
 	React.useEffect(() => {
@@ -70,12 +70,14 @@ export const CreateUserScreen = () => {
 	}, []);
 
 	async function createProfile() {
-		let communities = multiSelectedIndex.map(
-			(item) => dataBaseCommunities[item.row]
-		);
+		console.log("uppdaterad");
+		// setMyCommunitysInfo(
+		// 	multiSelectedIndex.map((item) => dataBaseCommunities[item.row])
+		// );
 		let communityIDs = multiSelectedIndex.map(
 			(item) => dataBaseCommunities[item.row].id
 		);
+
 		let accountData = {
 			firstname: firstName,
 			lastname: lastName,
@@ -91,9 +93,10 @@ export const CreateUserScreen = () => {
 		};
 		let updatedProfile = await addProfile(accountData, communityIDs);
 		setUserInfo(updatedProfile);
-		setShowCommunities(communityIDs);
-		setMyCommunities(communities);
-		setLoggedIn(true);
+		setShowCommunityIds(communityIDs);
+		console.log("sluet");
+
+		//setLoggedIn(true);
 	}
 
 	const theme = useTheme();

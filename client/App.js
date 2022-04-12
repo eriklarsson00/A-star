@@ -77,6 +77,7 @@ export default () => {
 					setLoggedIn(true);
 				} else {
 					console.log("Cannot log in, unknown userId: " + userId);
+					setLoggedIn(false);
 				}
 			} else {
 				setLoggedIn(false);
@@ -99,25 +100,26 @@ export default () => {
 	return (
 		<>
 			<IconRegistry icons={EvaIconsPack} />
-			<UserInfo.Provider value={FirstUservalue}>
-				<GoogleInfo.Provider value={FirstGooglevalue}>
-					<MyCommunitysInfo.Provider value={FirstCommunityValue}>
+			<UserLoggedIn.Provider value={FirstLoggedInValue}>
+				<UserInfo.Provider value={FirstUservalue}>
+					<GoogleInfo.Provider value={FirstGooglevalue}>
 						<ShowCommunityIds.Provider value={FirstShowValue}>
 							<ProfileImagePath.Provider value={FirstProfileImagePath}>
-								<UserLoggedIn.Provider value={FirstLoggedInValue}>
+								<MyCommunitysInfo.Provider value={FirstCommunityValue}>
 									<ApplicationProvider
 										{...eva}
 										theme={{ ...eva.light, ...theme }}
 									>
 										<StatusBar barStyle="dark-content" />
+
 										<CheckWhichStartScreen />
 									</ApplicationProvider>
-								</UserLoggedIn.Provider>
+								</MyCommunitysInfo.Provider>
 							</ProfileImagePath.Provider>
 						</ShowCommunityIds.Provider>
-					</MyCommunitysInfo.Provider>
-				</GoogleInfo.Provider>
-			</UserInfo.Provider>
+					</GoogleInfo.Provider>
+				</UserInfo.Provider>
+			</UserLoggedIn.Provider>
 		</>
 	);
 };
