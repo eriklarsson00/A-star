@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View, Image, ScrollView } from "react-native";
+import { StyleSheet, View, Image, ScrollView, FlatList } from "react-native";
 import {
   Text,
   List,
@@ -122,6 +122,29 @@ export const ItemAvailableComponent = () => {
     toggleModal(item);
   };
 
+  const flatListHeader = () => {
+    return (
+      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
+        Mina varor
+      </Text>
+    );
+  };
+
+  const flatListFooter = () => {
+    return (
+      <View>
+        <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
+          Tillgängliga varor
+        </Text>
+        <List
+          scrollEnabled={false}
+          data={offers}
+          renderItem={renderAvailableItems}
+        />
+      </View>
+    );
+  };
+
   const renderAvailableItems = ({ item }) => {
     let newDate = new Date();
 
@@ -222,7 +245,7 @@ export const ItemAvailableComponent = () => {
             onChange={(event, date) => setDate(date)}
             display={"inline"}
           />
-          <Button onPress={() => addTransaction(item)}>Ta vara</Button>
+          <Button onPress={() => makeTransaction(item)}>Ta vara</Button>
         </Card>
       </Modal>
     );
@@ -275,28 +298,13 @@ export const ItemAvailableComponent = () => {
   );
 
   const LoadedView = () => (
-    <ScrollView style={{ flex: 1 }}>
-      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-        Mina varor
-      </Text>
-      <List scrollEnabled={false} data={myOffers} renderItem={renderMyItems} />
-      {community.length != 0 ? (
-        community.map((name) => (
-          <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-            Tillgängligt i {name}{" "}
-          </Text>
-        ))
-      ) : (
-        <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-          Tillgängliga varor
-        </Text>
-      )}
-      <List
-        scrollEnabled={false}
-        data={offers}
-        renderItem={renderAvailableItems}
-      />
-    </ScrollView>
+    <FlatList
+      style={{ flex: 1 }}
+      data={myOffers}
+      renderItem={renderMyItems}
+      ListHeaderComponent={flatListHeader}
+      ListFooterComponent={flatListFooter}
+    ></FlatList>
   );
 
   return loading ? <LoadingView /> : <LoadedView />;
