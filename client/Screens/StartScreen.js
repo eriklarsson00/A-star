@@ -83,16 +83,52 @@ export const StartScreen = ({ navigation }) => {
       style={{
         alignContent: "center",
         alignItems: "center",
-        marginTop: 150,
+        marginTop: 0,
       }}
     >
+      <View
+        style={{
+          zIndex: -3,
+          width: "300%",
+          height: 500,
+          position: "absolute",
+          top: -100,
+          backgroundColor: "rgba(255,100,100,0.5)",
+          transform: [{ rotateZ: "15deg" }],
+        }}
+      />
+      <View
+        style={{
+          zIndex: -3,
+          width: "300%",
+          height: 500,
+          position: "absolute",
+          top: 200,
+          backgroundColor: "rgba(255,100,100,0.3)",
+          transform: [{ rotateZ: "-15deg" }, { rotateX: "-5deg" }],
+        }}
+      />
+      <View
+        style={{
+          zIndex: -3,
+          width: 900,
+          height: 900,
+          position: "absolute",
+          top: 500,
+          borderRadius: 500,
+          backgroundColor: "rgba(255,100,100,0.2)",
+          transform: [{ rotateY: "30deg" }],
+        }}
+      />
       <Image
         source={require("../assets/icon.png")}
         style={{
+          marginTop: 125,
           width: 200,
           height: 200,
           resizeMode: "stretch",
           marginBottom: 200,
+          zIndex: 100,
         }}
       ></Image>
       <Button
