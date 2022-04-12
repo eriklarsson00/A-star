@@ -21,14 +21,13 @@ import {
 } from "@ui-kitten/components";
 import tw from "twrnc";
 import { useIsFocused } from "@react-navigation/native";
-//import { render } from 'react-dom';
-import { CommunityInfo } from "../assets/AppContext";
+import { MyCommunitysInfo, ShowCommunityIds } from "../assets/AppContext";
 import { getOffers } from "../Services/ServerCommunication.js";
 import io from "socket.io-client";
 import { host } from "../Services/ServerHost";
 
 export const ItemAvailableComponent = () => {
-  const { community } = React.useContext(CommunityInfo);
+  const { community } = React.useContext(MyCommunitysInfo);
   const [takeProduct, setTakeProduct] = React.useState(false);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const [offers, setOffers] = React.useState([]);
@@ -222,11 +221,7 @@ export const ItemAvailableComponent = () => {
   const renderLists = ({ item }) => (
     <View>
       <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-        {item.myListings
-          ? "Mina varor"
-          : community.map((name) => (
-              <Text category={"h5"}>Tillgängligt i {name} </Text>
-            ))}
+        {item.myListings ? "Mina varor" : "TODO: Fixa detta"}
       </Text>
       <List
         data={item.data}
@@ -247,9 +242,12 @@ export const ItemAvailableComponent = () => {
         Mina varor
       </Text>
       <List scrollEnabled={false} data={myOffers} renderItem={renderMyItems} />
-      {community.map((name) => (
-              <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>Tillgängligt i {name} </Text>
-            ))}
+      {community &&
+        community.map((name) => (
+          <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
+            Tillgängligt i {name}{" "}
+          </Text>
+        ))}
       <List
         scrollEnabled={false}
         data={offers}

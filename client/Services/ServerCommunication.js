@@ -18,17 +18,31 @@ const request = async (type, route, body) => {
 //Fetches a user profile with the email email.
 //Returns a profile object if the user exists, otherwise
 //An empty array
-const getUserProfile = async (email) => {
+const getUserProfileByEmail = async (email) => {
   let userProfile = await request("GET", "/users/email/" + email);
   return userProfile;
-} 
+};
+
+//Fetches a user profile with the email email.
+//Returns a profile object if the user exists, otherwise
+//An empty array
+const getUserProfileById = async (id) => {
+  let userProfile = await request("GET", "/users/" + id);
+  return userProfile;
+};
 
 const getOffers = async (communities) => {
   let offers = await request("GET", "/offers");
   // await communities.forEach(async (community) => {
   //   offers = await request("GET", "/offers/active/" + community);
   // });
-  return [...new Set(offers)]
+  return [...new Set(offers)];
+};
+
+const getCommunities = async () => {
+  let communities = await request("Get", "/communities");
+  console.log(communities);
+  return [...new Set(communities)];
 };
 
 const getRequests = async (communities) => {
@@ -36,15 +50,36 @@ const getRequests = async (communities) => {
   // communities.forEach(async (community) => {
   //   requests = [...requests, ...await request("GET", "/requests/active/" + community)];
   // });
-  return [...new Set(requests)]
+  return [...new Set(requests)];
 };
 
 //Sends an profile to the database, returns the profile
 //object with their id added.
-const addProfile = async (profile) => {
+const addProfile = async (profile, communities) => {
+  console.log(profile);
   const users = await request("POST", "/users", profile);
-  const updatedProfile = await getUserProfile(profile.email);
+  const updatedProfile = await getUserProfileByEmail(profile.email);
+  console.log("updated profile" + updatedProfile);
+  console.log("comm in add Prof" + communities);
+  await addToCommunity(updatedProfile.id, communities);
   return updatedProfile;
-}
+};
 
-export { getOffers, getRequests, getUserProfile, addProfile}
+const addToCommunity = async (profile_id, communities) => {
+  console.log("communies in addToCommunity" + communities);
+  console.log("profileId in addToCommunity" + profile_id);
+  for (const id of communities) {
+    let upload_obj = { user_id: profile_id, community_id: id };
+    await request("POST", "users/community", upload_obj);
+  }
+};
+
+export {
+  getOffers,
+  getRequests,
+  getUserProfileById,
+  getUserProfileByEmail,
+  addProfile,
+  getCommunities,
+  addToCommunity,
+};
