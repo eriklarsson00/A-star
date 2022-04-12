@@ -41,7 +41,6 @@ const getOffers = async (communities) => {
 
 const getCommunities = async () => {
   let communities = await request("Get", "/communities");
-  console.log(communities);
   return [...new Set(communities)];
 };
 
@@ -53,35 +52,29 @@ const getRequests = async (communities) => {
   return [...new Set(requests)];
 };
 
-//Sends an profile to the database, returns the profile
+//Sends an profile to the database, returns an array with the profile
 //object with their id added.
 const addProfile = async (profile, communities) => {
-  console.log(profile);
   const users = await request("POST", "/users", profile);
   const updatedProfile = await getUserProfileByEmail(profile.email);
-  console.log("updated profile" + updatedProfile);
-  console.log("comm in add Prof" + communities);
-  await addToCommunity(updatedProfile.id, communities);
+  await addToCommunity(updatedProfile[0].id, communities);
   return updatedProfile;
 };
 
-//Sends an profile to the database, returns the profile
-//object with their id added.
+const addToCommunity = async (profile_id, communities) => {
+  for (const id of communities) {
+    let upload_obj = {
+      user_id: profile_id,
+      community_id: id,
+    };
+    const result = await request("POST", "/users/community/", upload_obj);
+  }
+};
 const deleteProfile = async (id) => {
-  console.log(id);
   const res = await request("DELETE", "/users/" + id)
     .then((res) => console.log(res))
     .catch((err) => console.log(err));
   return res;
-};
-
-const addToCommunity = async (profile_id, communities) => {
-  console.log("communies in addToCommunity" + communities);
-  console.log("profileId in addToCommunity" + profile_id);
-  for (const id of communities) {
-    let upload_obj = { user_id: profile_id, community_id: id };
-    await request("POST", "users/community", upload_obj);
-  }
 };
 
 export {

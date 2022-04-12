@@ -1,5 +1,11 @@
 import React from "react";
-import { StyleSheet, Image, TouchableOpacity } from "react-native";
+import {
+  SafeAreaView,
+  StyleSheet,
+  Image,
+  View,
+  TouchableOpacity,
+} from "react-native";
 import {
   Text,
   Layout,
@@ -11,6 +17,7 @@ import {
   Card,
   Select,
   SelectItem,
+  IndexPath,
 } from "@ui-kitten/components";
 import tw from "twrnc";
 import ImagePicker from "../Components/ImagePicker";
@@ -19,8 +26,8 @@ import {
   ShowCommunityIds,
   MyCommunitysInfo,
   UserInfo,
-  UserLoggedIn,
   GoogleInfo,
+  UserLoggedIn,
 } from "../assets/AppContext";
 import { addProfile, getCommunities } from "../Services/ServerCommunication";
 
@@ -30,27 +37,28 @@ async function getAllCommunities() {
 }
 
 export const CreateUserScreen = () => {
+  //STATE
+
+  const [phoneNumber, setPhoneNumber] = React.useState("");
+  const [multiSelectedIndex, setMultiSelectedIndex] = React.useState([]);
+  const [adress, setAdress] = React.useState("");
+  const [visible, setVisible] = React.useState(false);
+  const [dataBaseCommunities, setDataBaseCommunities] = React.useState([]);
+  const [firstName, setFirstName] = React.useState(
+    googleInfo?.given_name ?? ""
+  );
+  const [lastName, setLastName] = React.useState(googleInfo?.family_name ?? "");
+
   //CONTEXT
   const { googleInfo, setGoogleInfo } = React.useContext(GoogleInfo);
   const { userInfo, setUserInfo } = React.useContext(UserInfo);
   const { userLoggedIn, setLoggedIn } = React.useContext(UserLoggedIn);
   const { profileImagePath, setProfileImagePath } =
     React.useContext(ProfileImagePath);
-  const { showCommunities, setShowCommunities } =
+  const { showCommunityIds, setShowCommunityIds } =
     React.useContext(ShowCommunityIds);
-  const { myCommunities, setMyCommunities } =
+  const { myCommunitysInfo, setMyCommunitysInfo } =
     React.useContext(MyCommunitysInfo);
-
-  //STATE
-  const [firstName, setFirstName] = React.useState(
-    googleInfo?.given_name ?? ""
-  );
-  const [lastName, setLastName] = React.useState(googleInfo?.family_name ?? "");
-  const [phoneNumber, setPhoneNumber] = React.useState("");
-  const [multiSelectedIndex, setMultiSelectedIndex] = React.useState([]);
-  const [adress, setAdress] = React.useState("");
-  const [visible, setVisible] = React.useState(false);
-  const [dataBaseCommunities, setDataBaseCommunities] = React.useState([]);
 
   React.useEffect(() => {
     const getComm = async () => {
@@ -60,17 +68,19 @@ export const CreateUserScreen = () => {
   }, []);
 
   async function createProfile() {
-    let communities = multiSelectedIndex.map(
-      (item) => dataBaseCommunities[item.row]
-    );
+    console.log("uppdaterad");
+    // setMyCommunitysInfo(
+    // 	multiSelectedIndex.map((item) => dataBaseCommunities[item.row])
+    // );
     let communityIDs = multiSelectedIndex.map(
       (item) => dataBaseCommunities[item.row].id
     );
+
     let accountData = {
       firstname: firstName,
       lastname: lastName,
       number: phoneNumber,
-      email: googleInfo.email,
+      email: googleInfo?.email ?? null,
       location: "",
       imgurl: "", //TODO fixa bucket-bild
       rating: 0, //TODO : Start rating?
@@ -81,9 +91,10 @@ export const CreateUserScreen = () => {
     };
     let updatedProfile = await addProfile(accountData, communityIDs);
     setUserInfo(updatedProfile);
-    setShowCommunities(communityIDs);
-    setMyCommunities(communities);
-    setLoggedIn(true);
+    setShowCommunityIds(communityIDs);
+    console.log("sluet");
+
+    //setLoggedIn(true);
   }
 
   const theme = useTheme();

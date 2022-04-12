@@ -1,4 +1,12 @@
-import { React, useState, useMemo, useEffect } from "react";
+import {
+  React,
+  createContext,
+  useState,
+  useMemo,
+  Component,
+  useEffect,
+  Text,
+} from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StatusBar } from "react-native";
 import * as eva from "@eva-design/eva";
@@ -65,6 +73,7 @@ export default () => {
           setLoggedIn(true);
         } else {
           console.log("Cannot log in, unknown userId: " + userId);
+          setLoggedIn(false);
         }
       } else {
         setLoggedIn(false);
