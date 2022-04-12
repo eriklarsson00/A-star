@@ -111,7 +111,7 @@ async function updateProfilePicture(req, res) {
 
     knex("Users")
       .where("id", id)
-      .update({ imgurl: location })
+      .update({ imgurl: loc })
       .catch((err) => {
         res.status(500).json(err);
       })
