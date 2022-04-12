@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity, View, Image } from "react-native";
+import { useIsFocused } from "@react-navigation/native";
 import {
   Text,
   Layout,
@@ -15,115 +16,88 @@ import {
 } from "@ui-kitten/components";
 import CommunityComponent from "../Components/CommunityComponent";
 import tw from "twrnc";
+import {
+  UserInfo,
+  MyCommunitysInfo,
+  ShowCommunityIds,
+  ProfileImagePath,
+} from "../assets/AppContext";
+import { getCommunities } from "../Services/ServerCommunication";
+
+async function getAllCommunities() {
+  let communities = await getCommunities();
+  return communities;
+}
 
 export const CommunityScreen = () => {
+  //CONTEXT
+  const { myCommunitysInfo, setMyCommunitysInfo } =
+    React.useContext(MyCommunitysInfo);
+  const { profileImagePath, setProfileImagePath } =
+    React.useContext(ProfileImagePath);
+  const { userInfo, setUserInfo } = React.useContext(UserInfo);
+
+  //STATE
   const [visible, setVisible] = React.useState(false);
   const [joinCommunity, setJoinCommunity] = React.useState(false);
   const [IncorrectCommunityPassword, setIncorrectCommunityPassword] =
     React.useState(false);
   const [joinPrivateCommunity, setJoinPrivateCommunity] = React.useState(false);
-  const [avaliableCommunities, setAvaliableCommunities] = React.useState([
-    "Ängsklockan",
-    "Rackarberget",
-    "Majklockan",
-  ]);
   const [communityPasswordInput, setCommunityPasswordInput] =
     React.useState("");
-  const [chosenCommunity, setChosenCommunity] = React.useState("");
-
-  const dataBaseCommunities = [
-    {
-      id: 0,
-      memberAmount: 104,
-      name: "Rackarberget",
-      description: "beskrivning",
-      location: "plats",
-      imgurl:
-        "https://www.uppsalahem.se/globalassets/bilder/omradesbilder/7002/Rackarberget_3.jpg?w=320",
-      private: false,
-      password: "psw",
-    },
-    {
-      id: 1,
-      memberAmount: 5,
-      name: "Kajsas änglar",
-      description: "beskrivning",
-      location: "plats",
-      imgurl: "https://m.media-amazon.com/images/I/71RfMw9q4fS._AC_UL320_.jpg",
-      private: true,
-      password: "psw",
-    },
-    {
-      id: 2,
-      memberAmount: 50,
-      name: "Ultuna",
-      description: "beskrivning",
-      location: "plats",
-      imgurl:
-        "https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg",
-      private: false,
-      password: "psw",
-    },
-    {
-      id: 3,
-      memberAmount: 60,
-      name: "Djäknegatan",
-      description: "beskrivning",
-      location: "plats",
-      imgurl:
-        "https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg",
-      private: false,
-      password: "psw",
-    },
-    {
-      id: 4,
-      memberAmount: 62,
-      name: "Innerstan",
-      description: "beskrivning",
-      location: "plats",
-      imgurl:
-        "https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg",
-      private: false,
-      password: "psw",
-    },
-    {
-      id: 5,
-      memberAmount: 11,
-      name: "ITC",
-      description: "beskrivning",
-      location: "plats",
-      imgurl:
-        "https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg",
-      private: true,
-      password: "psw",
-    },
-    {
-      id: 6,
-      memberAmount: 24,
-      name: "Kantorn",
-      description: "beskrivning",
-      location: "plats",
-      imgurl:
-        "https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg",
-      private: false,
-      password: "psw",
-    },
-    {
-      id: 6,
-      memberAmount: 13,
-      name: "Rosendal",
-      description: "beskrivning",
-      location: "plats",
-      imgurl:
-        "https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg",
-      private: false,
-      password: "psw",
-    },
-  ];
-  const printCommunity = ({ item, index }) => (
-    <CommunityComponent name={item} />
+  const [chosenCommunity, setChosenCommunity] = React.useState({});
+  const [dataBaseCommunities, setDataBaseCommunities] = React.useState([]);
+  const [myCommunityNames, setMyCommunityNames] = React.useState(
+    myCommunitysInfo.map((comm) => {
+      comm.name;
+    })
   );
+
+  //ÖVRIGT
+  const isFocused = useIsFocused();
+  const theme = useTheme();
+
+  React.useEffect(() => {
+    const getComm = async () => {
+      setDataBaseCommunities(await getAllCommunities());
+    };
+    getComm();
+
+    //	console.log(myCommunitysInfo);
+    //setMyCommunitysInfo([]); // TODO: Detta återställer ens communities till noll (=> Sätta start comms ngnstans)
+  }, [isFocused]);
+
+  //FUNKTIONER SOM RETURNERAR KOD
+  const printCommunity = ({ item, index }) => (
+    <CommunityComponent id={item.name} />
+  );
+
+  //FUNKTIONER ÖVRIGA
+
   const giveKey = ({ item, index }) => reuturn(item);
+
+  function tryPassword() {
+    if (communityPasswordInput == "test") {
+      setMyCommunitysInfo([...myCommunitysInfo, chosenCommunity]);
+      setJoinPrivateCommunity(false);
+      setVisible(false);
+      setIncorrectCommunityPassword(false);
+      setCommunityPasswordInput("");
+    } else {
+      setIncorrectCommunityPassword(true);
+      setCommunityPasswordInput("");
+    }
+  }
+
+  function addCommunity() {
+    console.log(chosenCommunity);
+    setMyCommunityNames([...myCommunityNames, chosenCommunity.name]);
+    setJoinCommunity(false);
+    setVisible(false);
+    setMyCommunitysInfo([...myCommunitysInfo, chosenCommunity]);
+  }
+
+  //IKONER
   const LockIcon = () => (
     <Icon style={styles.lockStyle} fill="#8F9BB3" name="lock-outline" />
   );
@@ -135,44 +109,37 @@ export const CommunityScreen = () => {
       name="close-circle-outline"
     />
   );
-  const theme = useTheme();
 
-  function tryPassword() {
-    if (communityPasswordInput == "test") {
-      setAvaliableCommunities([...avaliableCommunities, chosenCommunity]);
-      setJoinPrivateCommunity(false);
-      setVisible(false);
-      setIncorrectCommunityPassword(false);
-      setCommunityPasswordInput("");
-    } else {
-      setIncorrectCommunityPassword(true);
-      setCommunityPasswordInput("");
-    }
-  }
-  const printExistingCommunities = ({ item, index }) => (
+  const renderIcon = (props) => {
+    return <Icon {...props} name={props.iconName} />;
+  };
+
+  const printExistingCommunities = (
+    { item, index } //DETTA ÄR VAD SOM RENDERAS FÖR VARJE ITEM I LÄGG TILL
+  ) => (
     <TouchableOpacity
       style={[
         styles.touchableStyle,
         {
           backgroundColor:
-            chosenCommunity == item.name
+            chosenCommunity.name == item.name
               ? theme["color-basic-300"]
               : theme["color-basic-100"],
         },
       ]}
       onPress={() => {
-        chosenCommunity == item.name
-          ? setChosenCommunity("")
-          : setChosenCommunity(item.name);
+        chosenCommunity.name == item.name
+          ? setChosenCommunity({})
+          : setChosenCommunity(item);
       }}
     >
       <View style={styles.communityContainer}>
         <View style={{ width: 215 }}>
           <Text style={tw`text-lg`}>{item.name}</Text>
         </View>
-        {item.private && <LockIcon />}
+        {item.private === 1 && <LockIcon />}
       </View>
-      {chosenCommunity == item.name && (
+      {chosenCommunity.name == item.name && (
         <View>
           <Divider
             style={{
@@ -184,22 +151,26 @@ export const CommunityScreen = () => {
           <View style={styles.communityImageContainer}>
             <Image
               style={styles.communityImage}
-              source={{ uri: item.imgurl, height: 80, width: 80 }}
+              source={{
+                uri: userInfo.imgurl ? userInfo.imgurl : profileImagePath,
+                height: 80,
+                width: 80,
+              }}
             />
             <View style={styles.communityDescription}>
               <Text style={tw`mb-2 mt-1`}>{item.description}</Text>
               <View style={styles.communityImageJoin}></View>
             </View>
           </View>
-          {item.private && (
+          {item.private === 1 && (
             <Text style={tw`font-semibold`}>Privat grannskap</Text>
           )}
-          <Text>Antal medlemmar: {item.memberAmount}</Text>
+          <Text>Antal medlemmar {item.members}</Text>
           <Text>Plats: {item.location}</Text>
           <Button
             style={{ margin: 5 }}
             onPress={() =>
-              item.private
+              item.private === 1
                 ? setJoinPrivateCommunity(true)
                 : setJoinCommunity(true)
             }
@@ -211,18 +182,15 @@ export const CommunityScreen = () => {
     </TouchableOpacity>
   );
 
-  const renderIcon = (props) => {
-    return <Icon {...props} name={props.iconName} />;
-  };
   return (
     <Layout style={styles.container}>
       <Layout style={tw`pt-5 pb-2`}>
-        <Text style={tw`text-lg text-center`}>Community </Text>
+        <Text style={tw`text-lg text-center`}>Grannskap </Text>
       </Layout>
       <Divider style={{ color: "black" }} />
       <List
         style={styles.container_list}
-        data={avaliableCommunities}
+        data={myCommunitysInfo}
         renderItem={printCommunity}
         key={giveKey}
         containerStyle={styles.list_style}
@@ -233,6 +201,17 @@ export const CommunityScreen = () => {
       <Layout style={styles.buttonCont}>
         <Button style={styles.button} onPress={() => setVisible(true)}>
           Lägg till grannskap
+        </Button>
+        <Button
+          style={styles.button}
+          onPress={() => {
+            console.log(myCommunitysInfo);
+            console.log(dataBaseCommunities);
+            console.log(myCommunitysInfo[0]);
+            console.log(myCommunityNames);
+          }}
+        >
+          console <Text>{myCommunitysInfo.length}</Text>
         </Button>
       </Layout>
       <Modal
@@ -252,9 +231,7 @@ export const CommunityScreen = () => {
           <Divider />
           <List
             style={styles.dataBaseList}
-            data={dataBaseCommunities.filter(
-              (comm) => !avaliableCommunities.includes(comm.name)
-            )}
+            data={dataBaseCommunities}
             ItemSeparatorComponent={Divider}
             renderItem={printExistingCommunities}
             key={giveKey}
@@ -272,7 +249,7 @@ export const CommunityScreen = () => {
       >
         <Card disabled={true}>
           <Text style={tw`text-lg font-semibold text-center`}>
-            Vill du gå med i {chosenCommunity} ?
+            Vill du gå med i {chosenCommunity.name} ?
           </Text>
           <View
             style={{
@@ -284,14 +261,7 @@ export const CommunityScreen = () => {
           >
             <Button
               style={{ width: 100, marginRight: 15 }}
-              onPress={() => {
-                setAvaliableCommunities([
-                  ...avaliableCommunities,
-                  chosenCommunity,
-                ]);
-                setJoinCommunity(false);
-                setVisible(false);
-              }}
+              onPress={addCommunity}
             >
               Ja
             </Button>
@@ -312,7 +282,7 @@ export const CommunityScreen = () => {
       >
         <Card disabled={true}>
           <Text style={tw`text-lg font-semibold text-center`}>
-            {chosenCommunity} är ett privat grannskap
+            {chosenCommunity.name} är ett privat grannskap
           </Text>
           <View
             style={{

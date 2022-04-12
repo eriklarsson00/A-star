@@ -77,14 +77,13 @@ import * as requests from "./routes/requests.js";
 import * as transactions from "./routes/transactions.js";
 import * as products from "./routes/products.js";
 import * as ci from "./routes/ci.js";
-import * as uploadS3 from "./routes/upload.js";
+import { upload, uploadImageOnS3 } from "./routes/upload.js";
 
 //*************************CI*************************
 
 app.route("/ci/deploy").post(ci.deployServer);
 
 //*************************PRODUCTS*************************
-
 
 app.route("/products/:gtin").get(products.getProduct);
 
@@ -103,6 +102,12 @@ app.route("/users/email/:email").get(users.getUserEmail);
 app.route("/users/community").post(users.addUserToCommunity);
 
 app.route("/users/community/:id").get(users.getUserCommunities);
+
+app.post(
+  "/users/profile/:id",
+  upload.single("image"),
+  users.updateProfilePicture
+);
 
 //*************************LOGIN*************************
 
@@ -135,17 +140,19 @@ app
   .post((req, res) => {
     offers.addOffer(req, res);
     const communities = req.body.communities;
-    communities.forEach((community) => {
+    communities?.forEach((community) => {
       io.sockets.to(community).emit("offer", req.body.offer);
     });
-    addOffer(req, res)
   });
 
 app
   .route("/offers/:id")
   .get(offers.getOffer)
   .put(offers.updateOffer)
-  .delete(offers.deleteOffer);
+  .delete((req, res) => {
+    offers.deleteOffer(req, res);
+    io.sockets.emit("deleteOffer", req.params.id);
+  });
 
 //*************************REQUESTS*************************
 
@@ -159,18 +166,21 @@ app
   .route("/requests")
   .get(requests.getRequests)
   .post((req, res) => {
+    requests.addRequest(req, res);
     const communities = req.body.communities;
-    communities.forEach((community) => {
+    communities?.forEach((community) => {
       io.sockets.to(community).emit("request", req.body.request);
     });
-    addRequest(req, res)
   });
 
 app
   .route("/requests/:id")
   .get(requests.getRequest)
   .put(requests.updateRequest)
-  .delete(requests.deleteRequest);
+  .delete((req, res) => {
+    requests.deleteRequest(req, res);
+    io.sockets.emit("deleteRequest", req.params.id);
+  });
 
 //*************************TRANSACTIONS*************************
 
@@ -197,28 +207,25 @@ app.route("/transactions/lister/:id").get(transactions.getListerTransactions);
 
 //*************************IMAGES*********************
 
-app.post("/images", uploadS3.upload.single("image"), (req, res) => {
-  uploadS3.uploadImageOnS3(req.file);
-  console.log(req.file);
-  res.send("Single File test");
+app.post("/Image", upload.single("image"), (req, res) => {
+  try {
+    uploadImageOnS3(req.file, "images/" + req.file.filename);
+    res.json(
+      "https://matsamverkan.s3.us-east-1.amazonaws.com/" + req.file.filename
+    );
+  } catch (err) {
+    res.status(500);
+    res.json("Upload failed: " + err);
+  }
 });
-
 //*************************SERVER*************************
 
 if (sserver) {
-  sserver.listen(process.env.SERVER_PORT_HTTPS, () => {
-    console.log(
-      "Listening to port " +
-        process.env.SERVER_PORT_HTTPS +
-        " with auto reload!"
-    );
-  });
+  const httpsMsg = `Listening to port ${process.env.SERVER_PORT_HTTPS} with auto reload!`;
+  sserver.listen(process.env.SERVER_PORT_HTTPS, () => console.log(httpsMsg));
 }
 
-server.listen(process.env.SERVER_PORT_HTTP, () => {
-  console.log(
-    "Listening to port " + process.env.SERVER_PORT_HTTP + " with auto reload!"
-  );
-});
+const httpMsg = `Listening to port ${process.env.SERVER_PORT_HTTP} with auto reload!`;
+server.listen(process.env.SERVER_PORT_HTTP, () => console.log(httpMsg));
 
 export { server }; // Needed for testing purposes

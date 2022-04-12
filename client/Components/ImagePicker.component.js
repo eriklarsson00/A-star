@@ -1,16 +1,15 @@
 import React, { useState, useContext } from "react";
 import { View, Text, StyleSheet, Image, Button } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import * as ImageManipulator from 'expo-image-manipulator';
-import {ProfileImagePath} from '../assets/AppContext';
-
+import * as ImageManipulator from "expo-image-manipulator";
+import { ProfileImagePath } from "../assets/AppContext";
 
 // send witb prop resize= {x} to change dimension of picture
 export default function ImagePickerComp(props) {
   // The path of the picked image
 
   const [pickedImagePath, setPickedImagePath] = useState("");
-  const [ProfileImagePath, setProfileImagePath] = useContext(ProfileImagePath);
+  const [profileImagePath, setProfileImagePath] = useContext(ProfileImagePath);
   // This function is triggered when the "Select an image" button pressed
   const showImagePicker = async () => {
     // Ask the user for the permission to access the media library
@@ -21,7 +20,6 @@ export default function ImagePickerComp(props) {
       alert("You've refused to allow this app to access your photos!");
       return;
     }
-    console.log("här");
     const result = await ImagePicker.launchImageLibraryAsync({
       quality: 0,
     });
@@ -31,12 +29,12 @@ export default function ImagePickerComp(props) {
 
     if (!result.cancelled) {
       setPickedImagePath(result.uri);
-      if(props.context === 'Profile') {
+      if (props.context === "Profile") {
         setProfileImagePath(result.uri);
-      } 
+      }
 
-      if(props.context === 'Item') {
-          //TODO set context for item
+      if (props.context === "Item") {
+        //TODO set context for item
       }
       pushToServer(result);
     }
@@ -59,12 +57,12 @@ export default function ImagePickerComp(props) {
     console.log(result);
     if (!result.cancelled) {
       setPickedImagePath(result.uri);
-      if(props.context === 'Profile') {
+      if (props.context === "Profile") {
         setProfileImagePath(result.uri);
-      } 
+      }
 
-      if(props.context === 'Item') {
-          //TODO set context for item
+      if (props.context === "Item") {
+        //TODO set context for item
       }
 
       pushToServer(result);
@@ -73,14 +71,16 @@ export default function ImagePickerComp(props) {
 
   //Sends the picture to the s3 bucket
   const pushToServer = async (result) => {
-   const image = await resizeImage(result, props.resize);
+    const image = await resizeImage(result, props.resize);
     const body = new FormData();
     body.append("image", {
       name: "photo.jpg",
       type: image.type,
       uri: image.uri,
     });
-    var ip = "http://ec2-3-215-18-23.compute-1.amazonaws.com/images";
+    let imagePath = props.context;
+    console.log("imagePath = " + imagePath);
+    var ip = "http://ec2-3-215-18-23.compute-1.amazonaws.com/" + imagePath;
 
     fetch(ip, {
       method: "POST",
@@ -91,24 +91,22 @@ export default function ImagePickerComp(props) {
     }).catch((err) => console.log(err));
   };
 
-  //changes the size of the image. 
+  //changes the size of the image.
   resizeImage = async (result, resize) => {
     const manipResult = await ImageManipulator.manipulateAsync(
-     
       result.uri,
-      [{ resize: { width: result.width * resize, height: result.height * resize } }],
-      { compress: 1}
-    ); 
-      return manipResult;
-    }
-
-
-
-
-
-
-
-
+      [
+        {
+          resize: {
+            width: result.width * resize,
+            height: result.height * resize,
+          },
+        },
+      ],
+      { compress: 1 }
+    );
+    return manipResult;
+  };
 
   return (
     <View style={styles.screen}>
@@ -124,10 +122,7 @@ export default function ImagePickerComp(props) {
       </View>
     </View>
   );
-    
-
-
-        }
+}
 
 // Kindacode.com
 // Just some styles

@@ -1,140 +1,262 @@
 import React from "react";
-import { SafeAreaView, StyleSheet, Image, View, TouchableOpacity } from "react-native";
-import { Text, Layout, Button, Input, Icon, useTheme, Modal, Card, Select, SelectItem, IndexPath} from "@ui-kitten/components";
-import tw from 'twrnc'
-import ImagePicker from '../Components/ImagePicker'
-import {ProfileImagePath, CommunityInfo, UserInfo} from '../assets/AppContext'
+import {
+  SafeAreaView,
+  StyleSheet,
+  Image,
+  View,
+  TouchableOpacity,
+} from "react-native";
+import {
+  Text,
+  Layout,
+  Button,
+  Input,
+  Icon,
+  useTheme,
+  Modal,
+  Card,
+  Select,
+  SelectItem,
+  IndexPath,
+} from "@ui-kitten/components";
+import tw from "twrnc";
+import ImagePicker from "../Components/ImagePicker";
+import {
+  ProfileImagePath,
+  ShowCommunityIds,
+  MyCommunitysInfo,
+  UserInfo,
+  GoogleInfo,
+  UserLoggedIn,
+} from "../assets/AppContext";
+import { addProfile, getCommunities } from "../Services/ServerCommunication";
 
+async function getAllCommunities() {
+  let communities = await getCommunities();
+  return communities.filter((community) => community.private == 0);
+}
 
 export const CreateUserScreen = () => {
+  //STATE
 
-    const [firstName, setFirstName] = React.useState('');
-    const [lastName, setLastName] = React.useState('');
-    const [phoneNumber, setPhoneNumber] = React.useState('');
-    const {userInfo, setUserInfo } = React.useContext(UserInfo);
-    const [location, setLocation] = React.useState('');
-    const {profileImagePath, setProfileImagePath } = React.useContext(ProfileImagePath);
-    const { community, setCommunity } = React.useContext(CommunityInfo);
+  const [phoneNumber, setPhoneNumber] = React.useState("");
+  const [multiSelectedIndex, setMultiSelectedIndex] = React.useState([]);
+  const [adress, setAdress] = React.useState("");
+  const [visible, setVisible] = React.useState(false);
+  const [dataBaseCommunities, setDataBaseCommunities] = React.useState([]);
+  const [firstName, setFirstName] = React.useState(
+    googleInfo?.given_name ?? ""
+  );
+  const [lastName, setLastName] = React.useState(googleInfo?.family_name ?? "");
 
-    const [selectedIndex, setSelectedIndex] = React.useState(new IndexPath(0));
-    const [visible, setVisible] = React.useState(false);
+  //CONTEXT
+  const { googleInfo, setGoogleInfo } = React.useContext(GoogleInfo);
+  const { userInfo, setUserInfo } = React.useContext(UserInfo);
+  const { userLoggedIn, setLoggedIn } = React.useContext(UserLoggedIn);
+  const { profileImagePath, setProfileImagePath } =
+    React.useContext(ProfileImagePath);
+  const { showCommunityIds, setShowCommunityIds } =
+    React.useContext(ShowCommunityIds);
+  const { myCommunitysInfo, setMyCommunitysInfo } =
+    React.useContext(MyCommunitysInfo);
 
-    const createProfile = () => {
-        let accountData = {
-            firstName : firstName,
-            lastName : lastName,
-            number : phoneNumber,
-            email : userInfo.email,
-            location : location,
-            imgurl : '', //TODO fixa bucket-bild
-            rating : '', //TODO : Start rating?
-            given : 0,
-            taken : 0,
-        }
-        setUserInfo(accountData);
-        console.log(accountData);
-        //TO DO pusha upp på databasen
-        //navigera till start
-    }
+  React.useEffect(() => {
+    const getComm = async () => {
+      setDataBaseCommunities(await getAllCommunities());
+    };
+    getComm();
+  }, []);
 
-    const theme = useTheme()
-    const dataBaseCommunities = [
-	{id: 0, memberAmount: 104, name: 'Rackarberget', description: 'beskrivning', location: 'plats', imgurl: 'https://www.uppsalahem.se/globalassets/bilder/omradesbilder/7002/Rackarberget_3.jpg?w=320', private: false, password: 'psw'},
-	{id: 2, memberAmount: 50, name: 'Ultuna', description: 'beskrivning', location: 'plats', imgurl: 'https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg', private: false, password: 'psw'},
-	{id: 3, memberAmount: 60, name: 'Djäknegatan', description: 'beskrivning', location: 'plats', imgurl: 'https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg', private: false, password: 'psw'},
-	{id: 4, memberAmount: 62, name: 'Innerstan', description: 'beskrivning', location: 'plats', imgurl: 'https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg', private: false, password: 'psw'}, 
-	{id: 6, memberAmount: 24, name: 'Kantorn', description: 'beskrivning', location: 'plats', imgurl: 'https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg', private: false, password: 'psw'}, 
-	{id: 6, memberAmount: 13, name: 'Rosendal', description: 'beskrivning', location: 'plats', imgurl: 'https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg', private: false, password: 'psw'}]
+  async function createProfile() {
+    setMyCommunitysInfo(
+      multiSelectedIndex.map((item) => dataBaseCommunities[item.row])
+    );
+    let communityIDs = multiSelectedIndex.map(
+      (item) => dataBaseCommunities[item.row].id
+    );
 
-    const AddIcon = () => (
-		<Icon style={ styles.lockStyle} fill="#8F9BB3"name='plus-circle-outline'/>
-	);
-    const ChoseImageModal = ()=> {
-        return(
-        <Modal
-		visible={visible}
-		backdropStyle={styles.backdrop}
-		onBackdropPress={() => setVisible(false)}
+    let accountData = {
+      firstname: firstName,
+      lastname: lastName,
+      number: phoneNumber,
+      email: googleInfo?.email ?? null,
+      location: "",
+      imgurl: "", //TODO fixa bucket-bild
+      rating: 0, //TODO : Start rating?
+      adress: adress,
+      raters: 0,
+      given: 0,
+      taken: 0,
+    };
+    let updatedProfile = await addProfile(accountData, communityIDs);
+    setUserInfo(updatedProfile);
+    setShowCommunityIds(communityIDs);
+    setLoggedIn(true);
+  }
+
+  const theme = useTheme();
+
+  const groupDisplayValues = multiSelectedIndex.map((index) => {
+    var community = dataBaseCommunities[index.row];
+    return community.name;
+  });
+  const AddIcon = () => (
+    <Icon style={styles.lockStyle} fill="#8F9BB3" name="plus-circle-outline" />
+  );
+  const StarIcon = (url) => (
+    <>
+      <Image
+        style={tw`rounded-full`}
+        source={{
+          uri: url,
+          height: 40,
+          width: 40,
+        }}
+      />
+    </>
+  );
+
+  const ChoseImageModal = () => {
+    return (
+      <Modal
+        visible={visible}
+        backdropStyle={styles.backdrop}
+        onBackdropPress={() => setVisible(false)}
+      >
+        <Card disabled={true}>
+          <ImagePicker context="Profile" />
+          <Button style={tw`mt-2 w-50`} onPress={() => setVisible(false)}>
+            Klar
+          </Button>
+        </Card>
+      </Modal>
+    );
+  };
+
+  const SelectCommunity = () => {
+    return (
+      <Layout style={{ height: 100, width: "100%" }} level="1">
+        <Select
+          style={styles.inputStyle}
+          value={groupDisplayValues.join(", ")}
+          multiSelect={true}
+          label="Välj grannskap"
+          placeholder="Välj grannskap"
+          selectedIndex={multiSelectedIndex}
+          onSelect={(index) => {
+            setMultiSelectedIndex(index);
+          }}
         >
-			<Card disabled={true}>
-			<ImagePicker context="Profile"/>
-            <Button style={tw`mt-2 w-50 `} onPress={() => setVisible(false)}>Klar</Button>
-			</Card>
-		</Modal>
-        )}
+          {dataBaseCommunities.map((item) => {
+            return (
+              <SelectItem
+                key="majklockan"
+                accessoryLeft={StarIcon(item.imgurl)}
+                title={item.name}
+              />
+            );
+          })}
+        </Select>
+      </Layout>
+    );
+  };
 
-    const SelectCommunity = () =>{
-    return(
-        <Layout style={{minHeight:128, width:"100%"}} level='1'>
-            <Select 
-            multiSelect = {true}
-            label="Välj grannskap"
-            placeholder="Välj grannskap"
-            selectedIndex={selectedIndex}
-            onSelect={index => setSelectedIndex(index)}>
-            {dataBaseCommunities.map(() =>{
-                return(
-                <SelectItem  title={"hej"}/>)
-            })}
- 
-            </Select>
-        </Layout>
-    )
-    }
-   
-	return (
+  return (
     <Layout style={styles.container}>
-        <Layout style={tw`pt-5 pb-2`}>
-            <Text style={tw`text-lg text-center`}>
-                Slutför registrering
-            </Text>
-        </Layout>
-        <Layout style={styles.createUserContainer} level='1'>
-            <Image style={tw`rounded-full`} source={{uri:profileImagePath, height: 150, width: 150}}/>
-            <TouchableOpacity onPress={()=>{setVisible(true)}} style={styles.AddIconContainer}>
-            <ChoseImageModal/>
-            <AddIcon/>
-            </TouchableOpacity>
-            <Input label='Förnamn' value={firstName} onChangeText={nextValue => setFirstName(nextValue)}/>
-            <Input label='Efternamn' value={lastName} onChangeText={nextValue => setLastName(nextValue)}/>
-            <Input label='Telefonnummer' value={phoneNumber} onChangeText={nextValue => setPhoneNumber(nextValue)}/>
-            <Input label='Adress' value={location} onChangeText={nextValue => setLocation(nextValue)}/>
-            <SelectCommunity />
-            <Button 
-                id="createProfile" 
-                onPress={() => createProfile()} 
-                disabled={firstName === '' || lastName === '' || phoneNumber === '' || location === ''} 
-                style= {{backgroundColor: firstName === '' || lastName === '' || phoneNumber === '' || location === '' ? "grey" : theme['color-primary-500']}}
-            >Skapa Konto</Button>
-        </Layout> 
+      <Layout style={tw`pt-5 pb-2`}>
+        <Text style={tw`text-lg text-center`}>Slutför registrering</Text>
+      </Layout>
+      <Layout style={styles.createUserContainer} level="1">
+        <Image
+          style={tw`rounded-full`}
+          source={{ uri: profileImagePath, height: 150, width: 150 }}
+        />
+        <TouchableOpacity
+          onPress={() => {
+            setVisible(true);
+          }}
+          style={styles.AddIconContainer}
+        >
+          <ChoseImageModal />
+          <AddIcon />
+        </TouchableOpacity>
+        <Input
+          style={styles.inputStyle}
+          label="Förnamn"
+          value={firstName}
+          onChangeText={(nextValue) => setFirstName(nextValue)}
+        />
+        <Input
+          style={styles.inputStyle}
+          label="Efternamn"
+          value={lastName}
+          onChangeText={(nextValue) => setLastName(nextValue)}
+        />
+        <Input
+          style={styles.inputStyle}
+          label="Telefonnummer"
+          value={phoneNumber}
+          onChangeText={(nextValue) => setPhoneNumber(nextValue)}
+        />
+        <Input
+          style={styles.inputStyle}
+          label="Adress"
+          value={adress}
+          onChangeText={(nextValue) => setAdress(nextValue)}
+        />
+        <SelectCommunity />
+        <Button
+          id="createProfile"
+          onPress={() => createProfile()}
+          disabled={
+            firstName === "" ||
+            lastName === "" ||
+            phoneNumber === "" ||
+            adress === ""
+          }
+          style={{
+            backgroundColor:
+              firstName === "" ||
+              lastName === "" ||
+              phoneNumber === "" ||
+              adress === ""
+                ? "grey"
+                : theme["color-primary-500"],
+          }}
+        >
+          Skapa Konto
+        </Button>
+      </Layout>
     </Layout>
-	);
+  );
 };
 
-
-const styles = StyleSheet.create({ 
-    container: {
-		flex: 1,
-		height: '100%',
-		paddingTop:50,
-    },
-    createUserContainer:{
-        flex: 1,
-        flexDirection : 'column',
-        alignItems: 'center'
-    },
-    lockStyle:{
-	    width: 65,
-	    height: 65,
-    },
-    AddIconContainer: {
-        position: 'absolute',
-        marginTop: 110,
-        backgroundColor: 'white',
-        borderRadius: 50
-    },
-    backdrop: {
-	    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    },
-    
-}); 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    height: "100%",
+    paddingTop: 50,
+    paddingHorizontal: 25,
+  },
+  createUserContainer: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  lockStyle: {
+    width: 65,
+    height: 65,
+  },
+  AddIconContainer: {
+    position: "absolute",
+    marginTop: 110,
+    backgroundColor: "white",
+    borderRadius: 50,
+  },
+  backdrop: {
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  inputStyle: {
+    marginVertical: 10,
+  },
+});
