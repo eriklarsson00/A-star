@@ -63,9 +63,6 @@ export const CommunityScreen = () => {
 			setDataBaseCommunities(await getAllCommunities());
 		};
 		getComm();
-
-		//	console.log(myCommunitysInfo);
-		//setMyCommunitysInfo([]); // TODO: Detta återställer ens communities till noll (=> Sätta start comms ngnstans)
 	}, [isFocused]);
 
 	//FUNKTIONER SOM RETURNERAR KOD
@@ -78,7 +75,7 @@ export const CommunityScreen = () => {
 	const giveKey = ({ item, index }) => reuturn(item);
 
 	function tryPassword() {
-		if (communityPasswordInput == "test") {
+		if (communityPasswordInput === chosenCommunity.password) {
 			setMyCommunitysInfo([...myCommunitysInfo, chosenCommunity]);
 			setJoinPrivateCommunity(false);
 			setVisible(false);
@@ -91,7 +88,6 @@ export const CommunityScreen = () => {
 	}
 
 	function addCommunity() {
-		console.log(chosenCommunity);
 		setMyCommunityNames([...myCommunityNames, chosenCommunity.name]);
 		setJoinCommunity(false);
 		setVisible(false);
