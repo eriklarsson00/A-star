@@ -51,7 +51,8 @@
     "twrnc": "^3.0.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.9"
+    "@babel/core": "^7.12.9",
+    "@types/react": "^18.0.0"
   },
   "private": true,
   "author": "",

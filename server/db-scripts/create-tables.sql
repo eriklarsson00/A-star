@@ -135,6 +135,10 @@ CREATE TABLE IF NOT EXISTS Transactions
         ON DELETE CASCADE,
     CONSTRAINT transactions_ibfk_3
         FOREIGN KEY (responder_id) REFERENCES Users (id)
+    CONSTRAINT transactions_offer_id_uindex
+        UNIQUE (offer_id)
+    CONSTRAINT transactions_request_id_uindex
+        UNIQUE (request_id)
 );
 
 CREATE INDEX offer_id

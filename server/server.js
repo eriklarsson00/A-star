@@ -77,7 +77,7 @@ import * as requests from "./routes/requests.js";
 import * as transactions from "./routes/transactions.js";
 import * as products from "./routes/products.js";
 import * as ci from "./routes/ci.js";
-import * as uploadS3 from "./routes/upload.js";
+import { upload, uploadImageOnS3 } from "./routes/upload.js";
 
 //*************************CI*************************
 
@@ -102,6 +102,12 @@ app.route("/users/email/:email").get(users.getUserEmail);
 app.route("/users/community").post(users.addUserToCommunity);
 
 app.route("/users/community/:id").get(users.getUserCommunities);
+
+app.post(
+  "/users/profile/:id",
+  upload.single("image"),
+  users.updateProfilePicture
+);
 
 //*************************LOGIN*************************
 
@@ -201,40 +207,25 @@ app.route("/transactions/lister/:id").get(transactions.getListerTransactions);
 
 //*************************IMAGES*********************
 
-app.post("/Image", async (req, res) => {
+app.post("/Image", upload.single("image"), (req, res) => {
   try {
-    await uploadImageOnS3(req.file, "/images");
-    res.send("Succesfully sent to images");
+    uploadImageOnS3(req.file, "images/" + req.file.filename);
+    res.json(
+      "https://matsamverkan.s3.us-east-1.amazonaws.com/" + req.file.filename
+    );
   } catch (err) {
-    res.send("Upload failed", err);
-  }
-});
-
-app.post("/Profile", async (req, res) => {
-  try {
-    console.log("IN /Profile on server.js!!!!");
-    await uploadImageOnS3(req.file, "/profilePictures/test.jpg");
-    res.send("Succesfully sent to profiles");
-  } catch (err) {
-    res.send("Upload failed", err);
+    res.status(500);
+    res.json("Upload failed: " + err);
   }
 });
 //*************************SERVER*************************
 
 if (sserver) {
-  sserver.listen(process.env.SERVER_PORT_HTTPS, () => {
-    console.log(
-      "Listening to port " +
-        process.env.SERVER_PORT_HTTPS +
-        " with auto reload!"
-    );
-  });
+  const httpsMsg = `Listening to port ${process.env.SERVER_PORT_HTTPS} with auto reload!`;
+  sserver.listen(process.env.SERVER_PORT_HTTPS, () => console.log(httpsMsg));
 }
 
-server.listen(process.env.SERVER_PORT_HTTP, () => {
-  console.log(
-    "Listening to port " + process.env.SERVER_PORT_HTTP + " with auto reload!"
-  );
-});
+const httpMsg = `Listening to port ${process.env.SERVER_PORT_HTTP} with auto reload!`;
+server.listen(process.env.SERVER_PORT_HTTP, () => console.log(httpMsg));
 
 export { server }; // Needed for testing purposes
