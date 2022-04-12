@@ -23,113 +23,99 @@ import tw from "twrnc";
 import ImagePicker from "../Components/ImagePicker";
 import {
   ProfileImagePath,
-  CommunityInfo,
+  ShowCommunityIds,
+  MyCommunitysInfo,
   UserInfo,
+  GoogleInfo,
+  UserLoggedIn,
 } from "../assets/AppContext";
+import { addProfile, getCommunities } from "../Services/ServerCommunication";
+
+async function getAllCommunities() {
+  let communities = await getCommunities();
+  return communities.filter((community) => community.private == 0);
+}
 
 export const CreateUserScreen = () => {
-  const [firstName, setFirstName] = React.useState("");
-  const [lastName, setLastName] = React.useState("");
+  //STATE
+
   const [phoneNumber, setPhoneNumber] = React.useState("");
+  const [multiSelectedIndex, setMultiSelectedIndex] = React.useState([]);
+  const [adress, setAdress] = React.useState("");
+  const [visible, setVisible] = React.useState(false);
+  const [dataBaseCommunities, setDataBaseCommunities] = React.useState([]);
+  const [firstName, setFirstName] = React.useState(
+    googleInfo?.given_name ?? ""
+  );
+  const [lastName, setLastName] = React.useState(googleInfo?.family_name ?? "");
+
+  //CONTEXT
+  const { googleInfo, setGoogleInfo } = React.useContext(GoogleInfo);
   const { userInfo, setUserInfo } = React.useContext(UserInfo);
-  const [location, setLocation] = React.useState("");
+  const { userLoggedIn, setLoggedIn } = React.useContext(UserLoggedIn);
   const { profileImagePath, setProfileImagePath } =
     React.useContext(ProfileImagePath);
-  const { community, setCommunity } = React.useContext(CommunityInfo);
+  const { showCommunityIds, setShowCommunityIds } =
+    React.useContext(ShowCommunityIds);
+  const { myCommunitysInfo, setMyCommunitysInfo } =
+    React.useContext(MyCommunitysInfo);
 
-  const [selectedIndex, setSelectedIndex] = React.useState(new IndexPath(0));
-  const [visible, setVisible] = React.useState(false);
+  React.useEffect(() => {
+    const getComm = async () => {
+      setDataBaseCommunities(await getAllCommunities());
+    };
+    getComm();
+  }, []);
 
-  const createProfile = () => {
+  async function createProfile() {
+    setMyCommunitysInfo(
+      multiSelectedIndex.map((item) => dataBaseCommunities[item.row])
+    );
+    let communityIDs = multiSelectedIndex.map(
+      (item) => dataBaseCommunities[item.row].id
+    );
+
     let accountData = {
-      firstName: firstName,
-      lastName: lastName,
+      firstname: firstName,
+      lastname: lastName,
       number: phoneNumber,
-      email: userInfo.email,
-      location: location,
+      email: googleInfo?.email ?? null,
+      location: "",
       imgurl: "", //TODO fixa bucket-bild
-      rating: "", //TODO : Start rating?
+      rating: 0, //TODO : Start rating?
+      adress: adress,
+      raters: 0,
       given: 0,
       taken: 0,
     };
-    setUserInfo(accountData);
-    //TO DO pusha upp på databasen
-    //navigera till start
-  };
+    let updatedProfile = await addProfile(accountData, communityIDs);
+    setUserInfo(updatedProfile);
+    setShowCommunityIds(communityIDs);
+    setLoggedIn(true);
+  }
 
   const theme = useTheme();
-  const dataBaseCommunities = [
-    {
-      id: 0,
-      memberAmount: 104,
-      name: "Rackarberget",
-      description: "beskrivning",
-      location: "plats",
-      imgurl:
-        "https://www.uppsalahem.se/globalassets/bilder/omradesbilder/7002/Rackarberget_3.jpg?w=320",
-      private: false,
-      password: "psw",
-    },
-    {
-      id: 2,
-      memberAmount: 50,
-      name: "Ultuna",
-      description: "beskrivning",
-      location: "plats",
-      imgurl:
-        "https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg",
-      private: false,
-      password: "psw",
-    },
-    {
-      id: 3,
-      memberAmount: 60,
-      name: "Djäknegatan",
-      description: "beskrivning",
-      location: "plats",
-      imgurl:
-        "https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg",
-      private: false,
-      password: "psw",
-    },
-    {
-      id: 4,
-      memberAmount: 62,
-      name: "Innerstan",
-      description: "beskrivning",
-      location: "plats",
-      imgurl:
-        "https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg",
-      private: false,
-      password: "psw",
-    },
-    {
-      id: 6,
-      memberAmount: 24,
-      name: "Kantorn",
-      description: "beskrivning",
-      location: "plats",
-      imgurl:
-        "https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg",
-      private: false,
-      password: "psw",
-    },
-    {
-      id: 6,
-      memberAmount: 13,
-      name: "Rosendal",
-      description: "beskrivning",
-      location: "plats",
-      imgurl:
-        "https://image.shutterstock.com/image-vector/vector-illustration-cool-detailed-red-260nw-94498447.jpg",
-      private: false,
-      password: "psw",
-    },
-  ];
 
+  const groupDisplayValues = multiSelectedIndex.map((index) => {
+    var community = dataBaseCommunities[index.row];
+    return community.name;
+  });
   const AddIcon = () => (
     <Icon style={styles.lockStyle} fill="#8F9BB3" name="plus-circle-outline" />
   );
+  const StarIcon = (url) => (
+    <>
+      <Image
+        style={tw`rounded-full`}
+        source={{
+          uri: url,
+          height: 40,
+          width: 40,
+        }}
+      />
+    </>
+  );
+
   const ChoseImageModal = () => {
     return (
       <Modal
@@ -138,8 +124,8 @@ export const CreateUserScreen = () => {
         onBackdropPress={() => setVisible(false)}
       >
         <Card disabled={true}>
-          <ImagePicker resize={1} context="Profile" />
-          <Button style={tw`mt-2 w-50 `} onPress={() => setVisible(false)}>
+          <ImagePicker context="Profile" />
+          <Button style={tw`mt-2 w-50`} onPress={() => setVisible(false)}>
             Klar
           </Button>
         </Card>
@@ -149,14 +135,25 @@ export const CreateUserScreen = () => {
 
   const SelectCommunity = () => {
     return (
-      <Layout style={{ minHeight: 128 }} level="1">
+      <Layout style={{ height: 128, width: "100%" }} level="1">
         <Select
+          value={groupDisplayValues.join(", ")}
           multiSelect={true}
-          selectedIndex={selectedIndex}
-          onSelect={(index) => setSelectedIndex(index)}
+          label="Välj grannskap"
+          placeholder="Välj grannskap"
+          selectedIndex={multiSelectedIndex}
+          onSelect={(index) => {
+            setMultiSelectedIndex(index);
+          }}
         >
-          {dataBaseCommunities.map(() => {
-            return <SelectItem title={"hej"} />;
+          {dataBaseCommunities.map((item) => {
+            return (
+              <SelectItem
+                key="majklockan"
+                accessoryLeft={StarIcon(item.imgurl)}
+                title={item.name}
+              />
+            );
           })}
         </Select>
       </Layout>
@@ -168,7 +165,7 @@ export const CreateUserScreen = () => {
       <Layout style={tw`pt-5 pb-2`}>
         <Text style={tw`text-lg text-center`}>Slutför registrering</Text>
       </Layout>
-      <Layout style={styles.createUserContainer}>
+      <Layout style={styles.createUserContainer} level="1">
         <Image
           style={tw`rounded-full`}
           source={{ uri: profileImagePath, height: 150, width: 150 }}
@@ -199,20 +196,28 @@ export const CreateUserScreen = () => {
         />
         <Input
           label="Adress"
-          value={location}
-          onChangeText={(nextValue) => setLocation(nextValue)}
+          value={adress}
+          onChangeText={(nextValue) => setAdress(nextValue)}
         />
-        <Text></Text>
         <SelectCommunity />
         <Button
+          id="createProfile"
+          onPress={() => createProfile()}
           disabled={
             firstName === "" ||
             lastName === "" ||
             phoneNumber === "" ||
-            location === ""
+            adress === ""
           }
-          onPress={() => createProfile()}
-          style={{ width: 200, margin: 15 }}
+          style={{
+            backgroundColor:
+              firstName === "" ||
+              lastName === "" ||
+              phoneNumber === "" ||
+              adress === ""
+                ? "grey"
+                : theme["color-primary-500"],
+          }}
         >
           Skapa Konto
         </Button>

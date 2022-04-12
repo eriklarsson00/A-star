@@ -20,112 +20,109 @@ import {
   Input,
 } from "@ui-kitten/components";
 import tw from "twrnc";
-//import { render } from 'react-dom';
-import { CommunityInfo} from "../assets/AppContext";
+import { useIsFocused } from "@react-navigation/native";
+import { MyCommunitysInfo, ShowCommunityIds } from "../assets/AppContext";
 import { getOffers } from "../Services/ServerCommunication.js";
-
-const DiscoverIcon = (props) => <Icon {...props} name="compass-outline" />;
-
-let otherItems = [];
-let ownItems = [];
-let id = 1;
-
-async function getItems() {
-  let offers = await getOffers([1]);
-  offers.forEach((offer) => {
-    if ((offer.user_id == id)) {
-      ownItems.push(offer);
-    } else {
-      otherItems.push(offer);
-    }
-  });
-}
-
-// const items = getItems();
-// function getItems() { //TODO: Get the users actuall listning items
-//     return new Array(10).fill({
-//         user_id : 1,
-//         product_id :1,
-//         product_text : "Apelsin",
-//         description: "Beskrivning av varan, den kanske är såhär lång?",
-//         quantity: "3 st",
-//         time_of_creation: "Today 13.37",
-//         time_of_purchase: "Date",
-//         time_of_expiration: "2022-04-01",
-//         imgurl : <DiscoverIcon />,
-//         broken_pkg : true,
-//     });
-// };
-
-// const myItems = getMyItems();
-// function getMyItems() { // TODO: Get the actuall offers in the communitys
-//   return new Array(3).fill({
-//     user_id : 1,
-//     product_id :1,
-//     product_text : "Apelsin",
-//     description: "Beskrivning av varan",
-//     quantity: "3 st",
-//     time_of_creation: "Today 13.37",
-//     time_of_purchase: "Date",
-//     time_of_expiration: "",
-//     imgurl : <DiscoverIcon />,
-//     broken_pkg : true,
-//   });
-// };
-
-// const lists = getLists();
-
-async function getLists() {
-  await getItems();
-  let arrayList = new Array(2);
-  arrayList[0] = {
-    //My items
-    data: ownItems,
-    myListings: true,
-  };
-  arrayList[1] = {
-    //All available
-    data: otherItems,
-    myListings: false,
-  };
-  return arrayList;
-}
+import io from "socket.io-client";
+import { host } from "../Services/ServerHost";
 
 export const ItemAvailableComponent = () => {
-  const [visible, setVisible] = React.useState(false);
-  const [myVisible, setMyVisible] = React.useState(false);
-  const { community } = React.useContext(CommunityInfo);
+  const { community } = React.useContext(MyCommunitysInfo);
   const [takeProduct, setTakeProduct] = React.useState(false);
-  //const [refreshing, setRefreshing] = React.useState(false);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
-  const [items, setItems] = React.useState([]);
+  const [offers, setOffers] = React.useState([]);
+  const [myOffers, setMyOffers] = React.useState([]);
+  const isFocused = useIsFocused();
 
-  /*React.useEffect(() => {
-    const fetchItems = async () => {setItems(await getLists())}
+  const id = 1;
+  const communities = [1, 2];
 
-    fetchItems()
-  }, [])*/
+  //fetch items on focus
 
-  const onRefresh = React.useCallback(() => {
-    // Used when users refreshes a page
-    setRefreshing(true);
-    //TODO: Implement actuall refresh function
-    setRefreshing(false);
+  React.useEffect(() => {
+    const fetchItems = async () => {
+      let myItems = [];
+      let otherItems = [];
+      let items = await getOffers(communities).catch((e) => console.log(e));
+      items.forEach((item) => {
+        item.visible = false;
+        if (item.user_id == id) {
+          myItems.push(item);
+        } else {
+          otherItems.push(item);
+        }
+      });
+      setMyOffers(myItems);
+      setOffers(otherItems);
+    };
+
+    if (isFocused) fetchItems();
+  }, [isFocused]);
+
+  const socketRef = React.useRef();
+
+  //connect to WebSocket on module load
+  React.useEffect(() => {
+    socketRef.current = io(host);
+
+    socketRef.current.emit("communities", { ids: ["1", "2"] });
+
+    socketRef.current.on("offer", (offer) => {
+      offer.visible = false;
+      if (offer.user_id == id) {
+        setMyOffers([...myOffers, offer]);
+      } else {
+        setOffers([...offers, offer]);
+      }
+    });
+
+    socketRef.current.on("deleteOffer", (id) => {
+      console.log(id);
+      removeOffer(myOffers, id);
+      removeOffer(offers, id);
+      setOffers([...offers]);
+      setMyOffers([...myOffers]);
+    });
+
+    return () => {
+      socketRef.current.disconnect();
+    };
   }, []);
+
+  const removeOffer = (array, id) => {
+    return array.filter((offer) => offer.id != id);
+  };
+
+  const toggleVisible = (array, item) => {
+    return array.map((offer) => {
+      if (offer == item) {
+        offer.visible = !offer.visible;
+      }
+    });
+  };
+
+  const toggleModal = (item) => {
+    toggleVisible(offers, item);
+    toggleVisible(myOffers, item);
+    setOffers([...offers]);
+    setMyOffers([...myOffers]);
+  };
 
   const renderAvailableItems = ({ item }) => (
     <View>
       <ListItem
         style={styles.container}
-        onPress={() => setVisible(true)}
-        accessoryLeft={item.imgurl}
+        onPress={() => {
+          toggleModal(item);
+        }}
+        // accessoryLeft={"https://picsum.photos/150/150"}
         title={`${item.product_text}`}
         description={`${item.quantity}`}
       />
       <Modal //Modal for additional information about a product
-        visible={visible}
+        visible={item.visible}
         backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}
-        onBackdropPress={() => setVisible(false)}
+        onBackdropPress={() => toggleModal(item)}
       >
         <Card disabled={true} style={{ width: 320, flex: 1 }}>
           <Layout style={tw`py-10`}>
@@ -149,16 +146,14 @@ export const ItemAvailableComponent = () => {
           </Text>
           <Text style={{ marginBottom: 10 }}>Användare som lagt upp</Text>
           <Text style={{ marginBottom: 10 }}>{item.description}</Text>
-          <Button onPress={() => (setTakeProduct(true), setVisible(false))}>
-            Ta vara
-          </Button>
+          <Button onPress={() => setTakeProduct(true)}>Ta vara</Button>
         </Card>
       </Modal>
 
-      <Modal //Modal for setting time & requesting an offer
+      {/* <Modal //Modal for setting time & offering an offer
         visible={takeProduct}
         backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}
-        onBackdropPress={() => (setTakeProduct(false), setVisible(false))}
+        onBackdropPress={() => setTakeProduct(false)}
       >
         <Card disabled={true} style={{ width: 320, flex: 1 }}>
           <Layout style={tw`py-10`}>
@@ -174,21 +169,29 @@ export const ItemAvailableComponent = () => {
           <Text style={{ marginBottom: 10 }}>Jag kan hämta varan: </Text>
           <RadioGroup
             selectedIndex={selectedIndex}
-            onChange={index => setSelectedIndex(index)}
+            onChange={(index) => setSelectedIndex(index)}
           >
             <Radio>Idag</Radio>
             <Radio>Imorgon</Radio>
             <Radio>Inom de närmaste dagarna</Radio>
             <Radio>Annat datum: </Radio>
           </RadioGroup>
-            <Input 
-              style={{marginBottom:10,}}
-              placeholder = 'Annat datum'
-              disabled={selectedIndex !== 3}
-            />
-          <Button onPress={() => (setTakeProduct(false), setVisible(false), console.log(selectedIndex))}>Ta vara</Button>
+          <Input
+            style={{ marginBottom: 10 }}
+            placeholder="Annat datum"
+            disabled={selectedIndex !== 3}
+          />
+          <Button
+            onPress={() => (
+              setTakeProduct(false),
+              setVisible(false),
+              console.log(selectedIndex)
+            )}
+          >
+            Ta vara
+          </Button>
         </Card>
-      </Modal>
+      </Modal> */}
     </View>
   );
 
@@ -198,15 +201,15 @@ export const ItemAvailableComponent = () => {
     <View>
       <ListItem
         style={styles.container}
-        onPress={() => setMyVisible(true)}
-        accessoryLeft={item.imgurl}
+        onPress={() => toggleModal(item)}
+        // accessoryLeft={"https://picsum.photos/150/150"}
         title={`${item.product_text} ${item.quantity}`}
         description={`${item.description}`}
       />
       <Modal
-        visible={myVisible}
+        visible={item.visible}
         backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.01)" }}
-        onBackdropPress={() => setMyVisible(false)}
+        onBackdropPress={() => toggleModal(item)}
       >
         <Card disabled={true}>
           <Text> Min vara {item.title} </Text>
@@ -218,11 +221,7 @@ export const ItemAvailableComponent = () => {
   const renderLists = ({ item }) => (
     <View>
       <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-        {item.myListings
-          ? "Mina varor"
-          : community.map((name) => (
-              <Text category={"h5"}>Tillgängligt i {name} </Text>
-            ))}
+        {item.myListings ? "Mina varor" : "TODO: Fixa detta"}
       </Text>
       <List
         data={item.data}
@@ -238,9 +237,23 @@ export const ItemAvailableComponent = () => {
             refreshing={refreshing}
             onRefresh={onRefresh}
           />}>*/
-    <View style={{ flex: 1 }}>
-      <List data={items} renderItem={renderLists} />
-    </View>
+    <ScrollView style={{ flex: 1 }}>
+      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
+        Mina varor
+      </Text>
+      <List scrollEnabled={false} data={myOffers} renderItem={renderMyItems} />
+      {community &&
+        community.map((name) => (
+          <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
+            Tillgängligt i {name}{" "}
+          </Text>
+        ))}
+      <List
+        scrollEnabled={false}
+        data={offers}
+        renderItem={renderAvailableItems}
+      />
+    </ScrollView>
     // </ScrollView>
   );
 };
@@ -253,6 +266,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   spaceBetween: {
-    marginBottom:10,
-  }
+    marginBottom: 10,
+  },
 });
