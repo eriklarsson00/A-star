@@ -11,7 +11,7 @@ import {
   Spinner,
 } from "@ui-kitten/components";
 import { useIsFocused } from "@react-navigation/native";
-import { CommunityInfo } from "../assets/AppContext";
+import { MyCommunitysInfo } from "../assets/AppContext";
 import { io } from "socket.io-client";
 import { getRequests } from "../Services/ServerCommunication";
 import { host } from "../Services/ServerHost";
@@ -21,7 +21,7 @@ export const ItemRequestedComponent = () => {
   const [myRequests, setMyRequests] = React.useState([]);
   const [requests, setRequests] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
-  const { community } = React.useContext(CommunityInfo);
+  const { community } = React.useContext(MyCommunitysInfo);
   const isFocused = useIsFocused();
 
   const communities = [1, 2];

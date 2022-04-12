@@ -1,6 +1,6 @@
 import React from "react";
 import { Text, Button, Icon } from "@ui-kitten/components";
-import { View, Image } from "react-native";
+import { View, Image, StyleSheet } from "react-native";
 import { UserInfo, UserLoggedIn, GoogleInfo } from "../assets/AppContext";
 import * as Google from "expo-auth-session/providers/google";
 import * as WebBrowser from "expo-web-browser";
@@ -86,40 +86,9 @@ export const StartScreen = ({ navigation }) => {
         marginTop: 0,
       }}
     >
-      <View
-        style={{
-          zIndex: -3,
-          width: "300%",
-          height: 500,
-          position: "absolute",
-          top: -100,
-          backgroundColor: "rgba(255,100,100,0.5)",
-          transform: [{ rotateZ: "15deg" }],
-        }}
-      />
-      <View
-        style={{
-          zIndex: -3,
-          width: "300%",
-          height: 500,
-          position: "absolute",
-          top: 200,
-          backgroundColor: "rgba(255,100,100,0.3)",
-          transform: [{ rotateZ: "-15deg" }, { rotateX: "-5deg" }],
-        }}
-      />
-      <View
-        style={{
-          zIndex: -3,
-          width: 900,
-          height: 900,
-          position: "absolute",
-          top: 500,
-          borderRadius: 500,
-          backgroundColor: "rgba(255,100,100,0.2)",
-          transform: [{ rotateY: "30deg" }],
-        }}
-      />
+      <View style={styles.top} />
+      <View style={styles.middle} />
+      <View style={styles.bottom} />
       <Image
         source={require("../assets/icon.png")}
         style={{
@@ -147,3 +116,35 @@ export const StartScreen = ({ navigation }) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  top: {
+    zIndex: -3,
+    width: "300%",
+    height: 500,
+    position: "absolute",
+    top: 200,
+    backgroundColor: "rgba(255,100,100,0.3)",
+    transform: [{ rotateZ: "-15deg" }, { rotateX: "-5deg" }],
+  },
+  middle: {
+    zIndex: -3,
+    width: 900,
+    height: 900,
+    position: "absolute",
+    top: 500,
+    borderRadius: 500,
+    backgroundColor: "rgba(255,100,100,0.2)",
+    transform: [{ rotateY: "30deg" }],
+  },
+  bottom: {
+    zIndex: -3,
+    width: 900,
+    height: 900,
+    position: "absolute",
+    top: 500,
+    borderRadius: 500,
+    backgroundColor: "rgba(255,100,100,0.2)",
+    transform: [{ rotateY: "30deg" }],
+  },
+});
