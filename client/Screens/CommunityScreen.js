@@ -22,7 +22,10 @@ import {
 	ShowCommunityIds,
 	ProfileImagePath,
 } from "../assets/AppContext";
-import { getCommunities } from "../Services/ServerCommunication";
+import {
+	getCommunities,
+	addToCommunity,
+} from "../Services/ServerCommunication";
 
 async function getAllCommunities() {
 	let communities = await getCommunities();
@@ -48,11 +51,7 @@ export const CommunityScreen = () => {
 		React.useState("");
 	const [chosenCommunity, setChosenCommunity] = React.useState({});
 	const [dataBaseCommunities, setDataBaseCommunities] = React.useState([]);
-	const [myCommunityNames, setMyCommunityNames] = React.useState(
-		myCommunitysInfo.map((comm) => {
-			comm.name;
-		})
-	);
+	const [myCommunityNames, setMyCommunityNames] = React.useState([]);
 
 	//ÖVRIGT
 	const isFocused = useIsFocused();
@@ -63,20 +62,26 @@ export const CommunityScreen = () => {
 			setDataBaseCommunities(await getAllCommunities());
 		};
 		getComm();
+		setMyCommunityNames(myCommunitysInfo.map((comm) => comm.name));
 	}, [isFocused]);
 
 	//FUNKTIONER SOM RETURNERAR KOD
 	const printCommunity = ({ item, index }) => (
-		<CommunityComponent id={item.name} />
+		<CommunityComponent
+			community={item}
+			setMyCommunityNames={setMyCommunityNames}
+			myCommunityNames={myCommunityNames}
+		/>
 	);
 
-	const CloseAddCommunity = () => {
+	const CloseAddCommunityIcon = () => {
 		return (
-			<TouchableOpacity onPress={() => setAddCommunityVisible(false)}>
+			<TouchableOpacity onPress={() => closeAddCommunity()}>
 				<CrossIcon />
 			</TouchableOpacity>
 		);
 	};
+
 	const printExistingCommunities = (
 		{ item, index } //DETTA ÄR VAD SOM RENDERAS FÖR VARJE ITEM I LÄGG TILL
 	) => (
@@ -149,6 +154,11 @@ export const CommunityScreen = () => {
 
 	const giveKey = ({ item, index }) => reuturn(item);
 
+	function closeAddCommunity() {
+		setAddCommunityVisible(false);
+		setChosenCommunity({});
+	}
+
 	function tryPassword() {
 		if (communityPasswordInput === chosenCommunity.password) {
 			addCommunity();
@@ -161,17 +171,20 @@ export const CommunityScreen = () => {
 		}
 	}
 
-	function addCommunity() {
+	async function addCommunity() {
 		setMyCommunityNames([...myCommunityNames, chosenCommunity.name]);
-		setShowCommunityIds([...showCommunityIds, chosenCommunity.id]);
 		setJoinCommunity(false);
-		setAddCommunityVisible(false);
+		closeAddCommunity();
 		setMyCommunitysInfo([...myCommunitysInfo, chosenCommunity]);
+		await addToCommunity(userInfo.id, [chosenCommunity.id]);
 	}
 
 	//IKONER
 	const LockIcon = () => (
 		<Icon style={styles.lockStyle} fill="#8F9BB3" name="lock-outline" />
+	);
+	const EditIcon = () => (
+		<Icon style={styles.editStyle} fill="#8F9BB3" name="edit-2-outline" />
 	);
 
 	const CrossIcon = () => (
@@ -185,11 +198,26 @@ export const CommunityScreen = () => {
 	//KODEN FÖR SIDAN
 
 	return (
-		<Layout style={styles.container}>
+		<Layout style={[styles.container]}>
 			<Layout style={tw`pt-5 pb-2`}>
 				<Text style={tw`text-lg text-center`}>Grannskap </Text>
 			</Layout>
-			<Divider style={{ color: "black" }} />
+			<View
+				style={{
+					paddingTop: 5,
+					backgroundColor: theme["color-basic-200"],
+					flexDirection: "column",
+					alignItems: "center",
+				}}
+			>
+				<Text style={tw`text-base`}>Välj grannskap att visa</Text>
+				<Divider
+					style={{
+						backgroundColor: theme["color-basic-400"],
+						width: 300,
+					}}
+				/>
+			</View>
 			<List
 				style={styles.container_list}
 				data={myCommunitysInfo}
@@ -204,23 +232,11 @@ export const CommunityScreen = () => {
 				>
 					Lägg till grannskap
 				</Button>
-				<Button
-					style={styles.button}
-					onPress={() => {
-						console.log("här börjar allt");
-						console.log(myCommunitysInfo);
-						console.log(myCommunityNames);
-						console.log("Databasecommunities");
-						console.log(dataBaseCommunities);
-					}}
-				>
-					console <Text>{myCommunitysInfo.length}</Text>
-				</Button>
 			</Layout>
 			<Modal
 				visible={addCommunityVisible}
 				backdropStyle={styles.backdrop}
-				onBackdropPress={() => setAddCommunityVisible(false)}
+				onBackdropPress={() => closeAddCommunity()}
 			>
 				<Card disabled={true}>
 					<View style={{ flex: 1, flexDirection: "row" }}>
@@ -229,7 +245,7 @@ export const CommunityScreen = () => {
 								Lägg till grannskap
 							</Text>
 						</View>
-						<CloseAddCommunity />
+						<CloseAddCommunityIcon />
 					</View>
 					<Divider />
 					<List
@@ -241,10 +257,7 @@ export const CommunityScreen = () => {
 						renderItem={printExistingCommunities}
 						key={giveKey}
 					/>
-					<Button
-						style={tw`mt-2`}
-						onPress={() => setAddCommunityVisible(false)}
-					>
+					<Button style={tw`mt-2`} onPress={() => closeAddCommunity()}>
 						Skapa nytt grannskap
 					</Button>
 					<Divider />
@@ -369,6 +382,13 @@ const styles = StyleSheet.create({
 	// list_style: {
 	// 	backgroundColor: "red",
 	// },
+	editStyle: {
+		width: 25,
+		height: 25,
+		alignSelf: "flex-end",
+		paddingRight: 150,
+		marginBottom: -10,
+	},
 	lockStyle: {
 		width: 25,
 		height: 25,

@@ -15,7 +15,10 @@ import { EvaIconsPack } from "@ui-kitten/eva-icons";
 import { AppNavigator } from "./Navigation/NavbarNavigation";
 import { LoginNavigation } from "./Navigation/LoginNavigation";
 import { default as theme } from "./assets/custom-theme.json";
-import { getUserProfileById } from "./Services/ServerCommunication";
+import {
+	getUserProfileById,
+	getUserCommunities,
+} from "./Services/ServerCommunication";
 import {
 	UserInfo,
 	MyCommunitysInfo,
@@ -85,8 +88,7 @@ export default () => {
 					setUserInfo(users[0]);
 					setLoggedIn(true);
 					setWhichScreen(<AppNavigator />);
-
-					// Fetch the users communities
+					setCommunities(users[0].id);
 				} else {
 					console.log("Cannot log in, unknown userId: " + userId);
 					setLoggedIn(false);
@@ -98,6 +100,16 @@ export default () => {
 			console.log(e);
 		}
 	}, [userLoggedIn]);
+
+	async function setCommunities(user_id) {
+		/*let myComms = await getUserCommunities(user_id);
+		setMyCommunitysInfo(myComms);
+		const jsonShowIds = await AsyncStorage.getItem("showCommunityIds");
+		if (jsonShowIds !== null) {
+			const showIds = JSON.parse(jsonShowIds);
+			console.log(showIds);
+		}*/
+	}
 
 	return (
 		<>
