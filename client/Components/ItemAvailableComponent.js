@@ -256,6 +256,9 @@ export const ItemAvailableComponent = () => {
             refreshing={refreshing}
             onRefresh={onRefresh}
           />}>*/
+
+    // inspo
+    // https://stackoverflow.com/questions/58243680/react-native-another-virtualizedlist-backed-container
     <FlatList
       style={{ flex: 1 }}
       data={myOffers}
