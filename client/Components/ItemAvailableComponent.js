@@ -16,6 +16,8 @@ import { useIsFocused } from "@react-navigation/native";
 import { MyCommunitysInfo, UserInfo } from "../assets/AppContext";
 import { getOffers, addTransaction } from "../Services/ServerCommunication.js";
 import io from "socket.io-client";
+import ProductInfoModal from "./Modals/ProductInfoModal";
+import TakeProductModal from "./Modals/TakeProductModal";
 import { host } from "../Services/ServerHost";
 
 export const ItemAvailableComponent = () => {
@@ -105,6 +107,14 @@ export const ItemAvailableComponent = () => {
     setMyOffers([...myOffers]);
   };
 
+  const toggleTake = () => {
+    setTakeProduct(!takeProduct);
+  };
+
+  const updateDate = (date) => {
+    setDate(date);
+  };
+
   const makeTransaction = async (item) => {
     const transaction = {
       offer_id: item.id,
@@ -123,108 +133,22 @@ export const ItemAvailableComponent = () => {
   };
 
   const renderAvailableItems = ({ item }) => {
-    let newDate = new Date();
-
     let infoModal = (
-      <Modal //Modal for additional information about a product
-        visible={item.visible}
-        backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}
-        onBackdropPress={() => toggleModal(item)}
-      >
-        <Card disabled={true} style={{ width: 320, flex: 1 }}>
-          <View
-            style={{
-              flexDirection: "row",
-              flex: 1,
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Layout style={tw`py-10`}>
-              <Image
-                style={tw`rounded-full`}
-                source={{
-                  uri: item.imgurl,
-                  height: 100,
-                  width: 100,
-                }}
-              />
-            </Layout>
-            <Text category={"s1"} style={{ marginLeft: 20 }}>
-              {item.product_text}
-            </Text>
-            <Text category={"s1"} style={{ marginLeft: 20 }}>
-              {item.quantity}
-            </Text>
-          </View>
-
-          <Text style={{ marginBottom: 10 }}>
-            Utångsdag: {item.time_of_expiration}
-          </Text>
-          <Text style={{ marginBottom: 10 }}>
-            Bruten förpackning: {item.broken_pkg ? "Japp" : "Nepp"}{" "}
-          </Text>
-          <Text style={{ marginBottom: 10 }}>Användare som lagt upp</Text>
-          <Text style={{ marginBottom: 10 }}>{item.description}</Text>
-          <Button onPress={() => setTakeProduct(true)}>Ta vara</Button>
-        </Card>
-      </Modal>
+      <ProductInfoModal
+        item={item}
+        toggleModal={toggleModal}
+        toggleTake={toggleTake}
+      />
     );
 
     let takeProductModal = (
-      <Modal //Modal for setting time & offering an offer
-        visible={item.visible}
-        backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0)" }}
-        onBackdropPress={() => {
-          toggleModal(item);
-        }}
-      >
-        <Card
-          disabled={true}
-          style={{
-            width: 320,
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <View
-            style={{
-              flexDirection: "row",
-              flex: 1,
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Layout style={tw`py-10`}>
-              <Image
-                style={tw`rounded-full`}
-                source={{
-                  uri: item.imgurl,
-                  height: 100,
-                  width: 100,
-                }}
-              />
-            </Layout>
-            <Text category={"s1"} style={{ marginLeft: 20 }}>
-              {item.product_text}
-            </Text>
-            <Text category={"s1"} style={{ marginLeft: 20 }}>
-              {item.quantity}
-            </Text>
-          </View>
-          <Text style={{ marginBottom: 10 }}>Välj tid för upphämtning</Text>
-          <DateTimePicker
-            style={{ flex: 1, width: 280 }}
-            mode={"datetime"}
-            value={date}
-            minimumDate={newDate}
-            onChange={(event, date) => setDate(date)}
-            display={"inline"}
-          />
-          <Button onPress={() => makeTransaction(item)}>Ta vara</Button>
-        </Card>
-      </Modal>
+      <TakeProductModal
+        item={item}
+        date={date}
+        toggleModal={toggleModal}
+        updateDate={updateDate}
+        makeTransaction={makeTransaction}
+      />
     );
 
     let modal = !takeProduct ? infoModal : takeProductModal;
