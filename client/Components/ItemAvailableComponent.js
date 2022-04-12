@@ -13,7 +13,7 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 import tw from "twrnc";
 import { useIsFocused } from "@react-navigation/native";
-import { CommunityInfo, UserInfo } from "../assets/AppContext";
+import { MyCommunitysInfo, UserInfo } from "../assets/AppContext";
 import { getOffers, addTransaction } from "../Services/ServerCommunication.js";
 import io from "socket.io-client";
 import { host } from "../Services/ServerHost";
@@ -120,29 +120,6 @@ export const ItemAvailableComponent = () => {
     await addTransaction(transaction);
     fetchItems();
     toggleModal(item);
-  };
-
-  const flatListHeader = () => {
-    return (
-      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-        Mina varor
-      </Text>
-    );
-  };
-
-  const flatListFooter = () => {
-    return (
-      <View>
-        <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-          Tillgängliga varor
-        </Text>
-        <List
-          scrollEnabled={false}
-          data={offers}
-          renderItem={renderAvailableItems}
-        />
-      </View>
-    );
   };
 
   const renderAvailableItems = ({ item }) => {
@@ -290,7 +267,30 @@ export const ItemAvailableComponent = () => {
       </Modal>
     </View>
   );
-  
+
+  const flatListHeader = () => {
+    return (
+      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
+        Mina varor
+      </Text>
+    );
+  };
+
+  const flatListFooter = () => {
+    return (
+      <View>
+        <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
+          Tillgängliga varor
+        </Text>
+        <List
+          scrollEnabled={false}
+          data={offers}
+          renderItem={renderAvailableItems}
+        />
+      </View>
+    );
+  };
+
   const LoadingView = () => (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Spinner size={"giant"} />

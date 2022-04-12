@@ -135,8 +135,9 @@ export const CreateUserScreen = () => {
 
   const SelectCommunity = () => {
     return (
-      <Layout style={{ height: 128, width: "100%" }} level="1">
+      <Layout style={{ height: 100, width: "100%" }} level="1">
         <Select
+          style={styles.inputStyle}
           value={groupDisplayValues.join(", ")}
           multiSelect={true}
           label="Välj grannskap"
@@ -180,21 +181,25 @@ export const CreateUserScreen = () => {
           <AddIcon />
         </TouchableOpacity>
         <Input
+          style={styles.inputStyle}
           label="Förnamn"
           value={firstName}
           onChangeText={(nextValue) => setFirstName(nextValue)}
         />
         <Input
+          style={styles.inputStyle}
           label="Efternamn"
           value={lastName}
           onChangeText={(nextValue) => setLastName(nextValue)}
         />
         <Input
+          style={styles.inputStyle}
           label="Telefonnummer"
           value={phoneNumber}
           onChangeText={(nextValue) => setPhoneNumber(nextValue)}
         />
         <Input
+          style={styles.inputStyle}
           label="Adress"
           value={adress}
           onChangeText={(nextValue) => setAdress(nextValue)}
@@ -231,6 +236,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: "100%",
     paddingTop: 50,
+    paddingHorizontal: 25,
   },
   createUserContainer: {
     flex: 1,
@@ -249,5 +255,8 @@ const styles = StyleSheet.create({
   },
   backdrop: {
     backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  inputStyle: {
+    marginVertical: 10,
   },
 });
