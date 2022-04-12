@@ -19,7 +19,7 @@ import io from "socket.io-client";
 import { host } from "../Services/ServerHost";
 
 export const ItemAvailableComponent = () => {
-  const { community } = React.useContext(CommunityInfo);
+  const { community } = React.useContext(MyCommunitysInfo);
   const [takeProduct, setTakeProduct] = React.useState(false);
   const [offers, setOffers] = React.useState([]);
   const [myOffers, setMyOffers] = React.useState([]);
@@ -290,7 +290,7 @@ export const ItemAvailableComponent = () => {
       </Modal>
     </View>
   );
-
+  
   const LoadingView = () => (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Spinner size={"giant"} />

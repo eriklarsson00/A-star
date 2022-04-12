@@ -1,5 +1,6 @@
 import { createRequire } from "module";
 import { checkIntID, checkEmptyBody, checkEmptyParam } from "./common.js";
+import { uploadImageOnS3 } from "./upload.js";
 const require = createRequire(import.meta.url);
 
 const knex = require("knex")({
@@ -92,6 +93,34 @@ function updateUser(req, res) {
     });
 }
 
+async function updateProfilePicture(req, res) {
+  const file = req.file;
+  const id = parseInt(req.params.id);
+
+  if (!file || isNaN(id)) {
+    res.status(400).json("File to upload is not present or id is malformed");
+    return;
+  }
+
+  uploadImageOnS3(file, "profilePictures/" + file.filename).then((data) => {
+    const loc = data.Location;
+
+    if (!loc) {
+      return res.status(500).json("Could not upload image to S3");
+    }
+
+    knex("Users")
+      .where("id", id)
+      .update({ imgurl: loc })
+      .catch((err) => {
+        res.status(500).json(err);
+      })
+      .then(() => {
+        res.json(loc);
+      });
+  });
+}
+
 function deleteUser(req, res) {
   const id = parseInt(req.params.id);
 
@@ -176,6 +205,7 @@ export {
   getUserEmail,
   addUser,
   updateUser,
+  updateProfilePicture,
   deleteUser,
   addUserToCommunity,
   getUserCommunities,

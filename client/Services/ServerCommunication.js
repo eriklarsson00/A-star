@@ -18,8 +18,16 @@ const request = async (type, route, body) => {
 //Fetches a user profile with the email email.
 //Returns a profile object if the user exists, otherwise
 //An empty array
-const getUserProfile = async (email) => {
+const getUserProfileByEmail = async (email) => {
   let userProfile = await request("GET", "/users/email/" + email);
+  return userProfile;
+};
+
+//Fetches a user profile with the email email.
+//Returns a profile object if the user exists, otherwise
+//An empty array
+const getUserProfileById = async (id) => {
+  let userProfile = await request("GET", "/users/" + id);
   return userProfile;
 };
 
@@ -29,6 +37,12 @@ const getOffers = async (communities) => {
   //   offers = await request("GET", "/offers/active/" + community);
   // });
   return [...new Set(offers)];
+
+};
+
+const getCommunities = async () => {
+  let communities = await request("Get", "/communities");
+  return [...new Set(communities)];
 };
 
 const getRequests = async (communities) => {
@@ -39,11 +53,12 @@ const getRequests = async (communities) => {
   return [...new Set(requests)];
 };
 
-//Sends an profile to the database, returns the profile
+//Sends an profile to the database, returns an array with the profile
 //object with their id added.
-const addProfile = async (profile) => {
+const addProfile = async (profile, communities) => {
   const users = await request("POST", "/users", profile);
-  const updatedProfile = await getUserProfile(profile.email);
+  const updatedProfile = await getUserProfileByEmail(profile.email);
+  await addToCommunity(updatedProfile[0].id, communities);
   return updatedProfile;
 };
 
@@ -51,4 +66,30 @@ const addTransaction = async (transaction) => {
   return await request("POST", "/transactions", transaction);
 };
 
-export { getOffers, getRequests, getUserProfile, addProfile, addTransaction };
+const addToCommunity = async (profile_id, communities) => {
+  for (const id of communities) {
+    let upload_obj = {
+      user_id: profile_id,
+      community_id: id,
+    };
+    const result = await request("POST", "/users/community/", upload_obj);
+  }
+};
+const deleteProfile = async (id) => {
+  const res = await request("DELETE", "/users/" + id)
+    .then((res) => console.log(res))
+    .catch((err) => console.log(err));
+  return res;
+};
+
+export {
+  getOffers,
+  getRequests,
+  getUserProfileById,
+  getUserProfileByEmail,
+  addProfile,
+  getCommunities,
+  addToCommunity,
+  addTransaction,
+  deleteProfile,
+};
