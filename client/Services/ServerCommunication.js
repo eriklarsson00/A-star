@@ -65,6 +65,16 @@ const addProfile = async (profile, communities) => {
   return updatedProfile;
 };
 
+//Sends an profile to the database, returns the profile
+//object with their id added.
+const deleteProfile = async (id) => {
+  console.log(id);
+  const res = await request("DELETE", "/users/" + id)
+    .then((res) => console.log(res))
+    .catch((err) => console.log(err));
+  return res;
+};
+
 const addToCommunity = async (profile_id, communities) => {
   console.log("communies in addToCommunity" + communities);
   console.log("profileId in addToCommunity" + profile_id);
@@ -82,4 +92,5 @@ export {
   addProfile,
   getCommunities,
   addToCommunity,
+  deleteProfile,
 };

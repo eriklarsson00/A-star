@@ -1,6 +1,6 @@
 import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { SafeAreaView, StyleSheet, Image } from "react-native";
+import { SafeAreaView, StyleSheet, Image, Alert } from "react-native";
 import {
   TopNavigation,
   Button,
@@ -11,24 +11,63 @@ import {
   Divider,
   useTheme,
 } from "@ui-kitten/components";
-import { ProfileImagePath, UserInfo, UserLoggedIn } from "../assets/AppContext";
+import {
+  ProfileImagePath,
+  UserInfo,
+  GoogleInfo,
+  UserLoggedIn,
+} from "../assets/AppContext";
 import tw from "twrnc";
+import { deleteProfile } from "../Services/ServerCommunication";
 
 export const ProfileScreen = () => {
   const { profileImagePath, setProfileImagePath } =
     React.useContext(ProfileImagePath);
   const { userInfo, setUserInfo } = React.useContext(UserInfo);
   const { userLoggedIn, setLoggedIn } = React.useContext(UserLoggedIn);
+  const { googleInfo, setGoogleInfo } = React.useContext(GoogleInfo);
   const rating =
     userInfo.raters > 0
       ? Math.round((userInfo.rating * 100) / userInfo.raters) / 100 + "/5"
-      : "Inga betyg";
+      : "Inga";
 
   const logOut = async () => {
-    await AsyncStorage.removeItem("userId");
+    // Clear all sorts of cache in app
+    await AsyncStorage.removeItem("userId").then(console.log("cache cleared"));
     setUserInfo([]);
+    setGoogleInfo(null);
     setLoggedIn(false);
   };
+
+  const removeAccount = async () => {
+    const res = await deleteProfile(userInfo.id);
+    // TODO: Remove profile pic from S3
+    await logOut();
+  };
+
+  const confirmRemovalAlert = () =>
+    Alert.alert(
+      "Ta bort konto?",
+      "Är du säker på att du vill ta bort ditt konto? Det går inte att ångra sig i efterhand.",
+      [
+        {
+          text: "Avbryt",
+          onPress: () => {},
+          style: "cancel",
+        },
+        { text: "Jag är säker", onPress: removeAccount },
+      ]
+    );
+
+  const confirmLogOutAlert = () =>
+    Alert.alert("Logga ut?", "Är du säker på att du vill logga ut?", [
+      {
+        text: "Avbryt",
+        onPress: () => {},
+        style: "cancel",
+      },
+      { text: "Jag är säker", onPress: logOut },
+    ]);
 
   return (
     <Layout style={styles.outerContainer} level="1">
@@ -77,11 +116,19 @@ export const ProfileScreen = () => {
           {" "}
           Kontoinställningar
         </Button>
-        <Button style={styles.btn} appearance="ghost">
+        <Button
+          style={styles.btn}
+          appearance="ghost"
+          onPress={confirmRemovalAlert}
+        >
           {" "}
           Ta bort konto
         </Button>
-        <Button style={styles.btn} appearance="ghost" onPress={logOut}>
+        <Button
+          style={styles.btn}
+          appearance="ghost"
+          onPress={confirmLogOutAlert}
+        >
           {" "}
           Logga ut
         </Button>

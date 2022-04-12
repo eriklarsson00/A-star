@@ -7,6 +7,9 @@ export const UserLoggedIn = React.createContext();
 the explore screen*/
 export const ShowCommunityIds = React.createContext();
 
+/* Google information */
+export const GoogleInfo = React.createContext();
+
 /* Information about all the communties the user is in */
 export const MyCommunitysInfo = React.createContext();
 
