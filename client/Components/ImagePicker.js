@@ -1,6 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { View, Text, StyleSheet, Image, Button } from "react-native";
-import { ProfileImagePath, UserInfo } from "../assets/AppContext";
+import {
+  ProfileImagePath,
+  UserInfo,
+  ItemImagePath,
+} from "../assets/AppContext";
+import { pushToServer } from "../Services/ServerCommunication";
 import * as ImageManipulator from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";
 
@@ -9,6 +14,7 @@ export default function ImagePickerComp(props) {
   const [pickedImagePath, setPickedImagePath] = useState(null);
   const { profileImagePath, setProfileImagePath } =
     React.useContext(ProfileImagePath);
+  const { itemImagePath, setItemImagePath } = React.useContext(ItemImagePath);
   const { userInfo, setUserInfo } = React.useContext(UserInfo);
 
   // This function is triggered when the "Select an image" button pressed
@@ -31,7 +37,9 @@ export default function ImagePickerComp(props) {
       if (props.context == "Profile") {
         setProfileImagePath(result.uri);
       }
-      setPickedImagePath(result.uri);
+      if (props.context == "ItemImage") {
+        setItemImagePath(result.url);
+      }
       pushToServer(result);
     }
   };
@@ -53,7 +61,13 @@ export default function ImagePickerComp(props) {
       if (props.context == "Profile") {
         setProfileImagePath(result.uri);
       }
-      pushToServer(result);
+      if (props.context == "ItemImage") {
+        console.log("hej");
+        console.log("result.url: " + result.uri);
+        setItemImagePath(result.uri);
+        console.log("item" + itemImagePath);
+      }
+      props.updateResult(result);
     }
   };
 
@@ -119,8 +133,6 @@ export default function ImagePickerComp(props) {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
   buttonContainer: {
     width: 400,

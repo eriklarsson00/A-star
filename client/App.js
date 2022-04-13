@@ -26,6 +26,7 @@ import {
   ProfileImagePath,
   UserLoggedIn,
   GoogleInfo,
+  ItemImagePath,
 } from "./assets/AppContext";
 
 export default () => {
@@ -47,9 +48,18 @@ export default () => {
   const [profileImagePath, setProfileImagePath] = useState(
     "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
   );
+  const [itemImagePath, setItemImagePath] = useState(
+    "https://www.mcicon.com/wp-content/uploads/2021/02/Technology_Camera_1-copy-18.jpg"
+  );
+
   const FirstProfileImagePath = useMemo(
     () => ({ profileImagePath, setProfileImagePath }),
     [profileImagePath]
+  );
+
+  const FirstIconImagePath = useMemo(
+    () => ({ itemImagePath, setItemImagePath }),
+    [itemImagePath]
   );
 
   const [myCommunitysInfo, setMyCommunitysInfo] = useState([]);
@@ -115,17 +125,19 @@ export default () => {
         <GoogleInfo.Provider value={FirstGooglevalue}>
           <ShowCommunityIds.Provider value={FirstShowValue}>
             <ProfileImagePath.Provider value={FirstProfileImagePath}>
-              <MyCommunitysInfo.Provider value={FirstCommunityValue}>
-                <UserLoggedIn.Provider value={FirstLoggedInValue}>
-                  <ApplicationProvider
-                    {...eva}
-                    theme={{ ...eva.light, ...theme }}
-                  >
-                    <StatusBar barStyle="dark-content" />
-                    <>{whichScreen}</>
-                  </ApplicationProvider>
-                </UserLoggedIn.Provider>
-              </MyCommunitysInfo.Provider>
+              <ItemImagePath.Provider value={FirstIconImagePath}>
+                <MyCommunitysInfo.Provider value={FirstCommunityValue}>
+                  <UserLoggedIn.Provider value={FirstLoggedInValue}>
+                    <ApplicationProvider
+                      {...eva}
+                      theme={{ ...eva.light, ...theme }}
+                    >
+                      <StatusBar barStyle="dark-content" />
+                      <>{whichScreen}</>
+                    </ApplicationProvider>
+                  </UserLoggedIn.Provider>
+                </MyCommunitysInfo.Provider>
+              </ItemImagePath.Provider>
             </ProfileImagePath.Provider>
           </ShowCommunityIds.Provider>
         </GoogleInfo.Provider>
