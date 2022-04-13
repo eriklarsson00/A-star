@@ -161,8 +161,8 @@ export const ItemAvailableComponent = () => {
             toggleModal(item);
           }}
           // accessoryLeft={"https://picsum.photos/150/150"}
-          title={`${item.product_text}`}
-          description={`${item.quantity}`}
+          title={`${item.product_text} ${item.quantity}`}
+          description={`${item.description}`}
         />
         {modal}
       </View>
