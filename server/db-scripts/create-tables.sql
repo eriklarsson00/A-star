@@ -26,10 +26,10 @@ CREATE TABLE IF NOT EXISTS Users
     adress    TEXT NOT NULL,
     location  TEXT NOT NULL,
     imgurl    TEXT NULL,
-    rating    INT  NULL,
-    raters    INT  NULL,
-    given     INT  NULL,
-    taken     INT  NULL
+    rating    INT  NOT NULL DEFAULT 0,
+    raters    INT  NOT NULL DEFAULT 0,
+    given     INT  NOT NULL DEFAULT 0,
+    taken     INT  NOT NULL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS CommunityUser

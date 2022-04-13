@@ -19,7 +19,7 @@ export const ExploreScreen = () => {
     <Layout style={{ flex: 1, paddingTop: 50 }}>
       <TopNavigation
         alignment="center"
-        title={"Todo: Fixa detta"}
+        title={"Utforska varor"}
       ></TopNavigation>
       <TopTabs.Navigator
         screenOptions={{

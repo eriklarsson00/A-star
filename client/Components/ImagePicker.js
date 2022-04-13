@@ -82,7 +82,7 @@ export default function ImagePickerComp(props) {
       .catch((err) => console.log(err));
   };
 
-  resizeImage = async (result, resize = 1) => {
+  resizeImage = async (result, resize = 0.05) => {
     const manipResult = await ImageManipulator.manipulateAsync(
       result.uri,
       [
