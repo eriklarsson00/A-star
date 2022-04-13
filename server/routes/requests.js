@@ -162,8 +162,6 @@ function getOtherRequestsCommunity(req, res) {
   let user = req.params.user;
   let communities = req.query.communities.split(",");
 
-  console.log(typeof communities);
-
   knex("Requests")
     .select("Requests.*")
     .leftJoin("Transactions", "Transactions.request_id", "Requests.id")
