@@ -37,12 +37,17 @@ const getOffers = async (communities) => {
   //   offers = await request("GET", "/offers/active/" + community);
   // });
   return [...new Set(offers)];
-
 };
 
 const getCommunities = async () => {
   let communities = await request("Get", "/communities");
   return [...new Set(communities)];
+};
+
+const getUserCommunities = async (user_id) => {
+  let userCommunities = await request("Get", "/users/communities" + user_id);
+  return userCommunities;
+  //console.log(userCommunities);
 };
 
 const getRequests = async (communities) => {
@@ -89,6 +94,7 @@ export {
   getUserProfileByEmail,
   addProfile,
   getCommunities,
+  getUserCommunities,
   addToCommunity,
   addTransaction,
   deleteProfile,
