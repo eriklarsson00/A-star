@@ -1,6 +1,12 @@
 import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { SafeAreaView, StyleSheet, Image, Alert } from "react-native";
+import {
+  SafeAreaView,
+  StyleSheet,
+  Image,
+  Alert,
+  ScrollView,
+} from "react-native";
 import {
   TopNavigation,
   Button,
@@ -103,7 +109,7 @@ export const ProfileScreen = () => {
           <Text style={tw`text-center`}>Betyg</Text>
         </Card>
       </Layout>
-      <Layout style={[{ width: "100%", paddingTop: 66 }]}>
+      <ScrollView style={[{ width: "100%" }]}>
         <Button style={styles.btn} appearance="ghost">
           {" "}
           Mina produkter
@@ -132,7 +138,7 @@ export const ProfileScreen = () => {
           {" "}
           Logga ut
         </Button>
-      </Layout>
+      </ScrollView>
     </Layout>
   );
 };
@@ -144,6 +150,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   outerContainer: {
+    height: "100%",
     paddingTop: 50,
     flexDirection: "column",
     flexWrap: "wrap",
@@ -153,7 +160,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     margin: 5,
-    width: 120,
+    width: "30%",
   },
   btn: {
     borderRadius: 1,
