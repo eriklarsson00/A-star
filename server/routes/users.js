@@ -181,6 +181,36 @@ function addUserToCommunity(req, res) {
     });
 }
 
+function removeUserFromCommunity(req, res) {
+  const body = req.body;
+
+  if (checkEmptyBody(body, res, "Body cannot be empty")) {
+    return;
+  }
+
+  const user_id = parseInt(body.user_id);
+  const community_id = parseInt(body.community_id);
+
+  if (isNaN(user_id) || isNaN(community_id)) {
+    res.status(400).json("Body needs to contain 'user_id' and 'community_id'");
+    return;
+  }
+
+  knex("CommunityUser")
+    .where("user_id", user_id)
+    .andWhere("community_id", community_id)
+    .del()
+    .catch((err) => {
+      res.status(500).json(err);
+      return;
+    })
+    .then(() => {
+      res.json(
+        `User with id ${body.user_id} removed from community with id ${body.community_id}`
+      );
+    });
+}
+
 function getUserCommunities(req, res) {
   const id = parseInt(req.params.id);
   const errMsg = "Usage: /users/communities/:id. id has to be a number";
@@ -208,5 +238,6 @@ export {
   updateProfilePicture,
   deleteUser,
   addUserToCommunity,
+  removeUserFromCommunity,
   getUserCommunities,
 };
