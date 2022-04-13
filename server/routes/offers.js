@@ -158,7 +158,6 @@ function getOtherOffersCommunity(req, res) {
   let user = req.params.user;
   let communities = req.query.communities.split(",");
 
-  console.log(typeof communities);
 
   knex("Offers")
     .select("Offers.*")
