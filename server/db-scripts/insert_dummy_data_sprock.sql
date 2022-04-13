@@ -14,7 +14,7 @@ BEGIN
     INSERT INTO Communities (name, description, location, imgurl, private, password) VALUES
     ('Majklockan', 'dummy text', 'POINT(59.85365, 17.60159)', NULL, false, NULL),
     ('Kantorn', 'dummy text', 'POINT(59.87378, 17.64386)', NULL, false, NULL),
-    ('Triangeln', 'dummy text', 'POINT(59.85484, 17.61693)', NULL, false, NULL);
+    ('Triangeln', 'dummy text', 'POINT(59.85484, 17.61693)', NULL, true, 'demo');
 
     INSERT INTO Users (firstname, lastname, number, email, adress, location, imgurl, rating, raters, given, taken) VALUES
     ('Anja', 'Persson', '0735959908', 'anja.persson@icloud.com', 'Råbyvägen 53 B, 75429 Uppsala', 'Gränby', NULL, DEFAULT, DEFAULT, DEFAULT, DEFAULT),
