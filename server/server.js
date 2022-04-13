@@ -99,7 +99,10 @@ app
 
 app.route("/users/email/:email").get(users.getUserEmail);
 
-app.route("/users/community").post(users.addUserToCommunity);
+app
+  .route("/users/community")
+  .post(users.addUserToCommunity)
+  .delete(users.removeUserFromCommunity);
 
 app.route("/users/community/:id").get(users.getUserCommunities);
 
@@ -185,6 +188,10 @@ app
     requests.deleteRequest(req, res);
     io.sockets.emit("deleteRequest", req.params.id);
   });
+
+app.route("/requests/user/:id").get(requests.getUserRequests);
+
+app.route("/requests/other/:user").get(requests.getOtherRequestsCommunity);
 
 //*************************TRANSACTIONS*************************
 
