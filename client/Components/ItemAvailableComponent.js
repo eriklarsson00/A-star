@@ -14,39 +14,40 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import tw from "twrnc";
 import { useIsFocused } from "@react-navigation/native";
 import { MyCommunitysInfo, UserInfo } from "../assets/AppContext";
-import { getOffers, addTransaction } from "../Services/ServerCommunication.js";
+import {
+  getOffers,
+  getMyOffers,
+  addTransaction,
+} from "../Services/ServerCommunication.js";
 import io from "socket.io-client";
 import ProductInfoModal from "./Modals/ProductInfoModal";
 import TakeProductModal from "./Modals/TakeProductModal";
 import { host } from "../Services/ServerHost";
 
 export const ItemAvailableComponent = () => {
-  const { community } = React.useContext(MyCommunitysInfo);
+  const { userInfo, setUserInfo } = React.useContext(UserInfo);
+  const { myCommunitysInfo, setMyCommunitysInfo } =
+    React.useContext(MyCommunitysInfo);
   const [takeProduct, setTakeProduct] = React.useState(false);
   const [offers, setOffers] = React.useState([]);
   const [myOffers, setMyOffers] = React.useState([]);
   const [date, setDate] = React.useState(new Date());
   const [loading, setLoading] = React.useState(true);
-  const { user } = React.useContext(UserInfo);
   const isFocused = useIsFocused();
-
-  const id = user ? user.id : 1;
-  const communities = [1, 2];
 
   //fetch items on focus
   const fetchItems = async () => {
     setLoading(true);
-    let myItems = [];
-    let otherItems = [];
-    let items = await getOffers(communities).catch((e) => console.log(e));
-    items.forEach((item) => {
-      item.visible = false;
-      item.imgurl = "https://picsum.photos/150/150";
-      if (item.user_id == id) {
-        myItems.push(item);
-      } else {
-        otherItems.push(item);
-      }
+    let myItems = getMyOffers(userInfo.id).map((offer) => {
+      offer.visible = false;
+      return offer;
+    });
+    let otherItems = getOffers(
+      userInfo.id,
+      myCommunitysInfo.map((community) => community.id)
+    ).map((offer) => {
+      offer.visible = false;
+      return offer;
     });
     setMyOffers(myItems);
     setOffers(otherItems);
@@ -63,11 +64,13 @@ export const ItemAvailableComponent = () => {
   React.useEffect(() => {
     socketRef.current = io(host);
 
-    socketRef.current.emit("communities", { ids: ["1", "2"] });
+    socketRef.current.emit("communities", {
+      ids: myCommunitysInfo.map((community) => community.id.toString()),
+    });
 
     socketRef.current.on("offer", (offer) => {
       offer.visible = false;
-      if (offer.user_id == id) {
+      if (offer.user_id == userInfo.id) {
         setMyOffers([...myOffers, offer]);
       } else {
         setOffers([...offers, offer]);
@@ -120,7 +123,7 @@ export const ItemAvailableComponent = () => {
       offer_id: item.id,
       request_id: null,
       status: "pending",
-      responder_id: id,
+      responder_id: userInfo.id,
       time_of_creation: new Date(),
       time_of_expiration: date,
     };
