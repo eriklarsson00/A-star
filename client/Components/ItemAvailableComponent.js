@@ -35,17 +35,17 @@ export const ItemAvailableComponent = () => {
   const [loading, setLoading] = React.useState(true);
   const isFocused = useIsFocused();
 
+  const userId = userInfo.id;
+  const communityIds = myCommunitysInfo.map((community) => community.id);
+
   //fetch items on focus
   const fetchItems = async () => {
     setLoading(true);
-    let myItems = getMyOffers(userInfo.id).map((offer) => {
+    let myItems = getMyOffers(userId).map((offer) => {
       offer.visible = false;
       return offer;
     });
-    let otherItems = getOffers(
-      userInfo.id,
-      myCommunitysInfo.map((community) => community.id)
-    ).map((offer) => {
+    let otherItems = getOffers(userId, communityIds).map((offer) => {
       offer.visible = false;
       return offer;
     });
@@ -65,12 +65,12 @@ export const ItemAvailableComponent = () => {
     socketRef.current = io(host);
 
     socketRef.current.emit("communities", {
-      ids: myCommunitysInfo.map((community) => community.id.toString()),
+      ids: communityIds.map((id) => id.toString()),
     });
 
     socketRef.current.on("offer", (offer) => {
       offer.visible = false;
-      if (offer.user_id == userInfo.id) {
+      if (offer.user_id == userId) {
         setMyOffers([...myOffers, offer]);
       } else {
         setOffers([...offers, offer]);
@@ -123,7 +123,7 @@ export const ItemAvailableComponent = () => {
       offer_id: item.id,
       request_id: null,
       status: "pending",
-      responder_id: userInfo.id,
+      responder_id: userId,
       time_of_creation: new Date(),
       time_of_expiration: date,
     };

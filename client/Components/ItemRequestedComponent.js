@@ -10,36 +10,35 @@ import {
   Spinner,
 } from "@ui-kitten/components";
 import { useIsFocused } from "@react-navigation/native";
-import { MyCommunitysInfo } from "../assets/AppContext";
+import { MyCommunitysInfo, UserInfo } from "../assets/AppContext";
 import { io } from "socket.io-client";
-import { getRequests } from "../Services/ServerCommunication";
+import { getRequests, getMyRequests } from "../Services/ServerCommunication";
 import { host } from "../Services/ServerHost";
 
 export const ItemRequestedComponent = () => {
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const { userInfo, setUserInfo } = React.useContext(UserInfo);
+  const { myCommunitysInfo, setMyCommunitysInfo } =
+    React.useContext(MyCommunitysInfo);
   const [myRequests, setMyRequests] = React.useState([]);
   const [requests, setRequests] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const { community } = React.useContext(MyCommunitysInfo);
   const isFocused = useIsFocused();
 
-  const communities = [1, 2];
-  const id = 4;
+  const userId = userInfo.id;
+  const communityIds = myCommunitysInfo.map((community) => community.id);
 
   //fetch items on focus
   useEffect(() => {
     const fetchItems = async () => {
       setLoading(true);
-      let myItems = [];
-      let otherItems = [];
-      let items = await getRequests(communities).catch((e) => console.log(e));
-      items.forEach((item) => {
-        item.visible = false;
-        if (item.user_id == id) {
-          myItems.push(item);
-        } else {
-          otherItems.push(item);
-        }
+      let myItems = getMyRequests(userId).map((request) => {
+        request.visible = false;
+        return request;
+      });
+      let otherItems = getRequests(userId, communityIds).map((request) => {
+        request.visible = false;
+        return request;
       });
       setMyRequests(myItems);
       setRequests(otherItems);
@@ -55,11 +54,13 @@ export const ItemRequestedComponent = () => {
   React.useEffect(() => {
     socketRef.current = io(host);
 
-    socketRef.current.emit("communities", { ids: ["1", "2"] });
+    socketRef.current.emit("communities", {
+      ids: communityIds.map((id) => id.toString()),
+    });
 
     socketRef.current.on("request", (request) => {
       request.visible = false;
-      if (request.user_id == id) {
+      if (request.user_id == userId) {
         setMyRequests([...myRequests, request]);
       } else {
         setRequests([...requests, request]);
