@@ -140,6 +140,44 @@ function deleteRequest(req, res) {
     });
 }
 
+function getUserRequests(req, res) {
+  const user = parseInt(req.params.id);
+
+  if (isNaN(user)) {
+    return res
+      .status(400)
+      .json("Usage: /requests/user/:id. id has to be a number");
+  }
+
+  knex("Requests")
+    .select()
+    .where("user_id", user)
+    .catch((err) => {
+      res.status(500).json(err);
+    })
+    .then((requests) => res.json(requests));
+}
+
+function getOtherRequestsCommunity(req, res) {
+  let user = req.params.user;
+  let communities = req.query.communities.split(",");
+
+  knex("Requests")
+    .select("Requests.*")
+    .leftJoin("Transactions", "Transactions.request_id", "Requests.id")
+    .leftJoin(
+      "CommunityListings",
+      "CommunityListings.request_id",
+      "Requests.id"
+    )
+    .whereIn("CommunityListings.community_id", communities)
+    .whereNot("Requests.user_id", user)
+    .andWhere("Transactions.request_id", null)
+    .then((requests) => {
+      res.json(requests);
+    });
+}
+
 export {
   getActiveRequestsCommunity,
   getActiveRequests,
@@ -148,4 +186,6 @@ export {
   addRequest,
   updateRequest,
   deleteRequest,
+  getUserRequests,
+  getOtherRequestsCommunity,
 };

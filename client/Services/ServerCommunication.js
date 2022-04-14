@@ -44,6 +44,12 @@ const getCommunities = async () => {
   return [...new Set(communities)];
 };
 
+const getUserCommunities = async (user_id) => {
+  let userCommunities = await request("Get", "/users/communities" + user_id);
+  return userCommunities;
+  //console.log(userCommunities);
+};
+
 const getRequests = async (communities) => {
   let requests = await request("GET", "/requests");
   // communities.forEach(async (community) => {
@@ -59,6 +65,10 @@ const addProfile = async (profile, communities) => {
   const updatedProfile = await getUserProfileByEmail(profile.email);
   await addToCommunity(updatedProfile[0].id, communities);
   return updatedProfile;
+};
+
+const addTransaction = async (transaction) => {
+  return await request("POST", "/transactions", transaction);
 };
 
 const addToCommunity = async (profile_id, communities) => {
@@ -84,6 +94,8 @@ export {
   getUserProfileByEmail,
   addProfile,
   getCommunities,
+  getUserCommunities,
   addToCommunity,
+  addTransaction,
   deleteProfile,
 };

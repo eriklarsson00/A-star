@@ -26,10 +26,10 @@ CREATE TABLE IF NOT EXISTS Users
     adress    TEXT NOT NULL,
     location  TEXT NOT NULL,
     imgurl    TEXT NULL,
-    rating    INT  NULL,
-    raters    INT  NULL,
-    given     INT  NULL,
-    taken     INT  NULL
+    rating    INT  NOT NULL DEFAULT 0,
+    raters    INT  NOT NULL DEFAULT 0,
+    given     INT  NOT NULL DEFAULT 0,
+    taken     INT  NOT NULL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS CommunityUser
@@ -134,9 +134,9 @@ CREATE TABLE IF NOT EXISTS Transactions
         FOREIGN KEY (request_id) REFERENCES Requests (id)
         ON DELETE CASCADE,
     CONSTRAINT transactions_ibfk_3
-        FOREIGN KEY (responder_id) REFERENCES Users (id)
+        FOREIGN KEY (responder_id) REFERENCES Users (id),
     CONSTRAINT transactions_offer_id_uindex
-        UNIQUE (offer_id)
+        UNIQUE (offer_id),
     CONSTRAINT transactions_request_id_uindex
         UNIQUE (request_id)
 );

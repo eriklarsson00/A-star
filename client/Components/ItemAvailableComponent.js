@@ -1,61 +1,59 @@
 import React from "react";
-import {
-  StyleSheet,
-  View,
-  Image,
-  RefreshControl,
-  ScrollView,
-} from "react-native";
+import { StyleSheet, View, Image, ScrollView, FlatList } from "react-native";
 import {
   Text,
   List,
   ListItem,
-  Icon,
   Modal,
   Card,
   Button,
   Layout,
-  Radio,
-  RadioGroup,
-  Input,
+  Spinner,
 } from "@ui-kitten/components";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import tw from "twrnc";
 import { useIsFocused } from "@react-navigation/native";
-import { MyCommunitysInfo, ShowCommunityIds } from "../assets/AppContext";
-import { getOffers } from "../Services/ServerCommunication.js";
+import { MyCommunitysInfo, UserInfo } from "../assets/AppContext";
+import { getOffers, addTransaction } from "../Services/ServerCommunication.js";
 import io from "socket.io-client";
+import ProductInfoModal from "./Modals/ProductInfoModal";
+import TakeProductModal from "./Modals/TakeProductModal";
 import { host } from "../Services/ServerHost";
 
 export const ItemAvailableComponent = () => {
   const { community } = React.useContext(MyCommunitysInfo);
   const [takeProduct, setTakeProduct] = React.useState(false);
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
   const [offers, setOffers] = React.useState([]);
   const [myOffers, setMyOffers] = React.useState([]);
+  const [date, setDate] = React.useState(new Date());
+  const [loading, setLoading] = React.useState(true);
+  const { user } = React.useContext(UserInfo);
   const isFocused = useIsFocused();
 
-  const id = 1;
+  const id = user ? user.id : 1;
   const communities = [1, 2];
 
   //fetch items on focus
+  const fetchItems = async () => {
+    setLoading(true);
+    let myItems = [];
+    let otherItems = [];
+    let items = await getOffers(communities).catch((e) => console.log(e));
+    items.forEach((item) => {
+      item.visible = false;
+      item.imgurl = "https://picsum.photos/150/150";
+      if (item.user_id == id) {
+        myItems.push(item);
+      } else {
+        otherItems.push(item);
+      }
+    });
+    setMyOffers(myItems);
+    setOffers(otherItems);
+    setLoading(false);
+  };
 
   React.useEffect(() => {
-    const fetchItems = async () => {
-      let myItems = [];
-      let otherItems = [];
-      let items = await getOffers(communities).catch((e) => console.log(e));
-      items.forEach((item) => {
-        item.visible = false;
-        if (item.user_id == id) {
-          myItems.push(item);
-        } else {
-          otherItems.push(item);
-        }
-      });
-      setMyOffers(myItems);
-      setOffers(otherItems);
-    };
-
     if (isFocused) fetchItems();
   }, [isFocused]);
 
@@ -104,96 +102,72 @@ export const ItemAvailableComponent = () => {
   const toggleModal = (item) => {
     toggleVisible(offers, item);
     toggleVisible(myOffers, item);
+    setTakeProduct(false);
     setOffers([...offers]);
     setMyOffers([...myOffers]);
   };
 
-  const renderAvailableItems = ({ item }) => (
-    <View>
-      <ListItem
-        style={styles.container}
-        onPress={() => {
-          toggleModal(item);
-        }}
-        // accessoryLeft={"https://picsum.photos/150/150"}
-        title={`${item.product_text}`}
-        description={`${item.quantity}`}
-      />
-      <Modal //Modal for additional information about a product
-        visible={item.visible}
-        backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}
-        onBackdropPress={() => toggleModal(item)}
-      >
-        <Card disabled={true} style={{ width: 320, flex: 1 }}>
-          <Layout style={tw`py-10`}>
-            <Image
-              style={tw`rounded-full`}
-              source={{
-                uri: "https://picsum.photos/150/150",
-                height: 100,
-                width: 100,
-              }}
-            />
-          </Layout>
-          <Text style={{ marginBottom: 10 }}>
-            {item.product_text} {item.quantity}
-          </Text>
-          <Text style={{ marginBottom: 10 }}>
-            Utångsdag: {item.time_of_expiration}
-          </Text>
-          <Text style={{ marginBottom: 10 }}>
-            Bruten förpackning: {item.broken_pkg ? "Japp" : "Nepp"}{" "}
-          </Text>
-          <Text style={{ marginBottom: 10 }}>Användare som lagt upp</Text>
-          <Text style={{ marginBottom: 10 }}>{item.description}</Text>
-          <Button onPress={() => setTakeProduct(true)}>Ta vara</Button>
-        </Card>
-      </Modal>
+  const toggleTake = () => {
+    setTakeProduct(!takeProduct);
+  };
 
-      {/* <Modal //Modal for setting time & offering an offer
-        visible={takeProduct}
-        backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}
-        onBackdropPress={() => setTakeProduct(false)}
-      >
-        <Card disabled={true} style={{ width: 320, flex: 1 }}>
-          <Layout style={tw`py-10`}>
-            <Image
-              style={tw`rounded-full`}
-              source={{
-                uri: "https://picsum.photos/100/100",
-                height: 80,
-                width: 80,
-              }}
-            />
-          </Layout>
-          <Text style={{ marginBottom: 10 }}>Jag kan hämta varan: </Text>
-          <RadioGroup
-            selectedIndex={selectedIndex}
-            onChange={(index) => setSelectedIndex(index)}
-          >
-            <Radio>Idag</Radio>
-            <Radio>Imorgon</Radio>
-            <Radio>Inom de närmaste dagarna</Radio>
-            <Radio>Annat datum: </Radio>
-          </RadioGroup>
-          <Input
-            style={{ marginBottom: 10 }}
-            placeholder="Annat datum"
-            disabled={selectedIndex !== 3}
-          />
-          <Button
-            onPress={() => (
-              setTakeProduct(false),
-              setVisible(false),
-              console.log(selectedIndex)
-            )}
-          >
-            Ta vara
-          </Button>
-        </Card>
-      </Modal> */}
-    </View>
-  );
+  const updateDate = (date) => {
+    setDate(date);
+  };
+
+  const makeTransaction = async (item) => {
+    const transaction = {
+      offer_id: item.id,
+      request_id: null,
+      status: "pending",
+      responder_id: id,
+      time_of_creation: new Date(),
+      time_of_expiration: date,
+    };
+
+    console.log(transaction);
+
+    await addTransaction(transaction);
+    fetchItems();
+    toggleModal(item);
+  };
+
+  const renderAvailableItems = ({ item }) => {
+    let infoModal = (
+      <ProductInfoModal
+        item={item}
+        toggleModal={toggleModal}
+        toggleTake={toggleTake}
+      />
+    );
+
+    let takeProductModal = (
+      <TakeProductModal
+        item={item}
+        date={date}
+        toggleModal={toggleModal}
+        updateDate={updateDate}
+        makeTransaction={makeTransaction}
+      />
+    );
+
+    let modal = !takeProduct ? infoModal : takeProductModal;
+
+    return (
+      <View>
+        <ListItem
+          style={styles.container}
+          onPress={() => {
+            toggleModal(item);
+          }}
+          // accessoryLeft={"https://picsum.photos/150/150"}
+          title={`${item.product_text} ${item.quantity}`}
+          description={`${item.description}`}
+        />
+        {modal}
+      </View>
+    );
+  };
 
   const renderMyItems = (
     { item } //Used for rendering my items
@@ -218,44 +192,46 @@ export const ItemAvailableComponent = () => {
     </View>
   );
 
-  const renderLists = ({ item }) => (
-    <View>
-      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-        {item.myListings ? "Mina varor" : "TODO: Fixa detta"}
-      </Text>
-      <List
-        data={item.data}
-        renderItem={item.myListings ? renderMyItems : renderAvailableItems}
-      />
-    </View>
-  );
-
-  return (
-    /* <ScrollView
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-          />}>*/
-    <ScrollView style={{ flex: 1 }}>
+  const flatListHeader = () => {
+    return (
       <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
         Mina varor
       </Text>
-      <List scrollEnabled={false} data={myOffers} renderItem={renderMyItems} />
-      {community &&
-        community.map((name) => (
-          <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-            Tillgängligt i {name}{" "}
-          </Text>
-        ))}
-      <List
-        scrollEnabled={false}
-        data={offers}
-        renderItem={renderAvailableItems}
-      />
-    </ScrollView>
-    // </ScrollView>
+    );
+  };
+
+  const flatListFooter = () => {
+    return (
+      <View>
+        <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
+          Tillgängliga varor
+        </Text>
+        <List
+          scrollEnabled={false}
+          data={offers}
+          renderItem={renderAvailableItems}
+        />
+      </View>
+    );
+  };
+
+  const LoadingView = () => (
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <Spinner size={"giant"} />
+    </View>
   );
+
+  const LoadedView = () => (
+    <FlatList
+      style={{ flex: 1 }}
+      data={myOffers}
+      renderItem={renderMyItems}
+      ListHeaderComponent={flatListHeader}
+      ListFooterComponent={flatListFooter}
+    ></FlatList>
+  );
+
+  return loading ? <LoadingView /> : <LoadedView />;
 };
 
 const styles = StyleSheet.create({

@@ -136,6 +136,41 @@ function deleteOffer(req, res) {
     });
 }
 
+function getUserOffers(req, res) {
+  const user = parseInt(req.params.id);
+
+  if (isNaN(user)) {
+    return res
+      .status(400)
+      .json("Usage: /offers/user/:id. id has to be a number");
+  }
+
+  knex("Offers")
+    .select()
+    .where("user_id", user)
+    .catch((err) => {
+      res.status(500).json(err);
+    })
+    .then((offers) => res.json(offers));
+}
+
+function getOtherOffersCommunity(req, res) {
+  let user = req.params.user;
+  let communities = req.query.communities.split(",");
+
+
+  knex("Offers")
+    .select("Offers.*")
+    .leftJoin("Transactions", "Transactions.offer_id", "Offers.id")
+    .leftJoin("CommunityListings", "CommunityListings.offer_id", "Offers.id")
+    .whereIn("CommunityListings.community_id", communities)
+    .whereNot("Offers.user_id", user)
+    .andWhere("Transactions.offer_id", null)
+    .then((offers) => {
+      res.json(offers);
+    });
+}
+
 export {
   getActiveOffersCommunity,
   getActiveOffers,
@@ -144,4 +179,6 @@ export {
   addOffer,
   deleteOffer,
   updateOffer,
+  getUserOffers,
+  getOtherOffersCommunity,
 };

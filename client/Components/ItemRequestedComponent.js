@@ -1,18 +1,16 @@
 import React, { useEffect } from "react";
-import { ScrollView } from "react-native";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, FlatList } from "react-native";
 import {
   Text,
-  Layout,
   List,
   Divider,
   ListItem,
-  Icon,
   Modal,
   Card,
+  Spinner,
 } from "@ui-kitten/components";
 import { useIsFocused } from "@react-navigation/native";
-import tw from "twrnc";
+import { MyCommunitysInfo } from "../assets/AppContext";
 import { io } from "socket.io-client";
 import { getRequests } from "../Services/ServerCommunication";
 import { host } from "../Services/ServerHost";
@@ -21,6 +19,8 @@ export const ItemRequestedComponent = () => {
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const [myRequests, setMyRequests] = React.useState([]);
   const [requests, setRequests] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+  const { community } = React.useContext(MyCommunitysInfo);
   const isFocused = useIsFocused();
 
   const communities = [1, 2];
@@ -29,6 +29,7 @@ export const ItemRequestedComponent = () => {
   //fetch items on focus
   useEffect(() => {
     const fetchItems = async () => {
+      setLoading(true);
       let myItems = [];
       let otherItems = [];
       let items = await getRequests(communities).catch((e) => console.log(e));
@@ -42,6 +43,7 @@ export const ItemRequestedComponent = () => {
       });
       setMyRequests(myItems);
       setRequests(otherItems);
+      setLoading(false);
     };
 
     if (isFocused) fetchItems();
@@ -116,28 +118,54 @@ export const ItemRequestedComponent = () => {
     </View>
   );
 
-  return (
-    <ScrollView>
+  const flatListHeader = () => {
+    return (
       <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
         Mina efterfrågningar
       </Text>
-      <List
-        scrollEnabled={false}
-        data={myRequests}
-        ItemSeparatorComponent={Divider}
-        renderItem={renderItem}
-      />
-      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-        Efterfrågas
-      </Text>
-      <List
-        scrollEnabled={false}
-        data={requests}
-        ItemSeparatorComponent={Divider}
-        renderItem={renderItem}
-      />
-    </ScrollView>
+    );
+  };
+
+  const flatListFooter = () => {
+    return (
+      <>
+        <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
+          Efterfrågade varor
+        </Text>
+        <List
+          scrollEnabled={false}
+          data={requests}
+          ItemSeparatorComponent={Divider}
+          renderItem={renderItem}
+        />
+      </>
+    );
+  };
+
+  const LoadingView = () => (
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <Spinner size={"giant"} />
+    </View>
   );
+
+  const LoadedView = () => (
+    <FlatList
+      data={myRequests}
+      ItemSeparatorComponent={Divider}
+      renderItem={renderItem}
+      ListHeaderComponent={flatListHeader}
+      ListFooterComponent={flatListFooter}
+    >
+      {community &&
+        community.map((name) => (
+          <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
+            Efterfrågas i {name}{" "}
+          </Text>
+        ))}
+    </FlatList>
+  );
+
+  return loading ? <LoadingView /> : <LoadedView />;
 };
 
 const styles = StyleSheet.create({
