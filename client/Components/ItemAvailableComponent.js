@@ -36,19 +36,13 @@ export const ItemAvailableComponent = () => {
   const isFocused = useIsFocused();
 
   const userId = userInfo.id;
-  const communityIds = myCommunitysInfo.map((community) => community.id);
+  const communityIds = myCommunitysInfo.map(({ id }) => id);
 
   //fetch items on focus
   const fetchItems = async () => {
     setLoading(true);
-    let myItems = getMyOffers(userId).map((offer) => {
-      offer.visible = false;
-      return offer;
-    });
-    let otherItems = getOffers(userId, communityIds).map((offer) => {
-      offer.visible = false;
-      return offer;
-    });
+    let myItems = await getMyOffers(userId);
+    let otherItems = await getOffers(userId, communityIds);
     setMyOffers(myItems);
     setOffers(otherItems);
     setLoading(false);

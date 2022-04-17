@@ -37,7 +37,8 @@ const getMyOffers = async (id) => {
 
 const getOffers = async (id, communities) => {
   let query = "?communities=" + communities.join(",");
-  return await request("GET", "/offers/other/" + id + query);
+  let offers = await request("GET", "/offers/other/" + id + query);
+  return [...new Set(offers)];
 };
 
 const getCommunities = async () => {
