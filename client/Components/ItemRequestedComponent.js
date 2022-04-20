@@ -26,20 +26,14 @@ export const ItemRequestedComponent = () => {
   const isFocused = useIsFocused();
 
   const userId = userInfo.id;
-  const communityIds = myCommunitysInfo.map((community) => community.id);
+  const communityIds = myCommunitysInfo.map(({ id }) => id);
 
   //fetch items on focus
   useEffect(() => {
     const fetchItems = async () => {
       setLoading(true);
-      let myItems = getMyRequests(userId).map((request) => {
-        request.visible = false;
-        return request;
-      });
-      let otherItems = getRequests(userId, communityIds).map((request) => {
-        request.visible = false;
-        return request;
-      });
+      let myItems = await getMyRequests(userId);
+      let otherItems = await getRequests(userId, communityIds);
       setMyRequests(myItems);
       setRequests(otherItems);
       setLoading(false);
