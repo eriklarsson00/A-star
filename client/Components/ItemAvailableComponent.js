@@ -1,17 +1,13 @@
 import React from "react";
-import { StyleSheet, View, Image, ScrollView, FlatList } from "react-native";
+import { StyleSheet, View, FlatList } from "react-native";
 import {
   Text,
   List,
   ListItem,
   Modal,
   Card,
-  Button,
-  Layout,
   Spinner,
 } from "@ui-kitten/components";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import tw from "twrnc";
 import { useIsFocused } from "@react-navigation/native";
 import { MyCommunitysInfo, UserInfo } from "../assets/AppContext";
 import {
