@@ -66,6 +66,14 @@ const addProfile = async (profile, communities) => {
   return updatedProfile;
 };
 
+const getPendingTransactions = async (user_id) => {
+  let transactions = await request(
+    "Get",
+    "/transactions/pending/user/" + user_id
+  );
+  return transactions;
+};
+
 const addTransaction = async (transaction) => {
   return await request("POST", "/transactions", transaction);
 };
@@ -107,6 +115,7 @@ export {
   getUserProfileById,
   getUserProfileByEmail,
   addProfile,
+  getPendingTransactions,
   getCommunities,
   getUserCommunities,
   addToCommunity,
