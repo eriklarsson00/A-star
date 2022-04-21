@@ -109,9 +109,9 @@ export default () => {
   }, [userLoggedIn]);
 
   async function setCommunities(user_id) {
-    /*let myComms = await getUserCommunities(user_id);
-		setMyCommunitysInfo(myComms);
-		const jsonShowIds = await AsyncStorage.getItem("showCommunityIds");
+    let myComms = await getUserCommunities(user_id);
+    setMyCommunitysInfo(myComms);
+    /*const jsonShowIds = await AsyncStorage.getItem("showCommunityIds");
 		if (jsonShowIds !== null) {
 			const showIds = JSON.parse(jsonShowIds);
 			console.log(showIds);

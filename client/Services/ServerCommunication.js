@@ -45,7 +45,7 @@ const getCommunities = async () => {
 };
 
 const getUserCommunities = async (user_id) => {
-  let userCommunities = await request("Get", "/users/communities" + user_id);
+  let userCommunities = await request("Get", "/users/community/" + user_id);
   return userCommunities;
   //console.log(userCommunities);
 };
