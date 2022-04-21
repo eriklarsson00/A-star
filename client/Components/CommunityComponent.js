@@ -1,196 +1,194 @@
 import React from "react";
 import { Image, StyleSheet, TouchableNativeFeedback, View } from "react-native";
 import {
-	Radio,
-	Text,
-	Layout,
-	Button,
-	useTheme,
-	Modal,
-	Card,
-	Icon,
-	Divider,
+  Radio,
+  Text,
+  Layout,
+  Button,
+  useTheme,
+  Modal,
+  Card,
+  Icon,
+  Divider,
 } from "@ui-kitten/components";
 import { ShowCommunityIds, MyCommunitysInfo } from "../assets/AppContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import tw from "twrnc";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { removeUserFromCommunity } from "../Services/ServerCommunication";
 
 const CommunityComponent = (props) => {
-	const theme = useTheme();
+  const theme = useTheme();
 
-	//STATE
-	const [removeCommunityVisible, setRemoveCommunityVisible] =
-		React.useState(false);
+  //STATE
+  const [removeCommunityVisible, setRemoveCommunityVisible] =
+    React.useState(false);
 
-	const [checked, setChecked] = React.useState(false);
+  const [checked, setChecked] = React.useState(false);
 
-	//CONTEXT
-	const { showCommunityIds, setShowCommunityIds } =
-		React.useContext(ShowCommunityIds);
+  //CONTEXT
+  const { showCommunityIds, setShowCommunityIds } =
+    React.useContext(ShowCommunityIds);
 
-	const { myCommunitysInfo, setMyCommunitysInfo } =
-		React.useContext(MyCommunitysInfo);
+  const { myCommunitysInfo, setMyCommunitysInfo } =
+    React.useContext(MyCommunitysInfo);
 
-	//ICONS
+  //ICONS
 
-	const CrossIcon = () => (
-		<Icon
-			style={styles.crossStyle}
-			fill={theme["color-basic-600"]}
-			name="close-circle-outline"
-		/>
-	);
+  const CrossIcon = () => (
+    <Icon
+      style={styles.crossStyle}
+      fill={theme["color-basic-600"]}
+      name="close-circle-outline"
+    />
+  );
 
-	function setShowCommIds(checked) {
-		// TODO: Uppdatera async showIDs
-		if (checked) {
-			//Man lägger till grannskapet
-		} else {
-			//Man tar bort grannskaped
-		}
-	}
+  function setShowCommIds(checked) {
+    // TODO: Uppdatera async showIDs
+    if (checked) {
+      //Man lägger till grannskapet
+    } else {
+      //Man tar bort grannskaped
+    }
+  }
 
-	function removeCommunity() {
-		if (showCommunityIds.includes(props.community.id)) {
-			setShowCommunityIds(
-				showCommunityIds.filter((comId) => comId != props.community.id)
-			);
-		}
-		setMyCommunitysInfo(
-			myCommunitysInfo.filter(
-				(community) => community.id != props.community.id
-			)
-		);
-		props.setMyCommunityNames(
-			props.myCommunityNames.filter((name) => name != props.community.name)
-		);
-		setRemoveCommunityVisible(false);
-	}
+  function removeCommunity() {
+    if (showCommunityIds.includes(props.community.id)) {
+      setShowCommunityIds(
+        showCommunityIds.filter((comId) => comId != props.community.id)
+      );
+    }
+    setMyCommunitysInfo(
+      myCommunitysInfo.filter((community) => community.id != props.community.id)
+    );
+    props.setMyCommunityNames(
+      props.myCommunityNames.filter((name) => name != props.community.name)
+    );
+    setRemoveCommunityVisible(false);
 
-	const RemoveCommunityModal = () => {
-		return (
-			<Modal
-				visible={removeCommunityVisible}
-				backdropStyle={styles.backdrop}
-				onBackdropPress={() => setRemoveCommunityVisible(false)}
-			>
-				<Card disabled={true}>
-					<Text style={tw`text-center text-base`}>
-						Vill du ta bort {props.community.name} från dina grannskap?
-					</Text>
-					<Divider />
-					<View style={styles.removeCommunityButtons}>
-						<Button
-							style={{ width: 100, margin: 15 }}
-							onPress={removeCommunity}
-						>
-							Ja
-						</Button>
-						<Button
-							style={{ width: 100, margin: 15 }}
-							onPress={() => {
-								setRemoveCommunityVisible(false);
-							}}
-						>
-							Avbryt
-						</Button>
-					</View>
-				</Card>
-			</Modal>
-		);
-	};
+    // Remove from database
+    //removeUserFromCommunity()
+  }
 
-	return (
-		<TouchableOpacity
-			activeOpacity={0.8}
-			onPress={() => {
-				setChecked(!checked);
-				showCommunityIds.includes(props.community.id)
-					? setShowCommunityIds(
-							showCommunityIds.filter(
-								(comId) => comId != props.community.id
-							)
-					  )
-					: setShowCommunityIds([...showCommunityIds, props.community.id]);
-			}}
-		>
-			<Layout style={styles.outer_container}>
-				<RemoveCommunityModal />
-				<Layout
-					style={[
-						styles.container,
-						{
-							backgroundColor: checked
-								? theme["color-primary-500"]
-								: theme["color-primary-300"],
-						},
-					]}
-				>
-					<View style={{ width: 280, flexDirection: "row" }}>
-						<Image
-							style={tw`ml-5 rounded-md`}
-							source={{
-								uri: "https://www.uppsalahem.se/globalassets/bilder/omradesbilder/7002/Rackarberget_3.jpg?w=320", //props.community.imgurl,
-								height: 50,
-								width: 50,
-							}}
-						/>
-						<Text style={tw`pl-2 pt-2.5 text-lg`}>
-							{props.community.name}
-						</Text>
-					</View>
-					<TouchableOpacity
-						onPress={() => {
-							setRemoveCommunityVisible(true);
-						}}
-					>
-						<CrossIcon />
-					</TouchableOpacity>
-				</Layout>
-			</Layout>
-		</TouchableOpacity>
-	);
+  const RemoveCommunityModal = () => {
+    return (
+      <Modal
+        visible={removeCommunityVisible}
+        backdropStyle={styles.backdrop}
+        onBackdropPress={() => setRemoveCommunityVisible(false)}
+      >
+        <Card disabled={true}>
+          <Text style={tw`text-center text-base`}>
+            Vill du ta bort {props.community.name} från dina grannskap?
+          </Text>
+          <Divider />
+          <View style={styles.removeCommunityButtons}>
+            <Button
+              style={{ width: 100, margin: 15 }}
+              onPress={removeCommunity}
+            >
+              Ja
+            </Button>
+            <Button
+              style={{ width: 100, margin: 15 }}
+              onPress={() => {
+                setRemoveCommunityVisible(false);
+              }}
+            >
+              Avbryt
+            </Button>
+          </View>
+        </Card>
+      </Modal>
+    );
+  };
+
+  return (
+    <TouchableOpacity
+      activeOpacity={0.8}
+      onPress={() => {
+        setChecked(!checked);
+        showCommunityIds.includes(props.community.id)
+          ? setShowCommunityIds(
+              showCommunityIds.filter((comId) => comId != props.community.id)
+            )
+          : setShowCommunityIds([...showCommunityIds, props.community.id]);
+      }}
+    >
+      <Layout style={styles.outer_container}>
+        <RemoveCommunityModal />
+        <Layout
+          style={[
+            styles.container,
+            {
+              backgroundColor: checked
+                ? theme["color-primary-500"]
+                : theme["color-primary-300"],
+            },
+          ]}
+        >
+          <View style={{ width: 280, flexDirection: "row" }}>
+            <Image
+              style={tw`ml-5 rounded-md`}
+              source={{
+                uri: "https://www.uppsalahem.se/globalassets/bilder/omradesbilder/7002/Rackarberget_3.jpg?w=320", //props.community.imgurl,
+                height: 50,
+                width: 50,
+              }}
+            />
+            <Text style={tw`pl-2 pt-2.5 text-lg`}>{props.community.name}</Text>
+          </View>
+          <TouchableOpacity
+            onPress={() => {
+              setRemoveCommunityVisible(true);
+            }}
+          >
+            <CrossIcon />
+          </TouchableOpacity>
+        </Layout>
+      </Layout>
+    </TouchableOpacity>
+  );
 };
 
 const styles = StyleSheet.create({
-	backdrop: {
-		backgroundColor: "rgba(0, 0, 0, 0.5)",
-	},
-	container: {
-		flex: 1,
-		flexDirection: "row",
-		alignItems: "center",
-		margin: 5,
-		width: "90%",
-		height: 80,
-		borderRadius: 15,
-	},
-	crossStyle: {
-		height: 30,
-		width: 30,
-	},
-	outer_container: {
-		alignItems: "center",
-		justifyContent: "center",
-		backgroundColor: "#F5F5F5",
-	},
-	radio: {
-		marginLeft: 260,
-		position: "absolute",
-	},
-	removeCommunityButtons: {
-		flex: 1,
-		flexDirection: "row",
-		justifyContent: "center",
-	},
+  backdrop: {
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  container: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    margin: 5,
+    width: "90%",
+    height: 80,
+    borderRadius: 15,
+  },
+  crossStyle: {
+    height: 30,
+    width: 30,
+  },
+  outer_container: {
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#F5F5F5",
+  },
+  radio: {
+    marginLeft: 260,
+    position: "absolute",
+  },
+  removeCommunityButtons: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+  },
 });
 
 export default CommunityComponent;
 
 //OLD layout
 {
-	/* <Layout
+  /* <Layout
 style={[
 	styles.container,
 	{
