@@ -62,8 +62,7 @@ const CommunityComponent = (props) => {
     setRemoveCommunityVisible(false);
 
     // Remove from database
-    const res = await removeUserFromCommunity(userInfo.id, props.community.id);
-    console.log(res);
+    await removeUserFromCommunity(userInfo.id, props.community.id);
   }
 
   const RemoveCommunityModal = () => {
