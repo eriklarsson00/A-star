@@ -39,6 +39,7 @@ export const InputNewItem = (props) => {
   const [productVisible, setProductVisible] = React.useState(true);
   const [created, setCreated] = React.useState(false);
   const [barCodeShow, setBarCodeShow] = React.useState(false);
+  const [image, setImage] = React.useState(null);
   const { itemImagePath, setItemImagePath } = React.useContext(ItemImagePath);
   const { profileImagePath, setProfileImagePath } =
     React.useContext(ProfileImagePath);
@@ -78,10 +79,18 @@ export const InputNewItem = (props) => {
       <Modal
         visible={visible}
         backdropStyle={styles.backdrop}
-        onBackdropPress={() => setVisible(false)}
+        onBackdropPress={() => {
+          setVisible(false);
+        }}
       >
         <Card disabled={true}>
-          <ImagePicker context="ItemImage" />
+          <ImagePicker
+            context="ItemImage"
+            updateResult={(result) => {
+              console.log("New picked image path: " + result.uri);
+              setImage(result.uri);
+            }}
+          />
           <Button style={tw`mt-2 w-50`} onPress={() => setVisible(false)}>
             Klar
           </Button>
@@ -119,7 +128,7 @@ export const InputNewItem = (props) => {
               >
                 <Image
                   style={{ width: 70, height: 70 }}
-                  source={{ uri: itemImagePath, height: 150, width: 150 }}
+                  source={{ uri: image, height: 150, width: 150 }}
                 />
                 <ChoseImageModal />
               </TouchableOpacity>

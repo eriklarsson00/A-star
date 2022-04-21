@@ -39,8 +39,10 @@ export default function ImagePickerComp(props) {
       }
       if (props.context == "ItemImage") {
         setItemImagePath(result.url);
+        props.updateResult(result);
       }
       pushToServer(result);
+     
     }
   };
 
@@ -62,12 +64,11 @@ export default function ImagePickerComp(props) {
         setProfileImagePath(result.uri);
       }
       if (props.context == "ItemImage") {
-        console.log("hej");
-        console.log("result.url: " + result.uri);
         setItemImagePath(result.uri);
-        console.log("item" + itemImagePath);
+        props.updateResult(result);
       }
-      props.updateResult(result);
+      pushToServer(result);
+      
     }
   };
 
