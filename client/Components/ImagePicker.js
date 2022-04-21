@@ -42,7 +42,6 @@ export default function ImagePickerComp(props) {
         props.updateResult(result);
       }
       pushToServer(result);
-     
     }
   };
 
@@ -68,7 +67,6 @@ export default function ImagePickerComp(props) {
         props.updateResult(result);
       }
       pushToServer(result);
-      
     }
   };
 
@@ -80,10 +78,13 @@ export default function ImagePickerComp(props) {
       type: image.type,
       uri: image.uri,
     });
-
-    var url =
-      "http://ec2-3-215-18-23.compute-1.amazonaws.com/users/profile/" +
-      userInfo.id;
+    if (props.context === "ItemImage") {
+      var url = "http://ec2-3-215-18-23.compute-1.amazonaws.com/itemimages";
+    } else {
+      var url =
+        "http://ec2-3-215-18-23.compute-1.amazonaws.com/users/profile/" +
+        userInfo.id;
+    }
 
     fetch(url, {
       method: "POST",

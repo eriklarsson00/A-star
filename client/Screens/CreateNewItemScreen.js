@@ -1,17 +1,39 @@
 import React from "react";
-import { SafeAreaView, Text, StyleSheet, View } from "react-native";
-import { Button, useTheme, Layout, Icon, List } from "@ui-kitten/components";
+import {
+  SafeAreaView,
+  Text,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+} from "react-native";
+import {
+  Button,
+  useTheme,
+  Layout,
+  Icon,
+  List,
+  Modal,
+  Card,
+  Divider,
+  Tooltip,
+} from "@ui-kitten/components";
 import tw from "twrnc";
-import { CreatedNewItem } from "../Components/CreatedNewItem";
 import { InputNewItem } from "../Components/InputNewItem";
 import BarCodeScannerComp from "../Components/BarCodeScanner.component";
+import { MyCommunitysInfo } from "../assets/AppContext";
+import { NewItemCommunityComponent } from "../Components/NewItemCommunityComponent";
 
 const CreateNewItemScreen = () => {
+  const { myCommunitysInfo, setMyCommunitysInfo } =
+    React.useContext(MyCommunitysInfo);
   const [productInfo, setProductInfo] = React.useState([]);
   const [compId, setCompId] = React.useState(0);
   const [count, setCount] = React.useState([0]);
   const [productName, setProductName] = React.useState("");
   const [barCodeShow, setBarCodeShow] = React.useState(false);
+  const [createPost, setCreatePost] = React.useState(false);
+  const [chosenCommunity, setChosenCommunity] = React.useState([]);
+  const [tooltipVisible, setTooltipVisible] = React.useState(false);
 
   const theme = useTheme();
 
@@ -34,10 +56,6 @@ const CreateNewItemScreen = () => {
   };
   const addId = (input) => {
     setCompId(compId + input);
-  };
-
-  const print = () => {
-    console.log(productInfo);
   };
 
   const newComp = () => {
@@ -72,6 +90,42 @@ const CreateNewItemScreen = () => {
   );
 
   const giveKey = ({ item, index }) => reuturn(item);
+
+  const printMyCommunities = ({ item, index }) => (
+    <Layout>
+      <NewItemCommunityComponent community={item} addCommunity={addCommunity} />
+    </Layout>
+  );
+
+  const addCommunity = (community, remove) => {
+    for (let i = 0; i < chosenCommunity.length; i++) {
+      if (chosenCommunity[i].id === community.id) {
+        if (remove) {
+          // om remove == falsk ska det community tas bort från listan
+          let newChosenCommunity = chosenCommunity.filter(
+            (com) => com.name != community.name
+          );
+          setChosenCommunity(newChosenCommunity);
+          return;
+        } else {
+          return;
+        }
+      }
+    }
+    setChosenCommunity((chosenCommunity) => [...chosenCommunity, community]);
+  };
+
+  const renderPublishButton = () => (
+    <Button
+      onPress={() => {
+        if (chosenCommunity.length == 0) {
+          setTooltipVisible(true);
+        }
+      }}
+    >
+      Publicera inlägg
+    </Button>
+  );
 
   if (!barCodeShow) {
     return (
@@ -109,13 +163,49 @@ const CreateNewItemScreen = () => {
           <Button
             style={{ width: 300, alignSelf: "center" }}
             onPress={() => {
-              print();
+              setCreatePost(true);
             }}
           >
             {" "}
             Skapa Inlägg
           </Button>
         </Layout>
+        <Modal
+          visible={createPost}
+          backdropStyle={styles.backdrop}
+          onBackdropPress={() => setCreatePost(false)}
+        >
+          <Card disabled={true}>
+            {myCommunitysInfo.length != 0 && (
+              <Text style={tw`text-lg font-semibold text-center pb-5`}>
+                Vilka grannskap vill du publicera inlägget i?
+              </Text>
+            )}
+            {myCommunitysInfo.length == 0 && (
+              <Text>
+                Du måste gå med i ett grannskap för att publicera inlägget!
+              </Text>
+            )}
+            <Divider />
+            <List
+              style={styles.dataBaseList}
+              data={myCommunitysInfo}
+              ItemSeparatorComponent={Divider}
+              renderItem={printMyCommunities}
+              key={giveKey}
+            />
+
+            <Layout style={{ paddingTop: 10 }}>
+              <Tooltip
+                anchor={renderPublishButton}
+                visible={tooltipVisible}
+                onBackdropPress={() => setTooltipVisible(false)}
+              >
+                Du måste välja ett grannskap först!
+              </Tooltip>
+            </Layout>
+          </Card>
+        </Modal>
       </Layout>
     );
   } else {
@@ -157,5 +247,8 @@ const styles = StyleSheet.create({
   },
   list_style: {
     backgroundColor: "red",
+  },
+  backdrop: {
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
 });

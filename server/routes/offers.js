@@ -158,7 +158,6 @@ function getOtherOffersCommunity(req, res) {
   let user = req.params.user;
   let communities = req.query.communities.split(",");
 
-
   knex("Offers")
     .select("Offers.*")
     .leftJoin("Transactions", "Transactions.offer_id", "Offers.id")
