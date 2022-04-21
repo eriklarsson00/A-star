@@ -311,4 +311,139 @@ export function transactionTests(server) {
   describe("/transactions/lister", () => {
     // ?
   });
+
+  describe("/transactions/accepted/user", () => {
+    it("should get accepted transactions for a user", function (done) {
+      chai
+        .request(server)
+        .get("/transactions/accepted/user/1")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(200);
+          res.body.should.be.a("array");
+          res.body.length.should.not.be.eql(0);
+          done();
+        });
+    });
+    it("should not get accepted transactions for a user", function (done) {
+      // Invalid id
+      chai
+        .request(server)
+        .get("/transactions/accepted/user/InvalidId")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(400);
+          res.body.should.be.a("string");
+          res.body.length.should.not.be.eql(0);
+        });
+
+      // Bad id
+      chai
+        .request(server)
+        .get("/transactions/accepted/user/-1")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(200);
+          res.body.should.be.a("array");
+          res.body.length.should.be.eql(0);
+          done();
+        });
+    });
+  });
+
+  describe("/transactions/pending/user", () => {
+    it("should get accepted transactions for a user", function (done) {
+      chai
+        .request(server)
+        .get("/transactions/pending/user/1")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(200);
+          res.body.should.be.a("array");
+          res.body.length.should.not.be.eql(0);
+          done();
+        });
+    });
+    it("should not get pending transactions for a user", function (done) {
+      // Invalid id
+      chai
+        .request(server)
+        .get("/transactions/pending/user/InvalidId")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(400);
+          res.body.should.be.a("string");
+          res.body.length.should.not.be.eql(0);
+        });
+
+      // Bad id
+      chai
+        .request(server)
+        .get("/transactions/pending/user/-1")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(200);
+          res.body.should.be.a("array");
+          res.body.length.should.be.eql(0);
+          done();
+        });
+    });
+  });
+
+  describe("/transactions/user", () => {
+    it("should get transactions for a user", function (done) {
+      chai
+        .request(server)
+        .get("/transactions/user/1")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(200);
+          res.body.should.be.a("array");
+          res.body.length.should.not.be.eql(0);
+          done();
+        });
+    });
+    it("should not get transactions for a user", function (done) {
+      // Invalid id
+      chai
+        .request(server)
+        .get("/transactions/user/InvalidId")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(400);
+          res.body.should.be.a("string");
+          res.body.length.should.not.be.eql(0);
+        });
+
+      // Bad id
+      chai
+        .request(server)
+        .get("/transactions/user/-1")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(200);
+          res.body.should.be.a("array");
+          res.body.length.should.be.eql(0);
+          done();
+        });
+    });
+  });
 }

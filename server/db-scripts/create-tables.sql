@@ -43,7 +43,9 @@ CREATE TABLE IF NOT EXISTS CommunityUser
         ON DELETE CASCADE,
     CONSTRAINT communityuser_ibfk_2
         FOREIGN KEY (user_id) REFERENCES Users (id)
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT communityuser_user_id_community_id_uindex
+        UNIQUE (request_id)
 );
 
 CREATE INDEX community_id
