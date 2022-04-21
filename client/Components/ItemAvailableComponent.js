@@ -49,7 +49,7 @@ export const ItemAvailableComponent = () => {
     let myItems = await getMyOffers(userId);
     let otherItems = await getOffers(userId, communityIds);
     transactions = await getPendingTransactions(userId);
-    setTransactionIds(transactions.map((transaction) => transaction.id));
+    setTransactionIds(transactions.map((transaction) => transaction.offer_id));
 
     setMyOffers(myItems);
     setOffers(otherItems);
