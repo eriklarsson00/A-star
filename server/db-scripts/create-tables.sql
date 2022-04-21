@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS CommunityUser
         FOREIGN KEY (user_id) REFERENCES Users (id)
         ON DELETE CASCADE,
     CONSTRAINT communityuser_user_id_community_id_uindex
-        UNIQUE (request_id)
+        UNIQUE (community_id, user_id)
 );
 
 CREATE INDEX community_id
