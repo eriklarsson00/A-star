@@ -96,6 +96,73 @@ function getTransactionCommunity(req, res) {
     });
 }
 
+function getTransactionAcceptedUser(req, res) {
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res
+      .status(400)
+      .json("Usage: /transactions/accepted/user/:id. id has to be a number");
+  }
+
+  const sql = `
+    SELECT T.* FROM Transactions T
+    LEFT JOIN Offers O    ON T.offer_id = O.id
+    LEFT JOIN Requests R  ON T.request_id = R.id
+    LEFT JOIN Users U     ON O.user_id = U.id OR R.user_id = U.id
+    WHERE status = 'pending'
+      AND U.id = ${id};
+    `;
+
+  knex.raw(sql).then((transactions) => {
+    res.json(transactions[0]);
+  });
+}
+
+function getTransactionPendingUser(req, res) {
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res
+      .status(400)
+      .json("Usage: /transactions/pending/user/:id. id has to be a number");
+  }
+  const sql = `
+    SELECT T.* FROM Transactions T
+    LEFT JOIN Offers O    ON T.offer_id = O.id
+    LEFT JOIN Requests R  ON T.request_id = R.id
+    LEFT JOIN Users U     ON O.user_id = U.id OR R.user_id = U.id
+    WHERE status = 'accepted'
+      AND U.id = ${id};
+    `;
+
+  knex.raw(sql).then((transactions) => {
+    res.json(transactions[0]);
+  });
+}
+
+function getTransactionUser(req, res) {
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res
+      .status(400)
+      .json("Usage: /transactions/user/:id. id has to be a number");
+  }
+
+  const sql = `
+    SELECT T.* FROM Transactions T
+    LEFT JOIN Offers O    ON T.offer_id = O.id
+    LEFT JOIN Requests R  ON T.request_id = R.id
+    LEFT JOIN Users U     ON O.user_id = U.id OR R.user_id = U.id
+    WHERE U.id = ${id};
+    `;
+
+  knex.raw(sql).then((transactions) => {
+    res.json(transactions[0]);
+  });
+}
+
 function addTransaction(req, res) {
   const transaction = req.body;
 
@@ -165,6 +232,9 @@ export {
   getResponderTransactions,
   getListerTransactions,
   getTransactionCommunity,
+  getTransactionAcceptedUser,
+  getTransactionPendingUser,
+  getTransactionUser,
   addTransaction,
   updateTransaction,
   deleteTransaction,
