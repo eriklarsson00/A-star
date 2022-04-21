@@ -252,31 +252,3 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 });
-
-/*{
-        "id": 3,
-        "user_id": 1,
-        "product_id": 1,
-        "product_text": "Marsipan",
-        "description": "Använde till bakning men kommer inte behöva resten.",
-        "quantity": 1,
-        "time_of_creation": "2022-04-13T11:46:31.000Z",
-        "time_of_purchase": "2022-04-13T11:46:31.000Z",
-        "time_of_expiration": "2022-04-13T11:46:31.000Z",
-        "imgurl": null,
-        "broken_pkg": 1
-    },
-{
-        "id": 1,
-        "offer_id": 1,       //Id på 
-        "request_id": null,
-        "status": "accepted",
-        "responder_id": 2,
-        "time_of_creation": "2022-04-13T11:46:31.000Z",
-        "time_of_expiration": "2022-04-13T11:46:31.000Z"
-    },    
-
-Om produktens id finns som offer id i transaktion -> Visa röd plupp     
-
-
-*/
