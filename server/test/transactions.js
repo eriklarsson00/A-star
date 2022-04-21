@@ -80,11 +80,28 @@ export function transactionTests(server) {
         });
     });
 
+    it("should delete transaction", function (done) {
+      chai
+        .request(server)
+        .delete("/transactions/1")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(200);
+          res.body.should.be.a("string");
+          res.body.length.should.not.be.eql(0);
+          done();
+        });
+    });
+
     it("should add transaction", function (done) {
+      let newTransaction = { ...dummyTransaction };
+      newTransaction.request_id = 7;
       chai
         .request(server)
         .post("/transactions")
-        .send(dummyTransaction)
+        .send(newTransaction)
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -101,21 +118,6 @@ export function transactionTests(server) {
         .request(server)
         .put("/transactions/1")
         .send(dummyTransaction)
-        .end((err, res) => {
-          if (err) {
-            console.error(err);
-          }
-          res.should.have.status(200);
-          res.body.should.be.a("string");
-          res.body.length.should.not.be.eql(0);
-          done();
-        });
-    });
-
-    it("should delete transaction", function (done) {
-      chai
-        .request(server)
-        .delete("/transactions/1")
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -264,10 +266,10 @@ export function transactionTests(server) {
   });
 
   describe("/transactions/responder", () => {
-    it("should get the user for a transactions", function (done) {
+    it("should get the user for a transaction", function (done) {
       chai
         .request(server)
-        .get("/transactions/responder/2")
+        .get("/transactions/responder/1")
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -278,7 +280,7 @@ export function transactionTests(server) {
           done();
         });
     });
-    it("should not get the user for a transactions", function (done) {
+    it("should not get the user for a transaction", function (done) {
       // Invalid id
       chai
         .request(server)
