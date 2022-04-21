@@ -37,8 +37,18 @@ async function getAllCommunities() {
 }
 
 export const CreateUserScreen = () => {
-  //STATE
+  // CONTEXT
+  const { googleInfo, setGoogleInfo } = React.useContext(GoogleInfo);
+  const { userInfo, setUserInfo } = React.useContext(UserInfo);
+  const { userLoggedIn, setLoggedIn } = React.useContext(UserLoggedIn);
+  const { profileImagePath, setProfileImagePath } =
+    React.useContext(ProfileImagePath);
+  const { showCommunityIds, setShowCommunityIds } =
+    React.useContext(ShowCommunityIds);
+  const { myCommunitysInfo, setMyCommunitysInfo } =
+    React.useContext(MyCommunitysInfo);
 
+  // STATE
   const [phoneNumber, setPhoneNumber] = React.useState("");
   const [multiSelectedIndex, setMultiSelectedIndex] = React.useState([]);
   const [adress, setAdress] = React.useState("");
@@ -49,17 +59,6 @@ export const CreateUserScreen = () => {
   );
   const [lastName, setLastName] = React.useState(googleInfo?.family_name ?? "");
   const [result, setResult] = React.useState(null);
-
-  //CONTEXT
-  const { googleInfo, setGoogleInfo } = React.useContext(GoogleInfo);
-  const { userInfo, setUserInfo } = React.useContext(UserInfo);
-  const { userLoggedIn, setLoggedIn } = React.useContext(UserLoggedIn);
-  const { profileImagePath, setProfileImagePath } =
-    React.useContext(ProfileImagePath);
-  const { showCommunityIds, setShowCommunityIds } =
-    React.useContext(ShowCommunityIds);
-  const { myCommunitysInfo, setMyCommunitysInfo } =
-    React.useContext(MyCommunitysInfo);
 
   React.useEffect(() => {
     const getComm = async () => {

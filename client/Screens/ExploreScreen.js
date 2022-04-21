@@ -7,6 +7,7 @@ import tw from "twrnc";
 
 import { ItemAvailableComponent } from "../Components/ItemAvailableComponent";
 import { ItemRequestedComponent } from "../Components/ItemRequestedComponent";
+import { BlockedDiscover } from "../Components/BlockedDiscovery";
 
 const TopTabs = createMaterialTopTabNavigator();
 
@@ -14,25 +15,32 @@ export const ExploreScreen = () => {
   const { showCommunityIds, setShowCommunityIds } =
     React.useContext(ShowCommunityIds);
   const theme = useTheme();
-  return (
-    /*<SafeAreaView style={{flex:1}}>*/
-    <Layout style={{ flex: 1, paddingTop: 50 }}>
-      <TopNavigation
-        alignment="center"
-        title={"Utforska varor"}
-      ></TopNavigation>
-      <TopTabs.Navigator
-        screenOptions={{
-          tabBarIndicatorStyle: { backgroundColor: theme["color-primary-500"] },
-        }}
-      >
-        <TopTabs.Screen
-          name="Tillgängligt"
-          component={ItemAvailableComponent}
-        />
-        <TopTabs.Screen name="Efterfrågas" component={ItemRequestedComponent} />
-      </TopTabs.Navigator>
-    </Layout>
-    /* </SafeAreaView>*/
-  );
+  if (showCommunityIds.length === 0) {
+    return <BlockedDiscover />;
+  } else {
+    return (
+      <Layout style={{ flex: 1, paddingTop: 50 }}>
+        <TopNavigation
+          alignment="center"
+          title={"Utforska varor"}
+        ></TopNavigation>
+        <TopTabs.Navigator
+          screenOptions={{
+            tabBarIndicatorStyle: {
+              backgroundColor: theme["color-primary-500"],
+            },
+          }}
+        >
+          <TopTabs.Screen
+            name="Tillgängligt"
+            component={ItemAvailableComponent}
+          />
+          <TopTabs.Screen
+            name="Efterfrågas"
+            component={ItemRequestedComponent}
+          />
+        </TopTabs.Navigator>
+      </Layout>
+    );
+  }
 };

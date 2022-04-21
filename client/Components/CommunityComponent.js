@@ -15,6 +15,7 @@ import { ShowCommunityIds, MyCommunitysInfo } from "../assets/AppContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import tw from "twrnc";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { removeUserFromCommunity } from "../Services/ServerCommunication";
 
 const CommunityComponent = (props) => {
   const theme = useTheme();
@@ -64,6 +65,9 @@ const CommunityComponent = (props) => {
       props.myCommunityNames.filter((name) => name != props.community.name)
     );
     setRemoveCommunityVisible(false);
+
+    // Remove from database
+    //removeUserFromCommunity()
   }
 
   const RemoveCommunityModal = () => {
