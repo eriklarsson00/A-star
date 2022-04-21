@@ -4,6 +4,7 @@ import {
   ProfileImagePath,
   UserInfo,
   ItemImagePath,
+  ImageArray,
 } from "../assets/AppContext";
 import { pushToServer } from "../Services/ServerCommunication";
 import * as ImageManipulator from "expo-image-manipulator";
@@ -11,6 +12,7 @@ import * as ImagePicker from "expo-image-picker";
 
 export default function ImagePickerComp(props) {
   // The path of the picked image
+  const { imageArray, setimageArray } = React.useContext(ImageArray);
   const [pickedImagePath, setPickedImagePath] = useState(null);
   const { profileImagePath, setProfileImagePath } =
     React.useContext(ProfileImagePath);
@@ -41,8 +43,8 @@ export default function ImagePickerComp(props) {
         setItemImagePath(result.url);
         props.updateResult(result);
       }
-      pushToServer(result);
-     
+      const image = await resizeImage(result, props.resize);
+      setimageArray(imageArray.push(image));
     }
   };
 
@@ -67,34 +69,9 @@ export default function ImagePickerComp(props) {
         setItemImagePath(result.uri);
         props.updateResult(result);
       }
-      pushToServer(result);
-      
+      const image = await resizeImage(result, props.resize);
+      return image;
     }
-  };
-
-  const pushToServer = async (result) => {
-    const image = await resizeImage(result, props.resize);
-    const body = new FormData();
-    body.append("image", {
-      name: "photo.jpg",
-      type: image.type,
-      uri: image.uri,
-    });
-
-    var url =
-      "http://ec2-3-215-18-23.compute-1.amazonaws.com/users/profile/" +
-      userInfo.id;
-
-    fetch(url, {
-      method: "POST",
-      body: body,
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    })
-      .then((data) => data.json())
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
   };
 
   resizeImage = async (result, resize = 0.05) => {

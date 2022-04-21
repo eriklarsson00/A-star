@@ -1,5 +1,7 @@
 import { host } from "./ServerHost";
+import { UserInfo } from "../assets/AppContext";
 
+const { userInfo, setUserInfo } = React.useContext(UserInfo);
 const request = async (type, route, body) => {
   try {
     let response = await fetch(`${host}${route}`, {
@@ -99,6 +101,35 @@ const removeUserFromCommunity = async (userId, communityId) => {
   );
 };
 
+const pushImagesToServer = async (image, serverPath) => {
+  const body = new FormData();
+  body.append("image", {
+    name: "photo.jpg",
+    type: image.type,
+    uri: image.uri,
+  });
+
+  var url = "";
+  if (serverPath === "Profile") {
+    url =
+      "http://ec2-3-215-18-23.compute-1.amazonaws.com/users/profile/" +
+      userInfo.id;
+  } else {
+    url = "http://ec2-3-215-18-23.compute-1.amazonaws.com/" + serverPath;
+  }
+
+  fetch(url, {
+    method: "POST",
+    body: body,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  })
+    .then((data) => data.json())
+    .then((res) => console.log(res))
+    .catch((err) => console.log(err));
+};
+
 export {
   getMyOffers,
   getOffers,
@@ -113,4 +144,5 @@ export {
   addTransaction,
   deleteProfile,
   removeUserFromCommunity,
+  pushImagesToServer,
 };
