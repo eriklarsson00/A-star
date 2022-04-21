@@ -158,7 +158,6 @@ function getOtherOffersCommunity(req, res) {
   let user = req.params.user;
   let communities = req.query.communities.split(",");
 
-
   knex("Offers")
     .select("Offers.*")
     .leftJoin("Transactions", "Transactions.offer_id", "Offers.id")
@@ -166,6 +165,7 @@ function getOtherOffersCommunity(req, res) {
     .whereIn("CommunityListings.community_id", communities)
     .whereNot("Offers.user_id", user)
     .andWhere("Transactions.offer_id", null)
+    .groupBy("Offers.id")
     .then((offers) => {
       res.json(offers);
     });

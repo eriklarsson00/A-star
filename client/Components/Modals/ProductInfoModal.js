@@ -12,8 +12,6 @@ import {
 } from "@ui-kitten/components";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import tw from "twrnc";
-import { useIsFocused } from "@react-navigation/native";
-import io from "socket.io-client";
 
 export const ProductInfoModal = (props) => {
   const item = props.item;
