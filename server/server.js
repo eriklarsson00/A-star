@@ -91,12 +91,6 @@ app.route("/products/:gtin").get(products.getProduct);
 
 app.route("/users").get(users.getUsers).post(users.addUser);
 
-app
-  .route("/users/:id")
-  .get(users.getUser)
-  .put(users.updateUser)
-  .delete(users.deleteUser);
-
 app.route("/users/email/:email").get(users.getUserEmail);
 
 app
@@ -111,6 +105,12 @@ app.post(
   upload.single("image"),
   users.updateProfilePicture
 );
+
+app
+  .route("/users/:id")
+  .get(users.getUser)
+  .put(users.updateUser)
+  .delete(users.deleteUser);
 
 //*************************LOGIN*************************
 
@@ -214,7 +214,8 @@ app
   .route("/transactions/responder/:id")
   .get(transactions.getResponderTransactions);
 
-app.route("/transactions/lister/:id").get(transactions.getListerTransactions);
+// Okänt användningsområde (dessutom icke fungerande)
+//app.route("/transactions/lister/:id").get(transactions.getListerTransactions);
 
 //*************************IMAGES*********************
 

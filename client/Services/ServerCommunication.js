@@ -94,7 +94,7 @@ const removeUserFromCommunity = async (userId, communityId) => {
     community_id: communityId,
   };
 
-  return await request("DELETE", "/users/commynity", obj).catch((err) =>
+  return await request("DELETE", "/users/community", obj).catch((err) =>
     console.log(err)
   );
 };

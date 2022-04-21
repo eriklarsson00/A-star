@@ -1,7 +1,6 @@
 import React from "react";
-import { Image, StyleSheet, TouchableNativeFeedback, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import {
-  Radio,
   Text,
   Layout,
   Button,
@@ -11,8 +10,11 @@ import {
   Icon,
   Divider,
 } from "@ui-kitten/components";
-import { ShowCommunityIds, MyCommunitysInfo } from "../assets/AppContext";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  ShowCommunityIds,
+  MyCommunitysInfo,
+  UserInfo,
+} from "../assets/AppContext";
 import tw from "twrnc";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { removeUserFromCommunity } from "../Services/ServerCommunication";
@@ -33,6 +35,8 @@ const CommunityComponent = (props) => {
   const { myCommunitysInfo, setMyCommunitysInfo } =
     React.useContext(MyCommunitysInfo);
 
+  const { userInfo } = React.useContext(UserInfo);
+
   //ICONS
 
   const CrossIcon = () => (
@@ -43,16 +47,7 @@ const CommunityComponent = (props) => {
     />
   );
 
-  function setShowCommIds(checked) {
-    // TODO: Uppdatera async showIDs
-    if (checked) {
-      //Man lägger till grannskapet
-    } else {
-      //Man tar bort grannskaped
-    }
-  }
-
-  function removeCommunity() {
+  async function removeCommunity() {
     if (showCommunityIds.includes(props.community.id)) {
       setShowCommunityIds(
         showCommunityIds.filter((comId) => comId != props.community.id)
@@ -67,7 +62,8 @@ const CommunityComponent = (props) => {
     setRemoveCommunityVisible(false);
 
     // Remove from database
-    //removeUserFromCommunity()
+    const res = await removeUserFromCommunity(userInfo.id, props.community.id);
+    console.log(res);
   }
 
   const RemoveCommunityModal = () => {
@@ -85,7 +81,7 @@ const CommunityComponent = (props) => {
           <View style={styles.removeCommunityButtons}>
             <Button
               style={{ width: 100, margin: 15 }}
-              onPress={removeCommunity}
+              onPress={async () => await removeCommunity()}
             >
               Ja
             </Button>
