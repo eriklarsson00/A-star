@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     transform: [{ rotateZ: "-15deg" }, { rotateX: "-5deg" }],
   },
   middle: {
-    zIndex: -3,
+    zIndex: -500,
     width: 900,
     height: 900,
     position: "absolute",
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     transform: [{ rotateY: "30deg" }],
   },
   bottom: {
-    zIndex: -3,
+    zIndex: -500,
     width: 900,
     height: 900,
     position: "absolute",

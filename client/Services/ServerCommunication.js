@@ -31,11 +31,13 @@ const getUserProfileById = async (id) => {
   return userProfile;
 };
 
-const getOffers = async (communities) => {
-  let offers = await request("GET", "/offers");
-  // await communities.forEach(async (community) => {
-  //   offers = await request("GET", "/offers/active/" + community);
-  // });
+const getMyOffers = async (id) => {
+  return await request("GET", "/offers/user/" + id);
+};
+
+const getOffers = async (id, communities) => {
+  let query = "?communities=" + communities.join(",");
+  let offers = await request("GET", "/offers/other/" + id + query);
   return [...new Set(offers)];
 };
 
@@ -50,12 +52,13 @@ const getUserCommunities = async (user_id) => {
   //console.log(userCommunities);
 };
 
-const getRequests = async (communities) => {
-  let requests = await request("GET", "/requests");
-  // communities.forEach(async (community) => {
-  //   requests = [...requests, ...await request("GET", "/requests/active/" + community)];
-  // });
-  return [...new Set(requests)];
+const getMyRequests = async (id) => {
+  return await request("GET", "/requests/user/" + id);
+};
+
+const getRequests = async (id, communities) => {
+  let query = "?communities=" + communities.join(",");
+  return await request("GET", "/requests/other/" + id + query);
 };
 
 //Sends an profile to the database, returns an array with the profile
@@ -88,7 +91,9 @@ const deleteProfile = async (id) => {
 };
 
 export {
+  getMyOffers,
   getOffers,
+  getMyRequests,
   getRequests,
   getUserProfileById,
   getUserProfileByEmail,

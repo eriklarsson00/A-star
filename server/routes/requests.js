@@ -173,6 +173,7 @@ function getOtherRequestsCommunity(req, res) {
     .whereIn("CommunityListings.community_id", communities)
     .whereNot("Requests.user_id", user)
     .andWhere("Transactions.request_id", null)
+    .groupBy("Requests.id")
     .then((requests) => {
       res.json(requests);
     });
