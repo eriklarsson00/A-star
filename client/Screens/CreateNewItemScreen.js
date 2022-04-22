@@ -34,6 +34,7 @@ const CreateNewItemScreen = () => {
   const [createPost, setCreatePost] = React.useState(false);
   const [chosenCommunity, setChosenCommunity] = React.useState([]);
   const [tooltipVisible, setTooltipVisible] = React.useState(false);
+  const [images, setImages] = React.useState([]);
 
   const theme = useTheme();
 
@@ -63,6 +64,10 @@ const CreateNewItemScreen = () => {
     setCount((count) => [...count, length]);
   };
 
+  const pushImage = (image) => {
+    setImages([...images, image]);
+  };
+
   const updateItem = (inputId, updatedItem) => {
     for (let i = 0; i < productInfo.length; i++) {
       if (productInfo[i].id === inputId) {
@@ -85,6 +90,7 @@ const CreateNewItemScreen = () => {
         setChange={updateItem}
         func={barCodeActive}
         product={productName}
+        pushImage={pushImage}
       />
     </Layout>
   );

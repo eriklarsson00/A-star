@@ -88,7 +88,8 @@ export const InputNewItem = (props) => {
             context="ItemImage"
             updateResult={(result) => {
               console.log("New picked image path: " + result.uri);
-              setImage(result.uri);
+              setImage(result);
+              props.pushImage(result);
             }}
           />
           <Button style={tw`mt-2 w-50`} onPress={() => setVisible(false)}>

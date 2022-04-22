@@ -4,7 +4,6 @@ import {
   ProfileImagePath,
   UserInfo,
   ItemImagePath,
-  ImageArray,
 } from "../assets/AppContext";
 import { pushToServer } from "../Services/ServerCommunication";
 import * as ImageManipulator from "expo-image-manipulator";
@@ -12,7 +11,7 @@ import * as ImagePicker from "expo-image-picker";
 
 export default function ImagePickerComp(props) {
   // The path of the picked image
-  const { imageArray, setimageArray } = React.useContext(ImageArray);
+
   const [pickedImagePath, setPickedImagePath] = useState(null);
   const { profileImagePath, setProfileImagePath } =
     React.useContext(ProfileImagePath);
@@ -33,18 +32,18 @@ export default function ImagePickerComp(props) {
     const result = await ImagePicker.launchImageLibraryAsync({
       quality: 0,
     });
+    const image = await resizeImage(result, props.resize);
 
-    if (!result.cancelled) {
-      setPickedImagePath(result.uri);
+    if (!image.cancelled) {
+      setPickedImagePath(image.uri);
       if (props.context == "Profile") {
-        setProfileImagePath(result.uri);
+        setProfileImagePath(image.uri);
+        props.updateResult(image);
       }
       if (props.context == "ItemImage") {
-        setItemImagePath(result.url);
-        props.updateResult(result);
+        setItemImagePath(image.uri);
+        props.updateResult(image);
       }
-      const image = await resizeImage(result, props.resize);
-      setimageArray(imageArray.push(image));
     }
   };
 
@@ -59,18 +58,17 @@ export default function ImagePickerComp(props) {
     }
 
     const result = await ImagePicker.launchCameraAsync();
-
+    const image = await resizeImage(result, props.resize);
     if (!result.cancelled) {
-      setPickedImagePath(result.uri);
+      setPickedImagePath(image.uri);
       if (props.context == "Profile") {
-        setProfileImagePath(result.uri);
+        props.updateResult(image);
+        setProfileImagePath(image.uri);
       }
       if (props.context == "ItemImage") {
-        setItemImagePath(result.uri);
-        props.updateResult(result);
+        props.updateResult(image);
+        setItemImagePath(image.uri);
       }
-      const image = await resizeImage(result, props.resize);
-      return image;
     }
   };
 
