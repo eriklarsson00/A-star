@@ -13,7 +13,11 @@ import {
 import moment from "moment";
 import "moment/locale/sv";
 import tw from "twrnc";
-import { getUserProfileById } from "../../Services/ServerCommunication";
+import {
+  getUserProfileById,
+  acceptTransaction,
+  deleteTransaction,
+} from "../../Services/ServerCommunication";
 
 export const TransactionInfoModal = (props) => {
   const item = props.item;
@@ -23,13 +27,22 @@ export const TransactionInfoModal = (props) => {
   const getResponder = async () => {
     if (!transaction) return;
     let responder = await getUserProfileById(transaction.responder_id);
-    console.log(responder);
     setResponder(responder[0]);
   };
 
   useEffect(() => {
     getResponder();
   }, []);
+
+  const accept = () => {
+    acceptTransaction(transaction.id);
+    props.toggleModal(item);
+  };
+
+  const decline = () => {
+    deleteTransaction(transaction.id);
+    props.toggleModal(item);
+  };
 
   const Info = () => {
     if (transaction) {
@@ -47,10 +60,10 @@ export const TransactionInfoModal = (props) => {
               marginTop: 10,
             }}
           >
-            <Button status={"success"}>
+            <Button onPress={() => accept()} status={"success"}>
               <Text>Acceptera</Text>
             </Button>
-            <Button status={"danger"}>
+            <Button onPress={() => decline()} status={"danger"}>
               <Text>Neka</Text>
             </Button>
           </Layout>

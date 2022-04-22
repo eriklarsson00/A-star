@@ -78,6 +78,10 @@ const addTransaction = async (transaction) => {
   return await request("POST", "/transactions", transaction);
 };
 
+const deleteTransaction = async (id) => {
+  return await request("DELETE", `/transactions/${id}`);
+};
+
 const acceptTransaction = async (id) => {
   return await request("PUT", `/transactions/${id}/accept`);
 };
@@ -136,5 +140,6 @@ export {
   responderConfirmTransaction,
   addTransaction,
   deleteProfile,
+  deleteTransaction,
   removeUserFromCommunity,
 };
