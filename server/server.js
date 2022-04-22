@@ -243,7 +243,7 @@ app.post("/itemimages", upload.single("image"), (req, res) => {
   try {
     uploadImageOnS3(req.file, "itemImages/" + req.file.filename);
     res.json(
-      "https://matsamverkan.s3.us-east-1.amazonaws.com/itemImages" +
+      "https://matsamverkan.s3.us-east-1.amazonaws.com/itemImages/" +
         req.file.filename
     );
   } catch (err) {
