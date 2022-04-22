@@ -27,6 +27,7 @@ import { ProfileImagePath, ItemImagePath } from "../assets/AppContext";
 export const InputNewItem = (props) => {
   const [productInfo, setProductInfo] = React.useState({
     id: 0,
+    user_id: 0,
     product_text: props.product,
     description: "",
     quantity: "",
@@ -40,7 +41,6 @@ export const InputNewItem = (props) => {
   const [created, setCreated] = React.useState(false);
   const [barCodeShow, setBarCodeShow] = React.useState(false);
   const [image, setImage] = React.useState(null);
-  const { itemImagePath, setItemImagePath } = React.useContext(ItemImagePath);
   const { profileImagePath, setProfileImagePath } =
     React.useContext(ProfileImagePath);
   const [visible, setVisible] = React.useState(false);
@@ -88,7 +88,8 @@ export const InputNewItem = (props) => {
             context="ItemImage"
             updateResult={(result) => {
               console.log("New picked image path: " + result.uri);
-              setImage(result.uri);
+              setImage(result);
+              props.pushImage(result);
             }}
           />
           <Button style={tw`mt-2 w-50`} onPress={() => setVisible(false)}>
@@ -128,7 +129,11 @@ export const InputNewItem = (props) => {
               >
                 <Image
                   style={{ width: 70, height: 70 }}
-                  source={{ uri: image, height: 150, width: 150 }}
+                  source={{
+                    uri: image === null ? image : image.uri,
+                    height: 150,
+                    width: 150,
+                  }}
                 />
                 <ChoseImageModal />
               </TouchableOpacity>
@@ -163,6 +168,7 @@ export const InputNewItem = (props) => {
                   ...productInfo,
                   product_text: value,
                   id: created ? productInfo.id : props.id,
+                  user_id: props.user_id,
                 })
               }
             />

@@ -96,6 +96,73 @@ function getTransactionCommunity(req, res) {
     });
 }
 
+function getTransactionAcceptedUser(req, res) {
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res
+      .status(400)
+      .json("Usage: /transactions/accepted/user/:id. id has to be a number");
+  }
+
+  const sql = `
+    SELECT T.* FROM Transactions T
+    LEFT JOIN Offers O    ON T.offer_id = O.id
+    LEFT JOIN Requests R  ON T.request_id = R.id
+    LEFT JOIN Users U     ON O.user_id = U.id OR R.user_id = U.id
+    WHERE status = 'accepted'
+      AND U.id = ${id};
+    `;
+
+  knex.raw(sql).then((transactions) => {
+    res.json(transactions[0]);
+  });
+}
+
+function getTransactionPendingUser(req, res) {
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res
+      .status(400)
+      .json("Usage: /transactions/pending/user/:id. id has to be a number");
+  }
+  const sql = `
+    SELECT T.* FROM Transactions T
+    LEFT JOIN Offers O    ON T.offer_id = O.id
+    LEFT JOIN Requests R  ON T.request_id = R.id
+    LEFT JOIN Users U     ON O.user_id = U.id OR R.user_id = U.id
+    WHERE status = 'pending'
+      AND U.id = ${id};
+    `;
+
+  knex.raw(sql).then((transactions) => {
+    res.json(transactions[0]);
+  });
+}
+
+function getTransactionUser(req, res) {
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res
+      .status(400)
+      .json("Usage: /transactions/user/:id. id has to be a number");
+  }
+
+  const sql = `
+    SELECT T.* FROM Transactions T
+    LEFT JOIN Offers O    ON T.offer_id = O.id
+    LEFT JOIN Requests R  ON T.request_id = R.id
+    LEFT JOIN Users U     ON O.user_id = U.id OR R.user_id = U.id
+    WHERE U.id = ${id};
+    `;
+
+  knex.raw(sql).then((transactions) => {
+    res.json(transactions[0]);
+  });
+}
+
 function addTransaction(req, res) {
   const transaction = req.body;
 
@@ -159,13 +226,146 @@ function deleteTransaction(req, res) {
     });
 }
 
+function acceptTransaction(req, res) {
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res
+      .status(400)
+      .json("Usage: /transactions/:id/accept. id has to be a number");
+  }
+
+  const sql = `
+    UPDATE Transactions SET status = 'accepted'
+    WHERE id = ${id};
+  `;
+
+  knex
+    .raw(sql)
+    .catch((err) => {
+      res.status(500).json(err);
+      id = undefined;
+    })
+    .then(() => {
+      if (id !== undefined) res.json("Transaction has been updated");
+    });
+}
+
+function ownerConfirmTransaction(req, res) {
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res
+      .status(400)
+      .json("Usage: /transactions/:id/ownerConfirm. id has to be a number");
+  }
+  const getSql = `
+    SELECT * FROM TRANSACTIONS
+    WHERE id = ${id}
+    FOR UPDATE;
+  `;
+
+  knex
+    .raw(getSql)
+    .catch((err) => {
+      res.status(500).json(err);
+      id = undefined;
+    })
+    .then((t) => {
+      let updateSql;
+
+      if (id == undefined || !t || !t[0] || t[0].lenght == 0) {
+        res.json("no entry found");
+        return;
+      } else if (t.status === "accepted") {
+        updateSql = `
+          UPDATE Transactions SET status = 'ownerConfirmed'
+          WHERE id = ${id};
+        `;
+      } else {
+        updateSql = `
+          UPDATE Transactions SET status = 'completed'
+          WHERE id = ${id};
+        `;
+      }
+
+      knex
+        .raw(updateSql)
+        .catch((err) => {
+          res.status(500).json(err);
+          id = undefined;
+        })
+        .then(() => {
+          if (id !== undefined) res.json("Transaction has been updated");
+        });
+    });
+}
+
+function responderConfirmTransaction(req, res) {
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res
+      .status(400)
+      .json("Usage: /transactions/:id/responderConfirm. id has to be a number");
+  }
+  const getSql = `
+    SELECT * FROM TRANSACTIONS
+    WHERE id = ${id}
+    FOR UPDATE;
+  `;
+
+  knex
+    .raw(getSql)
+    .catch((err) => {
+      res.status(500).json(err);
+      id = undefined;
+    })
+    .then((t) => {
+      let updateSql;
+
+      if (id == undefined || !t || !t[0] || t[0].lenght == 0) {
+        res.json("no entry found");
+        return;
+      } else if (t.status === "accepted") {
+        updateSql = `
+          UPDATE Transactions SET status = 'responderConfirmed'
+          WHERE id = ${id};
+        `;
+      } else {
+        updateSql = `
+          UPDATE Transactions SET status = 'completed'
+          WHERE id = ${id};
+        `;
+      }
+
+      knex
+        .raw(updateSql)
+        .catch((err) => {
+          res.status(500).json(err);
+          id = undefined;
+        })
+        .then(() => {
+          if (id !== undefined) res.json("Transaction has been updated");
+        });
+    });
+}
+
 export {
+  // CRUD
   getTransactions,
   getTransaction,
   getResponderTransactions,
   getListerTransactions,
   getTransactionCommunity,
+  getTransactionAcceptedUser,
+  getTransactionPendingUser,
+  getTransactionUser,
   addTransaction,
   updateTransaction,
   deleteTransaction,
+  // Actions
+  acceptTransaction,
+  ownerConfirmTransaction,
+  responderConfirmTransaction,
 };

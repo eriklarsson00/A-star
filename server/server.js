@@ -206,9 +206,29 @@ app
   .get(transactions.getTransaction)
   .delete(transactions.deleteTransaction);
 
+app.route("/transactions/:id/accept").put(transactions.acceptTransaction);
+
+app
+  .route("/transactions/:id/ownerConfirm")
+  .put(transactions.ownerConfirmTransaction);
+
+app
+  .route("/transactions/:id/responderConfirm")
+  .put(transactions.responderConfirmTransaction);
+
 app
   .route("/transactions/community/:id")
   .get(transactions.getTransactionCommunity);
+
+app
+  .route("/transactions/accepted/user/:id")
+  .get(transactions.getTransactionAcceptedUser);
+
+app
+  .route("/transactions/pending/user/:id")
+  .get(transactions.getTransactionPendingUser);
+
+app.route("/transactions/user/:id").get(transactions.getTransactionUser);
 
 app
   .route("/transactions/responder/:id")

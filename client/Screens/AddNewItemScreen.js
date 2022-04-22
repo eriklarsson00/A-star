@@ -18,13 +18,13 @@ const AddNewItemScreen = ({ navigation }) => {
         ]}
         onPress={() => setVisible(true)}
       >
-        Gives
+        Sökes
       </Button>
       <Button
         style={[styles.btn, { backgroundColor: theme["color-primary-500"] }]}
         onPress={() => navigation.navigate("CreateNewItemScreen")}
       >
-        Sökes{" "}
+        Gives{" "}
       </Button>
       {/* <Modal
 					presentationStyle="pageSheet"

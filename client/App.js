@@ -95,7 +95,7 @@ export default () => {
           setUserInfo(users[0]);
           setLoggedIn(true);
           setWhichScreen(<AppNavigator />);
-          setCommunities(users[0].id);
+          await setCommunities(users[0].id);
         } else {
           console.log("Cannot log in, unknown userId: " + userId);
           setLoggedIn(false);
@@ -111,11 +111,11 @@ export default () => {
   async function setCommunities(user_id) {
     let myComms = await getUserCommunities(user_id);
     setMyCommunitysInfo(myComms);
-    /*const jsonShowIds = await AsyncStorage.getItem("showCommunityIds");
-		if (jsonShowIds !== null) {
-			const showIds = JSON.parse(jsonShowIds);
-			console.log(showIds);
-		}*/
+    const jsonShowIds = await AsyncStorage.getItem("showCommunityIds");
+    if (jsonShowIds !== null) {
+      const showIds = JSON.parse(jsonShowIds);
+      setShowCommunityIds(showIds);
+    }
   }
 
   return (
@@ -125,19 +125,17 @@ export default () => {
         <GoogleInfo.Provider value={FirstGooglevalue}>
           <ShowCommunityIds.Provider value={FirstShowValue}>
             <ProfileImagePath.Provider value={FirstProfileImagePath}>
-              <ItemImagePath.Provider value={FirstIconImagePath}>
-                <MyCommunitysInfo.Provider value={FirstCommunityValue}>
-                  <UserLoggedIn.Provider value={FirstLoggedInValue}>
-                    <ApplicationProvider
-                      {...eva}
-                      theme={{ ...eva.light, ...theme }}
-                    >
-                      <StatusBar barStyle="dark-content" />
-                      <>{whichScreen}</>
-                    </ApplicationProvider>
-                  </UserLoggedIn.Provider>
-                </MyCommunitysInfo.Provider>
-              </ItemImagePath.Provider>
+              <MyCommunitysInfo.Provider value={FirstCommunityValue}>
+                <UserLoggedIn.Provider value={FirstLoggedInValue}>
+                  <ApplicationProvider
+                    {...eva}
+                    theme={{ ...eva.light, ...theme }}
+                  >
+                    <StatusBar barStyle="dark-content" />
+                    <>{whichScreen}</>
+                  </ApplicationProvider>
+                </UserLoggedIn.Provider>
+              </MyCommunitysInfo.Provider>
             </ProfileImagePath.Provider>
           </ShowCommunityIds.Provider>
         </GoogleInfo.Provider>

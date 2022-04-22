@@ -112,7 +112,7 @@ export function communityTests(server) {
     it("should delete community", function (done) {
       chai
         .request(server)
-        .delete("/communities/1")
+        .delete("/communities/3")
         .end((err, res) => {
           if (err) {
             console.error(err);

@@ -244,7 +244,7 @@ export function offerTests(server) {
     it("should get active offers in a community", function (done) {
       chai
         .request(server)
-        .get("/offers/active/3")
+        .get("/offers/active/1")
         .end((err, res) => {
           if (err) {
             console.error(err);

@@ -1,4 +1,5 @@
 import { host } from "./ServerHost";
+import { UserInfo } from "../assets/AppContext";
 
 const request = async (type, route, body) => {
   try {
@@ -78,6 +79,22 @@ const addTransaction = async (transaction) => {
   return await request("POST", "/transactions", transaction);
 };
 
+const deleteTransaction = async (id) => {
+  return await request("DELETE", `/transactions/${id}`);
+};
+
+const acceptTransaction = async (id) => {
+  return await request("PUT", `/transactions/${id}/accept`);
+};
+
+const ownerConfirmTransaction = async (id) => {
+  return await request("PUT", `/transactions/${id}/ownerComnfirm`);
+};
+
+const responderConfirmTransaction = async (id) => {
+  return await request("PUT", `/transactions/${id}/responderConfirm`);
+};
+
 const addToCommunity = async (profile_id, communities) => {
   // Should be refactored to only send one request with all communities
   for (const id of communities) {
@@ -107,6 +124,42 @@ const removeUserFromCommunity = async (userId, communityId) => {
   );
 };
 
+const pushImagesToServer = async (image, serverPath, userId) => {
+  const body = new FormData();
+  body.append("image", {
+    name: "photo.jpg",
+    type: image.type,
+    uri: image.uri,
+  });
+
+  var url = "";
+  if (serverPath === "Profile") {
+    url = host + "/users/profile/" + userId;
+  } else {
+    url = host + serverPath;
+  }
+
+  fetch(url, {
+    method: "POST",
+    body: body,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  })
+    .then((data) => data.json())
+    .then((res) => console.log(res))
+    .catch((err) => console.log(err));
+};
+
+const postOffer = async (offers, usercommunities) => {
+  const upload_obj = {
+    offer: offers,
+    communities: usercommunities,
+  };
+
+  const result = await request("POST", "/offers", upload_obj);
+};
+
 export {
   getMyOffers,
   getOffers,
@@ -119,7 +172,13 @@ export {
   getCommunities,
   getUserCommunities,
   addToCommunity,
+  acceptTransaction,
+  ownerConfirmTransaction,
+  responderConfirmTransaction,
   addTransaction,
   deleteProfile,
+  deleteTransaction,
   removeUserFromCommunity,
+  pushImagesToServer,
+  postOffer,
 };
