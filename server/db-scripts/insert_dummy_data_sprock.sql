@@ -43,8 +43,8 @@ BEGIN
     INSERT INTO Requests (user_id, product_text, description, quantity, time_of_creation, time_of_expiration) VALUES
     (1, 'Majs', 'Ska laga tacos och insåg att jag saknade majsen', 1, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
     (1, 'Korv', 'Tänkte dra och grilla så söker korv om någon har över!', 10, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
-    (2, 'Grädde', 'Behöver 2dl till matlagningen!', 2, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
-    (3, 'Majsstärkelse', 'Skulle behöva typ 1dl till en sås jag tänkte göra', 1, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
+    (1, 'Grädde', 'Behöver 2dl till matlagningen!', 2, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
+    (1, 'Majsstärkelse', 'Skulle behöva typ 1dl till en sås jag tänkte göra', 1, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
     (4, 'Ägg', 'Söker 3 ägg!', 3, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
     (4, 'Bakpulver', 'Har någon lite bakpulver över som de kan dela?', 20, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
     (4, 'Fyllig sås', 'Nån god sås söker jag, man kan aldrig få för mycket sås.', 200, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
@@ -61,10 +61,16 @@ BEGIN
     INSERT INTO Transactions (offer_id, request_id, status, responder_id, time_of_creation, time_of_expiration) VALUES
     (1, NULL, 'accepted', 2, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
     (2, NULL, 'accepted', 3, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
-    (5, NULL, 'accepted', 1, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
+    (3, NULL, 'pending', 1, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
+    (4, NULL, 'pending', 1, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
+    (5, NULL, 'completed', 1, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
+    (6, NULL, 'completed', 1, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
     (NULL, 1, 'accepted', 1, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
     (NULL, 2, 'accepted', 1, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
-    (NULL, 3, 'accepted', 1, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
+    (NULL, 3, 'pending', 1, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
+    (NULL, 4, 'pending', 1, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
+    (NULL, 5, 'completed', 1, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
+    (NULL, 6, 'completed', 1, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
 
     SET FOREIGN_KEY_CHECKS=1;  
     

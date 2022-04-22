@@ -7,6 +7,7 @@ import {
   Modal,
   Card,
   Spinner,
+  Icon,
 } from "@ui-kitten/components";
 import { useIsFocused } from "@react-navigation/native";
 import { MyCommunitysInfo, UserInfo } from "../assets/AppContext";
@@ -14,11 +15,16 @@ import {
   getOffers,
   getMyOffers,
   addTransaction,
+  getPendingTransactions,
 } from "../Services/ServerCommunication.js";
 import io from "socket.io-client";
 import ProductInfoModal from "./Modals/ProductInfoModal";
 import TakeProductModal from "./Modals/TakeProductModal";
 import { host } from "../Services/ServerHost";
+
+const TransactionIcon = (props) => (
+  <Icon {...props} fill="red" name="info-outline" />
+);
 
 export const ItemAvailableComponent = () => {
   const { userInfo, setUserInfo } = React.useContext(UserInfo);
@@ -29,16 +35,22 @@ export const ItemAvailableComponent = () => {
   const [myOffers, setMyOffers] = React.useState([]);
   const [date, setDate] = React.useState(new Date());
   const [loading, setLoading] = React.useState(true);
+  const [transactionIds, setTransactionIds] = React.useState([]);
   const isFocused = useIsFocused();
 
   const userId = userInfo.id;
   const communityIds = myCommunitysInfo.map(({ id }) => id);
+
+  let transactions = [];
 
   //fetch items on focus
   const fetchItems = async () => {
     setLoading(true);
     let myItems = await getMyOffers(userId);
     let otherItems = await getOffers(userId, communityIds);
+    transactions = await getPendingTransactions(userId);
+    setTransactionIds(transactions.map((transaction) => transaction.offer_id));
+
     setMyOffers(myItems);
     setOffers(otherItems);
     setLoading(false);
@@ -169,7 +181,9 @@ export const ItemAvailableComponent = () => {
       <ListItem
         style={styles.container}
         onPress={() => toggleModal(item)}
-        // accessoryLeft={"https://picsum.photos/150/150"}
+        accessoryRight={
+          transactionIds.includes(item.id) ? TransactionIcon : null
+        }
         title={`${item.product_text} ${item.quantity}`}
         description={`${item.description}`}
       />

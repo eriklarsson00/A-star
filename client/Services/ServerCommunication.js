@@ -66,8 +66,28 @@ const addProfile = async (profile, communities) => {
   return updatedProfile;
 };
 
+const getPendingTransactions = async (user_id) => {
+  let transactions = await request(
+    "Get",
+    "/transactions/pending/user/" + user_id
+  );
+  return transactions;
+};
+
 const addTransaction = async (transaction) => {
   return await request("POST", "/transactions", transaction);
+};
+
+const acceptTransaction = async (id) => {
+  return await request("PUT", `/transactions/${id}/accept`);
+};
+
+const ownerConfirmTransaction = async (id) => {
+  return await request("PUT", `/transactions/${id}/ownerComnfirm`);
+};
+
+const responderConfirmTransaction = async (id) => {
+  return await request("PUT", `/transactions/${id}/responderConfirm`);
 };
 
 const addToCommunity = async (profile_id, communities) => {
@@ -107,9 +127,13 @@ export {
   getUserProfileById,
   getUserProfileByEmail,
   addProfile,
+  getPendingTransactions,
   getCommunities,
   getUserCommunities,
   addToCommunity,
+  acceptTransaction,
+  ownerConfirmTransaction,
+  responderConfirmTransaction,
   addTransaction,
   deleteProfile,
   removeUserFromCommunity,
