@@ -20,23 +20,40 @@ export const TransactionInfoModal = (props) => {
   const transaction = props.transaction;
   const [responder, setResponder] = useState({});
 
+  const getResponder = async () => {
+    if (!transaction) return;
+    let responder = await getUserProfileById(transaction.responder_id);
+    console.log(responder);
+    setResponder(responder[0]);
+  };
+
   useEffect(() => {
-    async () => {
-      let responder = await getUserProfileById(transaction.responder_id);
-      setResponder(responder);
-    };
+    getResponder();
   }, []);
 
   const Info = () => {
     if (transaction) {
       return (
         <View>
+          <Text>{responder.firstname} vill hämta din vara </Text>
           <Text>
-            Vill plocka upp{" "}
             {moment(transaction.time_of_expiration).format("dddd Do MMM hh:mm")}
           </Text>
           <Text>{moment(transaction.time_of_expiration).fromNow()}</Text>
-          <Text>{responder.firstname}</Text>
+          <Layout
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              marginTop: 10,
+            }}
+          >
+            <Button status={"success"}>
+              <Text>Acceptera</Text>
+            </Button>
+            <Button status={"danger"}>
+              <Text>Neka</Text>
+            </Button>
+          </Layout>
         </View>
       );
     } else {
