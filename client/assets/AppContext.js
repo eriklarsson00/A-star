@@ -18,6 +18,3 @@ export const UserInfo = React.createContext();
 
 /*url till profilbilden som tas från imagepicker */
 export const ProfileImagePath = React.createContext();
-
-/* url till varubilden som tas när en vara skapas*/
-export const ItemImagePath = React.createContext(null);
