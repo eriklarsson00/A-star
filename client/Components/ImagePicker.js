@@ -1,10 +1,6 @@
 import React, { useState, useContext } from "react";
 import { View, Text, StyleSheet, Image, Button } from "react-native";
-import {
-  ProfileImagePath,
-  UserInfo,
-  ItemImagePath,
-} from "../assets/AppContext";
+import { ProfileImagePath, UserInfo } from "../assets/AppContext";
 import { pushToServer } from "../Services/ServerCommunication";
 import * as ImageManipulator from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";
@@ -15,8 +11,23 @@ export default function ImagePickerComp(props) {
   const [pickedImagePath, setPickedImagePath] = useState(null);
   const { profileImagePath, setProfileImagePath } =
     React.useContext(ProfileImagePath);
-  const { itemImagePath, setItemImagePath } = React.useContext(ItemImagePath);
   const { userInfo, setUserInfo } = React.useContext(UserInfo);
+
+  const resizeImage = async (result, resize = 0.05) => {
+    const manipResult = await ImageManipulator.manipulateAsync(
+      result.uri,
+      [
+        {
+          resize: {
+            width: result.width * resize,
+            height: result.height * resize,
+          },
+        },
+      ],
+      { compress: 1 }
+    );
+    return manipResult;
+  };
 
   // This function is triggered when the "Select an image" button pressed
   const showImagePicker = async () => {
@@ -32,6 +43,7 @@ export default function ImagePickerComp(props) {
     const result = await ImagePicker.launchImageLibraryAsync({
       quality: 0,
     });
+
     const image = await resizeImage(result, props.resize);
 
     if (!image.cancelled) {
@@ -41,7 +53,6 @@ export default function ImagePickerComp(props) {
         props.updateResult(image);
       }
       if (props.context == "ItemImage") {
-        setItemImagePath(image.uri);
         props.updateResult(image);
       }
     }
@@ -67,25 +78,8 @@ export default function ImagePickerComp(props) {
       }
       if (props.context == "ItemImage") {
         props.updateResult(image);
-        setItemImagePath(image.uri);
       }
     }
-  };
-
-  resizeImage = async (result, resize = 0.05) => {
-    const manipResult = await ImageManipulator.manipulateAsync(
-      result.uri,
-      [
-        {
-          resize: {
-            width: result.width * resize,
-            height: result.height * resize,
-          },
-        },
-      ],
-      { compress: 1 }
-    );
-    return manipResult;
   };
 
   return (

@@ -20,12 +20,17 @@ import {
 import tw from "twrnc";
 import { InputNewItem } from "../Components/InputNewItem";
 import BarCodeScannerComp from "../Components/BarCodeScanner.component";
-import { MyCommunitysInfo } from "../assets/AppContext";
+import { MyCommunitysInfo, UserInfo } from "../assets/AppContext";
 import { NewItemCommunityComponent } from "../Components/NewItemCommunityComponent";
+import { pushImagesToServer, postOffer } from "../Services/ServerCommunication";
 
-const CreateNewItemScreen = () => {
+const CreateNewItemScreen = ({ navigation }) => {
+  //CONTEXT
   const { myCommunitysInfo, setMyCommunitysInfo } =
     React.useContext(MyCommunitysInfo);
+  const { userInfo, setUserInfo } = React.useContext(UserInfo);
+
+  // STATES
   const [productInfo, setProductInfo] = React.useState([]);
   const [compId, setCompId] = React.useState(0);
   const [count, setCount] = React.useState([0]);
@@ -51,23 +56,28 @@ const CreateNewItemScreen = () => {
     setBarCodeShow(barCodeShow);
   };
 
-  // koppla mellan parent och child
+  // koppla mellan parent och child (InputNewItem)
+  // Funktionen ska lägga in ett nytt object i listan av alla objekt i inlägget
   const infoHandler = (input) => {
     setProductInfo((productInfo) => [...productInfo, input]);
   };
+  // Håller koll på vilket id en vara ska ha (lokalt, bara för den här screenen)
   const addId = (input) => {
     setCompId(compId + input);
   };
 
+  // Ska skapa en ny vara/produkt i inlägget
   const newComp = () => {
     const length = count.length;
     setCount((count) => [...count, length]);
   };
 
+  // lägg in en ny bild i arrayen av alla bilder
   const pushImage = (image) => {
     setImages([...images, image]);
   };
 
+  // ska updatera en vara, INTE skapa en ny
   const updateItem = (inputId, updatedItem) => {
     for (let i = 0; i < productInfo.length; i++) {
       if (productInfo[i].id === inputId) {
@@ -81,11 +91,13 @@ const CreateNewItemScreen = () => {
     console.log("ERROR: no item with inputId found");
   };
 
+  // Lista av enskilda varor
   const addComp = ({ item, index }) => (
     <Layout>
       <InputNewItem
         setProductInfo={infoHandler}
         id={compId}
+        user_id={userInfo.id}
         setId={addId}
         setChange={updateItem}
         func={barCodeActive}
@@ -95,14 +107,17 @@ const CreateNewItemScreen = () => {
     </Layout>
   );
 
+  // funktion som behövs för listor
   const giveKey = ({ item, index }) => reuturn(item);
 
+  // Lista av mina communities
   const printMyCommunities = ({ item, index }) => (
     <Layout>
       <NewItemCommunityComponent community={item} addCommunity={addCommunity} />
     </Layout>
   );
 
+  // Funktion som kollar om ett community ska läggas till av valda communities eller tas bort (alltså där inlägget ska publiceras)
   const addCommunity = (community, remove) => {
     for (let i = 0; i < chosenCommunity.length; i++) {
       if (chosenCommunity[i].id === community.id) {
@@ -121,11 +136,36 @@ const CreateNewItemScreen = () => {
     setChosenCommunity((chosenCommunity) => [...chosenCommunity, community]);
   };
 
+  const prepareProduct = (product, communities) => {
+    product.id = undefined;
+    postOffer(product, communities);
+  };
+
+  const publishOffer = () => {
+    const commArray = [];
+    for (let i = 0; i < chosenCommunity.length; i++) {
+      commArray.push(chosenCommunity[i].id);
+    }
+
+    productInfo.forEach((product) => {
+      prepareProduct(product, commArray);
+    });
+    //skickar upp varje bild till s3 när vi publicerar inlägget
+    images.forEach((image) => {
+      pushImagesToServer(image, "itemimages", userInfo.id);
+    });
+  };
+
+  // Knapp som ska publicera inlägget
   const renderPublishButton = () => (
     <Button
       onPress={() => {
         if (chosenCommunity.length == 0) {
           setTooltipVisible(true);
+        } else {
+          publishOffer();
+          setCreatePost(false);
+          navigation.navigate("AddItemScreen");
         }
       }}
     >

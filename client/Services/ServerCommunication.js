@@ -1,7 +1,6 @@
 import { host } from "./ServerHost";
 import { UserInfo } from "../assets/AppContext";
 
-const { userInfo, setUserInfo } = React.useContext(UserInfo);
 const request = async (type, route, body) => {
   try {
     let response = await fetch(`${host}${route}`, {
@@ -101,7 +100,7 @@ const removeUserFromCommunity = async (userId, communityId) => {
   );
 };
 
-const pushImagesToServer = async (image, serverPath) => {
+const pushImagesToServer = async (image, serverPath, userId) => {
   const body = new FormData();
   body.append("image", {
     name: "photo.jpg",
@@ -111,11 +110,9 @@ const pushImagesToServer = async (image, serverPath) => {
 
   var url = "";
   if (serverPath === "Profile") {
-    url =
-      "http://ec2-3-215-18-23.compute-1.amazonaws.com/users/profile/" +
-      userInfo.id;
+    url = host + "/users/profile/" + userId;
   } else {
-    url = "http://ec2-3-215-18-23.compute-1.amazonaws.com/" + serverPath;
+    url = host + serverPath;
   }
 
   fetch(url, {
@@ -128,6 +125,15 @@ const pushImagesToServer = async (image, serverPath) => {
     .then((data) => data.json())
     .then((res) => console.log(res))
     .catch((err) => console.log(err));
+};
+
+const postOffer = async (offers, usercommunities) => {
+  const upload_obj = {
+    offer: offers,
+    communities: usercommunities,
+  };
+
+  const result = await request("POST", "/offers", upload_obj);
 };
 
 export {
@@ -145,4 +151,5 @@ export {
   deleteProfile,
   removeUserFromCommunity,
   pushImagesToServer,
+  postOffer,
 };
