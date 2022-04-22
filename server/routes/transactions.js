@@ -110,7 +110,7 @@ function getTransactionAcceptedUser(req, res) {
     LEFT JOIN Offers O    ON T.offer_id = O.id
     LEFT JOIN Requests R  ON T.request_id = R.id
     LEFT JOIN Users U     ON O.user_id = U.id OR R.user_id = U.id
-    WHERE status = 'pending'
+    WHERE status = 'accepted'
       AND U.id = ${id};
     `;
 
@@ -132,7 +132,7 @@ function getTransactionPendingUser(req, res) {
     LEFT JOIN Offers O    ON T.offer_id = O.id
     LEFT JOIN Requests R  ON T.request_id = R.id
     LEFT JOIN Users U     ON O.user_id = U.id OR R.user_id = U.id
-    WHERE status = 'accepted'
+    WHERE status = 'pending'
       AND U.id = ${id};
     `;
 
