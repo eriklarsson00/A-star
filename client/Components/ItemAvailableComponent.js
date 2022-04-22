@@ -20,6 +20,7 @@ import {
 import io from "socket.io-client";
 import ProductInfoModal from "./Modals/ProductInfoModal";
 import TakeProductModal from "./Modals/TakeProductModal";
+import TransactionInfoModal from "./Modals/TransactionInfoModal";
 import { host } from "../Services/ServerHost";
 
 const TransactionIcon = (props) => (
@@ -35,22 +36,20 @@ export const ItemAvailableComponent = () => {
   const [myOffers, setMyOffers] = React.useState([]);
   const [date, setDate] = React.useState(new Date());
   const [loading, setLoading] = React.useState(true);
-  const [transactionIds, setTransactionIds] = React.useState([]);
+  const [transactions, setTransactions] = React.useState([]);
   const isFocused = useIsFocused();
 
   const userId = userInfo.id;
   const communityIds = myCommunitysInfo.map(({ id }) => id);
-
-  let transactions = [];
 
   //fetch items on focus
   const fetchItems = async () => {
     setLoading(true);
     let myItems = await getMyOffers(userId);
     let otherItems = await getOffers(userId, communityIds);
-    transactions = await getPendingTransactions(userId);
-    setTransactionIds(transactions.map((transaction) => transaction.offer_id));
+    let transactions = await getPendingTransactions(userId);
 
+    setTransactions(transactions);
     setMyOffers(myItems);
     setOffers(otherItems);
     setLoading(false);
@@ -91,6 +90,21 @@ export const ItemAvailableComponent = () => {
       socketRef.current.disconnect();
     };
   }, []);
+
+  const getTransaction = (offer) => {
+    if (!offerHasTransaction(offer)) {
+      return null;
+    }
+    return transactions.find(({ offer_id }) => offer_id == offer.id);
+  };
+
+  const offerHasTransaction = (offer) => {
+    return getTransactionIds().includes(offer.id);
+  };
+
+  const getTransactionIds = () => {
+    return transactions.map(({ offer_id }) => offer_id);
+  };
 
   const removeOffer = (array, id) => {
     return array.filter((offer) => offer.id != id);
@@ -181,21 +195,15 @@ export const ItemAvailableComponent = () => {
       <ListItem
         style={styles.container}
         onPress={() => toggleModal(item)}
-        accessoryRight={
-          transactionIds.includes(item.id) ? TransactionIcon : null
-        }
+        accessoryRight={offerHasTransaction(item) ? TransactionIcon : null}
         title={`${item.product_text} ${item.quantity}`}
         description={`${item.description}`}
       />
-      <Modal
-        visible={item.visible}
-        backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.01)" }}
-        onBackdropPress={() => toggleModal(item)}
-      >
-        <Card disabled={true}>
-          <Text> Min vara {item.title} </Text>
-        </Card>
-      </Modal>
+      <TransactionInfoModal
+        item={item}
+        toggleModal={toggleModal}
+        transaction={getTransaction(item)}
+      />
     </View>
   );
 
