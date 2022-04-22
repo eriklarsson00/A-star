@@ -128,9 +128,18 @@ export const InputNewItem = (props) => {
                 style={styles.AddIconContainer}
               >
                 <Image
-                  style={{ width: 70, height: 70 }}
+                  style={{
+                    width: 70,
+                    height: 70,
+                    borderWidth: 1,
+                    borderColor: "grey",
+                    borderRadius: 4,
+                  }}
                   source={{
-                    uri: image === null ? image : image.uri,
+                    uri:
+                      image === null
+                        ? "https://www.mcicon.com/wp-content/uploads/2021/02/Technology_Camera_1-copy-22.jpg"
+                        : image.uri,
                     height: 150,
                     width: 150,
                   }}
@@ -344,6 +353,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignContent: "center",
     paddingLeft: 20,
-    borderColor: "black",
+    paddingBottom: 20,
   },
 });

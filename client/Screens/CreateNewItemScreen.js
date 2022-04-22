@@ -136,8 +136,15 @@ const CreateNewItemScreen = ({ navigation }) => {
     setChosenCommunity((chosenCommunity) => [...chosenCommunity, community]);
   };
 
-  const prepareProduct = (product, communities) => {
+  const prepareProduct = async (product, communities) => {
+    let imgurl = await pushImagesToServer(
+      images[product.id],
+      "itemimages",
+      userInfo.id
+    );
     product.id = undefined;
+    console.log(imgurl);
+    product.imgurl = imgurl;
     postOffer(product, communities);
   };
 
@@ -151,9 +158,6 @@ const CreateNewItemScreen = ({ navigation }) => {
       prepareProduct(product, commArray);
     });
     //skickar upp varje bild till s3 när vi publicerar inlägget
-    images.forEach((image) => {
-      pushImagesToServer(image, "itemimages", userInfo.id);
-    });
   };
 
   // Knapp som ska publicera inlägget
