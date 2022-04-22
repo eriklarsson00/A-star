@@ -125,19 +125,17 @@ export default () => {
         <GoogleInfo.Provider value={FirstGooglevalue}>
           <ShowCommunityIds.Provider value={FirstShowValue}>
             <ProfileImagePath.Provider value={FirstProfileImagePath}>
-              <ItemImagePath.Provider value={FirstIconImagePath}>
-                <MyCommunitysInfo.Provider value={FirstCommunityValue}>
-                  <UserLoggedIn.Provider value={FirstLoggedInValue}>
-                    <ApplicationProvider
-                      {...eva}
-                      theme={{ ...eva.light, ...theme }}
-                    >
-                      <StatusBar barStyle="dark-content" />
-                      <>{whichScreen}</>
-                    </ApplicationProvider>
-                  </UserLoggedIn.Provider>
-                </MyCommunitysInfo.Provider>
-              </ItemImagePath.Provider>
+              <MyCommunitysInfo.Provider value={FirstCommunityValue}>
+                <UserLoggedIn.Provider value={FirstLoggedInValue}>
+                  <ApplicationProvider
+                    {...eva}
+                    theme={{ ...eva.light, ...theme }}
+                  >
+                    <StatusBar barStyle="dark-content" />
+                    <>{whichScreen}</>
+                  </ApplicationProvider>
+                </UserLoggedIn.Provider>
+              </MyCommunitysInfo.Provider>
             </ProfileImagePath.Provider>
           </ShowCommunityIds.Provider>
         </GoogleInfo.Provider>

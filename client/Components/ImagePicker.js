@@ -1,21 +1,33 @@
 import React, { useState, useContext } from "react";
 import { View, Text, StyleSheet, Image, Button } from "react-native";
-import {
-  ProfileImagePath,
-  UserInfo,
-  ItemImagePath,
-} from "../assets/AppContext";
+import { ProfileImagePath, UserInfo } from "../assets/AppContext";
 import { pushToServer } from "../Services/ServerCommunication";
 import * as ImageManipulator from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";
 
 export default function ImagePickerComp(props) {
   // The path of the picked image
+
   const [pickedImagePath, setPickedImagePath] = useState(null);
   const { profileImagePath, setProfileImagePath } =
     React.useContext(ProfileImagePath);
-  const { itemImagePath, setItemImagePath } = React.useContext(ItemImagePath);
   const { userInfo, setUserInfo } = React.useContext(UserInfo);
+
+  const resizeImage = async (result, resize = 0.05) => {
+    const manipResult = await ImageManipulator.manipulateAsync(
+      result.uri,
+      [
+        {
+          resize: {
+            width: result.width * resize,
+            height: result.height * resize,
+          },
+        },
+      ],
+      { compress: 1 }
+    );
+    return manipResult;
+  };
 
   // This function is triggered when the "Select an image" button pressed
   const showImagePicker = async () => {
@@ -32,17 +44,17 @@ export default function ImagePickerComp(props) {
       quality: 0,
     });
 
-    if (!result.cancelled) {
-      setPickedImagePath(result.uri);
+    const image = await resizeImage(result, props.resize);
+
+    if (!image.cancelled) {
+      setPickedImagePath(image.uri);
       if (props.context == "Profile") {
-        setProfileImagePath(result.uri);
+        setProfileImagePath(image.uri);
+        props.updateResult(image);
       }
       if (props.context == "ItemImage") {
-        setItemImagePath(result.url);
-        props.updateResult(result);
+        props.updateResult(image);
       }
-      pushToServer(result);
-     
     }
   };
 
@@ -57,60 +69,17 @@ export default function ImagePickerComp(props) {
     }
 
     const result = await ImagePicker.launchCameraAsync();
-
+    const image = await resizeImage(result, props.resize);
     if (!result.cancelled) {
-      setPickedImagePath(result.uri);
+      setPickedImagePath(image.uri);
       if (props.context == "Profile") {
-        setProfileImagePath(result.uri);
+        props.updateResult(image);
+        setProfileImagePath(image.uri);
       }
       if (props.context == "ItemImage") {
-        setItemImagePath(result.uri);
-        props.updateResult(result);
+        props.updateResult(image);
       }
-      pushToServer(result);
-      
     }
-  };
-
-  const pushToServer = async (result) => {
-    const image = await resizeImage(result, props.resize);
-    const body = new FormData();
-    body.append("image", {
-      name: "photo.jpg",
-      type: image.type,
-      uri: image.uri,
-    });
-
-    var url =
-      "http://ec2-3-215-18-23.compute-1.amazonaws.com/users/profile/" +
-      userInfo.id;
-
-    fetch(url, {
-      method: "POST",
-      body: body,
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    })
-      .then((data) => data.json())
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
-  };
-
-  resizeImage = async (result, resize = 0.05) => {
-    const manipResult = await ImageManipulator.manipulateAsync(
-      result.uri,
-      [
-        {
-          resize: {
-            width: result.width * resize,
-            height: result.height * resize,
-          },
-        },
-      ],
-      { compress: 1 }
-    );
-    return manipResult;
   };
 
   return (
