@@ -78,6 +78,18 @@ const addTransaction = async (transaction) => {
   return await request("POST", "/transactions", transaction);
 };
 
+const acceptTransaction = async (id) => {
+  return await request("PUT", `/transactions/${id}/accept`);
+};
+
+const ownerConfirmTransaction = async (id) => {
+  return await request("PUT", `/transactions/${id}/ownerComnfirm`);
+};
+
+const responderConfirmTransaction = async (id) => {
+  return await request("PUT", `/transactions/${id}/responderConfirm`);
+};
+
 const addToCommunity = async (profile_id, communities) => {
   // Should be refactored to only send one request with all communities
   for (const id of communities) {
@@ -119,6 +131,9 @@ export {
   getCommunities,
   getUserCommunities,
   addToCommunity,
+  acceptTransaction,
+  ownerConfirmTransaction,
+  responderConfirmTransaction,
   addTransaction,
   deleteProfile,
   removeUserFromCommunity,

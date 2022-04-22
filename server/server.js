@@ -206,6 +206,16 @@ app
   .get(transactions.getTransaction)
   .delete(transactions.deleteTransaction);
 
+app.route("/transactions/:id/accept").put(transactions.acceptTransaction);
+
+app
+  .route("/transactions/:id/ownerConfirm")
+  .put(transactions.ownerConfirmTransaction);
+
+app
+  .route("/transactions/:id/responderConfirm")
+  .put(transactions.responderConfirmTransaction);
+
 app
   .route("/transactions/community/:id")
   .get(transactions.getTransactionCommunity);

@@ -448,4 +448,139 @@ export function transactionTests(server) {
         });
     });
   });
+
+  describe("/transactions/:id/accept", () => {
+    it("should accept a transaction", function (done) {
+      chai
+        .request(server)
+        .put("/transactions/3/accept")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(200);
+          res.body.should.be.a("string");
+          res.body.length.should.not.be.eql(0);
+          done();
+        });
+    });
+    it("should not accept a transaction", function (done) {
+      // Invalid id
+      chai
+        .request(server)
+        .put("/transactions/InvalidId/accept")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(400);
+          res.body.should.be.a("string");
+          res.body.length.should.not.be.eql(0);
+        });
+
+      // Bad id
+      chai
+        .request(server)
+        .put("/transactions/-1/accept")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(200);
+          res.body.should.be.a("string");
+          res.body.length.should.not.be.eql(0);
+          done();
+        });
+    });
+  });
+
+  describe("/transactions/:id/ownerConfirm", () => {
+    it("should let owner confirm a transaction", function (done) {
+      chai
+        .request(server)
+        .put("/transactions/1/ownerConfirm")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(200);
+          res.body.should.be.a("string");
+          res.body.length.should.not.be.eql(0);
+          done();
+        });
+    });
+    it("should not let owner confirm a transaction", function (done) {
+      // Invalid id
+      chai
+        .request(server)
+        .put("/transactions/InvalidId/ownerConfirm")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(400);
+          res.body.should.be.a("string");
+          res.body.length.should.not.be.eql(0);
+        });
+
+      // Bad id
+      chai
+        .request(server)
+        .put("/transactions/-1/ownerConfirm")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(200);
+          res.body.should.be.a("string");
+          res.body.length.should.not.be.eql(0);
+          done();
+        });
+    });
+  });
+
+  describe("/transactions/:id/responderConfirm", () => {
+    it("should let responder confirm a transaction", function (done) {
+      chai
+        .request(server)
+        .put("/transactions/2/responderConfirm")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(200);
+          res.body.should.be.a("string");
+          res.body.length.should.not.be.eql(0);
+          done();
+        });
+    });
+    it("should not let responder confirm a transaction", function (done) {
+      // Invalid id
+      chai
+        .request(server)
+        .put("/transactions/InvalidId/responderConfirm")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(400);
+          res.body.should.be.a("string");
+          res.body.length.should.not.be.eql(0);
+        });
+
+      // Bad id
+      chai
+        .request(server)
+        .put("/transactions/-1/responderConfirm")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(200);
+          res.body.should.be.a("string");
+          res.body.length.should.not.be.eql(0);
+          done();
+        });
+    });
+  });
 }
