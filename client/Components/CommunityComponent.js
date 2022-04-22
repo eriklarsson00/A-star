@@ -1,4 +1,5 @@
 import React from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Image, StyleSheet, View } from "react-native";
 import {
   Text,
@@ -22,12 +23,6 @@ import { removeUserFromCommunity } from "../Services/ServerCommunication";
 const CommunityComponent = (props) => {
   const theme = useTheme();
 
-  //STATE
-  const [removeCommunityVisible, setRemoveCommunityVisible] =
-    React.useState(false);
-
-  const [checked, setChecked] = React.useState(false);
-
   //CONTEXT
   const { showCommunityIds, setShowCommunityIds } =
     React.useContext(ShowCommunityIds);
@@ -36,6 +31,14 @@ const CommunityComponent = (props) => {
     React.useContext(MyCommunitysInfo);
 
   const { userInfo } = React.useContext(UserInfo);
+
+  //STATE
+  const [removeCommunityVisible, setRemoveCommunityVisible] =
+    React.useState(false);
+
+  const [checked, setChecked] = React.useState(
+    showCommunityIds.includes(props.community.id)
+  );
 
   //ICONS
 
@@ -49,9 +52,11 @@ const CommunityComponent = (props) => {
 
   async function removeCommunity() {
     if (showCommunityIds.includes(props.community.id)) {
-      setShowCommunityIds(
-        showCommunityIds.filter((comId) => comId != props.community.id)
+      const newIds = showCommunityIds.filter(
+        (comId) => comId != props.community.id
       );
+      setShowCommunityIds(newIds);
+      await AsyncStorage.setItem("showCommunityIds", JSON.stringify(newIds));
     }
     setMyCommunitysInfo(
       myCommunitysInfo.filter((community) => community.id != props.community.id)
@@ -101,13 +106,20 @@ const CommunityComponent = (props) => {
   return (
     <TouchableOpacity
       activeOpacity={0.8}
-      onPress={() => {
+      onPress={async () => {
         setChecked(!checked);
-        showCommunityIds.includes(props.community.id)
-          ? setShowCommunityIds(
-              showCommunityIds.filter((comId) => comId != props.community.id)
-            )
-          : setShowCommunityIds([...showCommunityIds, props.community.id]);
+        let newIds;
+        if (showCommunityIds.includes(props.community.id)) {
+          newIds = showCommunityIds.filter(
+            (comId) => comId != props.community.id
+          );
+          setShowCommunityIds(newIds);
+        } else {
+          newIds = [...showCommunityIds, props.community.id];
+          setShowCommunityIds(newIds);
+        }
+
+        await AsyncStorage.setItem("showCommunityIds", JSON.stringify(newIds));
       }}
     >
       <Layout style={styles.outer_container}>
