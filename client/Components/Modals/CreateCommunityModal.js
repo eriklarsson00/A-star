@@ -22,6 +22,7 @@ import {
 } from "@ui-kitten/components";
 import tw from "twrnc";
 import ImagePicker from "../ImagePicker";
+import { addCommunity } from "../../Services/ServerCommunication";
 
 export const CreateCommunityModal = (props) => {
 	const theme = useTheme();
@@ -115,15 +116,24 @@ export const CreateCommunityModal = (props) => {
 	};
 
 	async function createCommunity() {
-		// let communityData = {
-		// 	name: communityName,
-		// 	description: communityDescription,
-		// 	private: communityPrivate,
-		// 	communityPassword: communityPassword,
-		// };
-		// await addProfile(accountData, communityIDs); //TODO
+		let communityData = {
+			//TODO lägg till guard på knappen
+			name: communityName,
+			location: "location",
+			description: communityDescription,
+			imgurl: null, ///TODO
+			private: communityPrivate,
+			password: communityPassword,
+		};
+		const result = await addCommunity(communityData);
+		console.log(result);
 		console.log("skapar");
 		props.setVisible(false);
+		setCommunityName("");
+		setCommunityDescription("");
+		setCommunityPrivate(false);
+		setCommunityImageUrl(""); //TODO
+		setCommunityPassword(null);
 	}
 	return (
 		<Modal
@@ -187,7 +197,12 @@ export const CreateCommunityModal = (props) => {
 								}
 							/>
 						)}
-						<Button style={tw`mt-2`} onPress={createCommunity}>
+						<Button
+							style={tw`mt-2`}
+							onPress={async () => {
+								await createCommunity();
+							}}
+						>
 							Skapa grannskap
 						</Button>
 					</ScrollView>
