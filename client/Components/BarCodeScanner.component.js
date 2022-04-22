@@ -63,36 +63,76 @@ export default function BarCodeScannerComp(props) {
   }
 
   return (
-    <View style={styles.container}>
-      <BarCodeScanner
-        barCodeTypes={[BarCodeScanner.Constants.BarCodeType.ean13]}
-        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-        style={StyleSheet.absoluteFillObject}
-      />
-      {scanned && (
-        <Button title={"Tap to Scan Again"} onPress={() => setScanned(false)} />
-      )}
-      <Button
-        style={styles.button}
-        title="Gå tillbaka"
-        onPress={() => {
-          props.func(false);
-        }}
-      />
-    </View>
+    <BarCodeScanner
+      barCodeTypes={[BarCodeScanner.Constants.BarCodeType.ean13]}
+      onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+      style={[StyleSheet.absoluteFillObject, styles.container]}
+    >
+      <View style={styles.layerTop}>
+        <View style={styles.buttonContainer}>
+          {scanned && (
+            <Button
+              title={"Tryck för att Scanna om vara"}
+              onPress={() => setScanned(false)}
+            />
+          )}
+        </View>
+      </View>
+
+      <View style={styles.layerCenter}>
+        <View style={styles.layerLeft} />
+        <View style={styles.focused} />
+
+        <View style={styles.layerRight} />
+      </View>
+      <View style={styles.layerBottom}>
+        <Button
+          title="Gå tillbaka"
+          onPress={() => {
+            props.func(false);
+          }}
+        />
+      </View>
+    </BarCodeScanner>
   );
 }
 
+const opacity = "rgba(0, 0, 0, .6)";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: "column",
   },
-  button: {
+  buttonContainer: {
     flex: 1,
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
+    alignItems: "center",
+    flexDirection: "column",
+    justifyContent: "center",
+    position: "absolute",
+    marginTop: 220,
+    marginLeft: 80,
+  },
+  layerTop: {
+    flex: 2,
+    backgroundColor: opacity,
+  },
+  layerCenter: {
+    flex: 1,
+    flexDirection: "row",
+  },
+  layerLeft: {
+    flex: 1,
+    backgroundColor: opacity,
+  },
+  focused: {
+    flex: 10,
+  },
+  layerRight: {
+    flex: 1,
+    backgroundColor: opacity,
+  },
+  layerBottom: {
+    flex: 2,
+    backgroundColor: opacity,
   },
 });

@@ -22,6 +22,7 @@ import {
   UserInfo,
   GoogleInfo,
   UserLoggedIn,
+  ShowCommunityIds,
 } from "../assets/AppContext";
 import tw from "twrnc";
 import { deleteProfile } from "../Services/ServerCommunication";
@@ -30,8 +31,9 @@ export const ProfileScreen = () => {
   const { profileImagePath, setProfileImagePath } =
     React.useContext(ProfileImagePath);
   const { userInfo, setUserInfo } = React.useContext(UserInfo);
-  const { userLoggedIn, setLoggedIn } = React.useContext(UserLoggedIn);
-  const { googleInfo, setGoogleInfo } = React.useContext(GoogleInfo);
+  const { setLoggedIn } = React.useContext(UserLoggedIn);
+  const { setGoogleInfo } = React.useContext(GoogleInfo);
+  const { setShowCommunityIds } = React.useContext(ShowCommunityIds);
   const rating =
     userInfo.raters > 0
       ? Math.round((userInfo.rating * 100) / userInfo.raters) / 100 + "/5"
@@ -39,10 +41,12 @@ export const ProfileScreen = () => {
 
   const logOut = async () => {
     // Clear all sorts of cache in app
-    await AsyncStorage.removeItem("userId").then(console.log("cache cleared"));
+    await AsyncStorage.removeItem("userId");
+    await AsyncStorage.removeItem("showCommunityIds");
     setUserInfo([]);
     setGoogleInfo(null);
     setLoggedIn(false);
+    setShowCommunityIds([]);
   };
 
   const removeAccount = async () => {
@@ -61,7 +65,7 @@ export const ProfileScreen = () => {
           onPress: () => {},
           style: "cancel",
         },
-        { text: "Jag är säker", onPress: removeAccount },
+        { text: "Jag är säker", onPress: async () => removeAccount() },
       ]
     );
 
@@ -72,7 +76,7 @@ export const ProfileScreen = () => {
         onPress: () => {},
         style: "cancel",
       },
-      { text: "Jag är säker", onPress: logOut },
+      { text: "Jag är säker", onPress: async () => logOut() },
     ]);
 
   return (
