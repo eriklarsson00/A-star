@@ -50,7 +50,6 @@ const CreateNewItemScreen = ({ navigation }) => {
   // barcodescanner
   const product = (productName) => {
     setProductName(productName);
-    console.log(productName);
   };
   const barCodeActive = (barCodeShow) => {
     setBarCodeShow(barCodeShow);
@@ -81,7 +80,6 @@ const CreateNewItemScreen = ({ navigation }) => {
   const updateItem = (inputId, updatedItem) => {
     for (let i = 0; i < productInfo.length; i++) {
       if (productInfo[i].id === inputId) {
-        console.log("productInfo[i].id = " + productInfo[i].id);
         let newProductInfo = [...productInfo];
         newProductInfo[i] = updatedItem;
         setProductInfo(newProductInfo);
@@ -143,7 +141,6 @@ const CreateNewItemScreen = ({ navigation }) => {
       userInfo.id
     );
     product.id = undefined;
-    console.log(imgurl);
     product.imgurl = imgurl;
     postOffer(product, communities);
   };
