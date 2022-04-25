@@ -136,10 +136,10 @@ const pushImagesToServer = async (image, serverPath, userId) => {
   if (serverPath === "Profile") {
     url = host + "/users/profile/" + userId;
   } else {
-    url = host + serverPath;
+    url = host + "/" + serverPath;
   }
 
-  fetch(url, {
+  return await fetch(url, {
     method: "POST",
     body: body,
     headers: {
@@ -147,7 +147,6 @@ const pushImagesToServer = async (image, serverPath, userId) => {
     },
   })
     .then((data) => data.json())
-    .then((res) => console.log(res))
     .catch((err) => console.log(err));
 };
 
