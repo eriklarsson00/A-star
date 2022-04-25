@@ -67,6 +67,11 @@ const addProfile = async (profile, communities) => {
   return updatedProfile;
 };
 
+const editProfile = async (profile, user_id) => {
+  const updatedProfile = await request("PUT", "/users/" + user_id, profile);
+  return updatedProfile;
+};
+
 const getPendingTransactions = async (user_id) => {
   let transactions = await request(
     "Get",
@@ -167,6 +172,10 @@ const postRequest = async (requests, usercommunities) => {
   return await request("POST", "/requests", upload_obj);
 };
 
+const addCommunity = async (community) => {
+  return await request("POST", "/communities", community);
+};
+
 export {
   getMyOffers,
   getOffers,
@@ -189,4 +198,6 @@ export {
   pushImagesToServer,
   postOffer,
   postRequest,
+  addCommunity,
+  editProfile,
 };

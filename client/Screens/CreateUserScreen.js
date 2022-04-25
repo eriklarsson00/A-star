@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  SafeAreaView,
-  StyleSheet,
-  Image,
-  View,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, Image, TouchableOpacity } from "react-native";
 import {
   Text,
   Layout,
@@ -17,19 +11,22 @@ import {
   Card,
   Select,
   SelectItem,
-  IndexPath,
 } from "@ui-kitten/components";
 import tw from "twrnc";
 import ImagePicker from "../Components/ImagePicker";
 import {
-  ProfileImagePath,
   ShowCommunityIds,
   MyCommunitysInfo,
   UserInfo,
   GoogleInfo,
   UserLoggedIn,
 } from "../assets/AppContext";
-import { addProfile, getCommunities } from "../Services/ServerCommunication";
+import {
+  addProfile,
+  editProfile,
+  getCommunities,
+  pushImagesToServer,
+} from "../Services/ServerCommunication";
 
 async function getAllCommunities() {
   let communities = await getCommunities();
@@ -41,8 +38,6 @@ export const CreateUserScreen = () => {
   const { googleInfo, setGoogleInfo } = React.useContext(GoogleInfo);
   const { userInfo, setUserInfo } = React.useContext(UserInfo);
   const { userLoggedIn, setLoggedIn } = React.useContext(UserLoggedIn);
-  const { profileImagePath, setProfileImagePath } =
-    React.useContext(ProfileImagePath);
   const { showCommunityIds, setShowCommunityIds } =
     React.useContext(ShowCommunityIds);
   const { myCommunitysInfo, setMyCommunitysInfo } =
@@ -58,7 +53,9 @@ export const CreateUserScreen = () => {
     googleInfo?.given_name ?? ""
   );
   const [lastName, setLastName] = React.useState(googleInfo?.family_name ?? "");
-  const [result, setResult] = React.useState(null);
+  const [ProfileImage, setProfileImage] = React.useState({
+    uri: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+  });
 
   React.useEffect(() => {
     const getComm = async () => {
@@ -81,22 +78,26 @@ export const CreateUserScreen = () => {
       number: phoneNumber,
       email: googleInfo?.email ?? null,
       location: "",
-      imgurl: "", //TODO fixa bucket-bild
-      rating: 0, //TODO : Start rating?
+      imgurl: "",
+      rating: 0,
       adress: adress,
       raters: 0,
       given: 0,
       taken: 0,
     };
     let updatedProfile = await addProfile(accountData, communityIDs);
+    let bucketImage = await pushImagesToServer(
+      ProfileImage,
+      "Profile",
+      updatedProfile[0].id
+    );
+    let newProfile = updatedProfile;
+    newProfile[0].imgurl = bucketImage;
+    await editProfile(newProfile[0], newProfile[0].id);
     setUserInfo(updatedProfile);
     setShowCommunityIds(communityIDs);
     setLoggedIn(true);
   }
-
-  const updateResult = (result) => {
-    setResult(result);
-  };
 
   const theme = useTheme();
 
@@ -128,7 +129,7 @@ export const CreateUserScreen = () => {
         onBackdropPress={() => setVisible(false)}
       >
         <Card disabled={true}>
-          <ImagePicker context="Profile" updateResult={updateResult} />
+          <ImagePicker context="Profile" updateResult={setProfileImage} />
           <Button style={tw`mt-2 w-50`} onPress={() => setVisible(false)}>
             Klar
           </Button>
@@ -172,7 +173,7 @@ export const CreateUserScreen = () => {
       <Layout style={styles.createUserContainer} level="1">
         <Image
           style={tw`rounded-full`}
-          source={{ uri: profileImagePath, height: 150, width: 150 }}
+          source={{ uri: ProfileImage.uri, height: 150, width: 150 }}
         />
         <TouchableOpacity
           onPress={() => {
