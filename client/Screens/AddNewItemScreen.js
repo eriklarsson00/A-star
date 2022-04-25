@@ -8,19 +8,13 @@ const AddNewItemScreen = ({ navigation }) => {
   return (
     <Layout style={styles.container}>
       <Button
-        style={[
-          styles.btn,
-          {
-            backgroundColor: theme["color-primary-400"],
-            borderColor: theme["color-primary-400"],
-          },
-        ]}
+        style={styles.btn}
         onPress={() => navigation.navigate("CreateNewRequestScreen")}
       >
         Sökes
       </Button>
       <Button
-        style={[styles.btn, { backgroundColor: theme["color-primary-500"] }]}
+        style={styles.btn}
         onPress={() => navigation.navigate("CreateNewOfferScreen")}
       >
         Gives{" "}
@@ -42,5 +36,7 @@ const styles = StyleSheet.create({
     width: 150,
     height: 70,
     margin: 50,
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 1, height: 5 },
   },
 });

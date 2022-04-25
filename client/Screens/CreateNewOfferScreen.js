@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  SafeAreaView,
-  Text,
-  StyleSheet,
-  View,
-  TouchableOpacity,
-} from "react-native";
+import { Text, StyleSheet } from "react-native";
 import {
   Button,
   useTheme,
@@ -41,8 +35,7 @@ const CreateNewOfferScreen = ({ navigation }) => {
   const [tooltipVisible, setTooltipVisible] = React.useState(false);
   const [images, setImages] = React.useState([]);
 
-  const theme = useTheme();
-
+  //ICONS
   const PlusIcon = () => (
     <Icon style={styles.icon} fill="black" name="plus-circle-outline" />
   );
@@ -265,34 +258,12 @@ const styles = StyleSheet.create({
   container: {
     height: "100%",
   },
-  checkbox: {
-    paddingTop: 10,
-    paddingLeft: 20,
-  },
-  lockStyle: {
-    width: 55,
-    height: 55,
-  },
-  btn: {
-    width: 75,
-    height: 70,
-    borderColor: "grey",
-    paddingLeft: 33,
-  },
-  createBtn: {
-    alignSelf: "center",
-    width: 200,
-    height: 50,
-  },
   icon: {
     width: 30,
     height: 30,
   },
   container_list: {
     height: 200,
-  },
-  list_style: {
-    backgroundColor: "red",
   },
   backdrop: {
     backgroundColor: "rgba(0, 0, 0, 0.5)",

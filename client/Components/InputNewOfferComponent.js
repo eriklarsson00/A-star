@@ -41,39 +41,31 @@ export const InputNewOfferComponent = (props) => {
   const [dateExp, setDateExp] = React.useState();
   const [visible, setVisible] = React.useState(false);
 
-  const { profileImagePath, setProfileImagePath } =
-    React.useContext(ProfileImagePath);
-
   const newDate = new Date();
   const product = props.product;
   const theme = useTheme();
-
-  const BarIcon = () => (
-    <Icon style={styles.lockStyle} fill="black" name="bar-chart-2-outline" />
-  );
 
   const CollapseIcon = () => (
     <Icon style={styles.iconCollapse} fill="grey" name="collapse-outline" />
   );
 
-  const AddIcon = () => (
-    <Icon style={styles.lockStyle} fill="#8F9BB3" name="plus-circle-outline" />
-  );
-
+  // Tar hand om all info om när användaren tryckt på skapa vara knappen
   const handleInfo = () => {
     if (!created) {
-      props.setId(1);
-      setCreated(true);
+      props.setId(1); // ger ett lokalt id (bara för screenen)
+      setCreated(true); // "Skapar" varan, så att det inte blir dubbletter
     }
     setProductVisible(false);
     props.setProductInfo(productInfo);
   };
 
+  // tar hand om när användaren vill uppdatera/ändra en vara som redan är "skapad"
   const handleChange = () => {
     props.setChange(productInfo.id, productInfo);
     setProductVisible(false);
   };
 
+  // Tar hand om när användaren ska ta en bild på sin vara
   const ChoseImageModal = () => {
     return (
       <Modal
@@ -100,6 +92,7 @@ export const InputNewOfferComponent = (props) => {
     );
   };
 
+  // Väljer utgångsdatum på användarens vara
   const ChooseExpDate = () => {
     if (dateExp) {
       return (
@@ -130,20 +123,16 @@ export const InputNewOfferComponent = (props) => {
     }
   };
 
+  // Ska updatera det valda purchase datumet i både produktinfo och bara statet kopplat till kalendern
   const updateDatePurchase = (date) => {
     setDatePurchase(date);
     setProductInfo({ ...productInfo, time_of_purchase: date });
   };
 
+  // Ska updatera det valda utgångsdatmet i både produktinfo och bara statet kopplat till kalendern
   const updateDateExp = (date) => {
     setDateExp(date);
     setProductInfo({ ...productInfo, time_of_expiration: date });
-  };
-
-  const barcodeText = () => {
-    if (!product) {
-      setProductInfo({ ...productInfo, product_text: product });
-    }
   };
 
   if (barCodeShow === false) {
