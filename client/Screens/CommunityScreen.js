@@ -123,8 +123,8 @@ export const CommunityScreen = () => {
 						<Image
 							style={styles.communityImage}
 							source={{
-								uri: "https://www.uppsalahem.se/globalassets/bilder/omradesbilder/7002/Rackarberget_3.jpg?w=320", //item.imgurl,
-								height: 80,
+								uri: item.imgurl,
+								height: 60,
 								width: 80,
 							}}
 						/>

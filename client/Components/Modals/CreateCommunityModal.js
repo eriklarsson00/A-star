@@ -22,7 +22,10 @@ import {
 } from "@ui-kitten/components";
 import tw from "twrnc";
 import ImagePicker from "../ImagePicker";
-import { addCommunity } from "../../Services/ServerCommunication";
+import {
+	addCommunity,
+	pushImagesToServer,
+} from "../../Services/ServerCommunication";
 
 export const CreateCommunityModal = (props) => {
 	const theme = useTheme();
@@ -37,6 +40,8 @@ export const CreateCommunityModal = (props) => {
 		"https://www.uppsalahem.se/globalassets/bilder/omradesbilder/7002/Rackarberget_3.jpg?w=320"
 	);
 	const [chooseImageVisible, setChooseImageVisible] = React.useState(false);
+
+	const [missingInformation, setMissingInformation] = React.useState(false);
 
 	const CrossIcon = () => (
 		<Icon
@@ -100,7 +105,6 @@ export const CreateCommunityModal = (props) => {
 					<ImagePicker
 						context="CommunityImage" //TODO
 						updateResult={(result) => {
-							console.log("New picked image path: " + result.uri);
 							setImage(result.uri);
 						}}
 					/>
@@ -116,24 +120,35 @@ export const CreateCommunityModal = (props) => {
 	};
 
 	async function createCommunity() {
-		let communityData = {
-			//TODO lägg till guard på knappen
-			name: communityName,
-			location: "location",
-			description: communityDescription,
-			imgurl: null, ///TODO
-			private: communityPrivate,
-			password: communityPassword,
-		};
-		const result = await addCommunity(communityData);
-		console.log(result);
-		console.log("skapar");
-		props.setVisible(false);
-		setCommunityName("");
-		setCommunityDescription("");
-		setCommunityPrivate(false);
-		setCommunityImageUrl(""); //TODO
-		setCommunityPassword(null);
+		setMissingInformation(false);
+		if (
+			communityName == "" ||
+			communityDescription == "" ||
+			communityImageUrl == ""
+		) {
+			setMissingInformation(true);
+		} else {
+			const newImgUrl = pushImagesToServer(image, "communityimages", null);
+			let communityData = {
+				name: communityName,
+				location: null,
+				description: communityDescription,
+				imgurl: newImgUrl,
+				private: communityPrivate,
+				password: communityPassword,
+			};
+			const result = await addCommunity(communityData);
+			console.log(result);
+			console.log("skapar");
+			props.setVisible(false);
+			setCommunityName("");
+			setCommunityDescription("");
+			setCommunityPrivate(false);
+			setCommunityImageUrl(
+				"https://www.uppsalahem.se/globalassets/bilder/omradesbilder/7002/Rackarberget_3.jpg?w=320"
+			);
+			setCommunityPassword(null);
+		}
 	}
 	return (
 		<Modal
@@ -196,6 +211,11 @@ export const CreateCommunityModal = (props) => {
 									setCommunityPassword(nextValue)
 								}
 							/>
+						)}
+						{missingInformation && (
+							<Text style={tw`pt-3 text-base `}>
+								Alla fält måste fyllas i
+							</Text>
 						)}
 						<Button
 							style={tw`mt-2`}
