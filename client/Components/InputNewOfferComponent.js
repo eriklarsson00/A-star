@@ -1,12 +1,6 @@
 import React from "react";
+import { StyleSheet, TouchableOpacity, Image } from "react-native";
 import {
-  SafeAreaView,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-} from "react-native";
-import {
-  TopNavigation,
   Button,
   useTheme,
   Input,
@@ -25,59 +19,53 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 
 //TODO: Inte kunna "skapa" en vara utan att ha skrivit ett namn eller påbörjat att skapa den
 
-export const InputNewItem = (props) => {
+export const InputNewOfferComponent = (props) => {
+  // Objectet för hur en offer ska se ut
   const [productInfo, setProductInfo] = React.useState({
     id: 0,
     user_id: 0,
     product_text: props.product,
     description: "",
     quantity: "",
-    time_of_creation: "",
     time_of_purchase: new Date(),
-    time_of_expiration: new Date(),
     imgurl: "",
     broken_pkg: false,
   });
+
+  // STATES
   const [productVisible, setProductVisible] = React.useState(true);
   const [created, setCreated] = React.useState(false);
   const [barCodeShow, setBarCodeShow] = React.useState(false);
   const [image, setImage] = React.useState(null);
   const [datePurchase, setDatePurchase] = React.useState(new Date());
-  const [dateExp, setDateExp] = React.useState(new Date());
+  const [dateExp, setDateExp] = React.useState();
   const [visible, setVisible] = React.useState(false);
-  const { profileImagePath, setProfileImagePath } =
-    React.useContext(ProfileImagePath);
 
   const newDate = new Date();
   const product = props.product;
   const theme = useTheme();
 
-  const BarIcon = () => (
-    <Icon style={styles.lockStyle} fill="black" name="bar-chart-2-outline" />
-  );
-
   const CollapseIcon = () => (
-    <Icon style={styles.icon2} fill="grey" name="collapse-outline" />
+    <Icon style={styles.iconCollapse} fill="grey" name="collapse-outline" />
   );
 
-  const AddIcon = () => (
-    <Icon style={styles.lockStyle} fill="#8F9BB3" name="plus-circle-outline" />
-  );
-
+  // Tar hand om all info om när användaren tryckt på skapa vara knappen
   const handleInfo = () => {
     if (!created) {
-      props.setId(1);
-      setCreated(true);
+      props.setId(1); // ger ett lokalt id (bara för screenen)
+      setCreated(true); // "Skapar" varan, så att det inte blir dubbletter
     }
     setProductVisible(false);
     props.setProductInfo(productInfo);
   };
 
+  // tar hand om när användaren vill uppdatera/ändra en vara som redan är "skapad"
   const handleChange = () => {
     props.setChange(productInfo.id, productInfo);
     setProductVisible(false);
   };
 
+  // Tar hand om när användaren ska ta en bild på sin vara
   const ChoseImageModal = () => {
     return (
       <Modal
@@ -104,20 +92,47 @@ export const InputNewItem = (props) => {
     );
   };
 
+  // Väljer utgångsdatum på användarens vara
+  const ChooseExpDate = () => {
+    if (dateExp) {
+      return (
+        <>
+          <Text style={tw`pl-5 pt-1 text-base`}> Utgångsdatum på varan: </Text>
+          <DateTimePicker
+            style={{ width: 140 }}
+            value={dateExp}
+            mode={"date"}
+            is24Hour={true}
+            minimumDate={newDate}
+            display="default"
+            onChange={(event, date) => updateDateExp(date)}
+          />
+        </>
+      );
+    } else {
+      return (
+        <Button
+          style={{ marginLeft: 20.5 }}
+          onPress={() => {
+            updateDateExp(new Date());
+          }}
+        >
+          Sätt utgångsdatum
+        </Button>
+      );
+    }
+  };
+
+  // Ska updatera det valda purchase datumet i både produktinfo och bara statet kopplat till kalendern
   const updateDatePurchase = (date) => {
     setDatePurchase(date);
     setProductInfo({ ...productInfo, time_of_purchase: date });
   };
 
+  // Ska updatera det valda utgångsdatmet i både produktinfo och bara statet kopplat till kalendern
   const updateDateExp = (date) => {
     setDateExp(date);
     setProductInfo({ ...productInfo, time_of_expiration: date });
-  };
-
-  const barcodeText = () => {
-    if (!product) {
-      setProductInfo({ ...productInfo, product_text: product });
-    }
   };
 
   if (barCodeShow === false) {
@@ -232,19 +247,7 @@ export const InputNewItem = (props) => {
               />
             </Layout>
             <Layout style={{ flexDirection: "row" }}>
-              <Text style={tw`pl-5 pt-1 text-base`}>
-                {" "}
-                Utgångsdatum på varan:{" "}
-              </Text>
-              <DateTimePicker
-                style={{ width: 140 }}
-                value={dateExp}
-                mode={"date"}
-                is24Hour={true}
-                minimumDate={newDate}
-                display="default"
-                onChange={(event, date) => updateDateExp(date)}
-              />
+              <ChooseExpDate />
             </Layout>
             <CheckBox
               style={styles.checkbox}
@@ -328,19 +331,6 @@ export const InputNewItem = (props) => {
 };
 
 const styles = StyleSheet.create({
-  item: {
-    width: 370,
-    alignSelf: "center",
-  },
-  icon: {
-    width: 30,
-    height: 30,
-  },
-  container: {
-    flex: 1,
-    height: "100%",
-    paddingTop: 50,
-  },
   checkbox: {
     paddingTop: 10,
     paddingLeft: 20,
@@ -349,13 +339,7 @@ const styles = StyleSheet.create({
     width: 55,
     height: 55,
   },
-  btn: {
-    width: 75,
-    height: 70,
-    borderColor: "grey",
-    paddingLeft: 33,
-  },
-  icon2: {
+  iconCollapse: {
     width: 30,
     height: 30,
   },

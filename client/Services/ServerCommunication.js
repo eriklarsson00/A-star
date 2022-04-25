@@ -161,7 +161,15 @@ const postOffer = async (offers, usercommunities) => {
     communities: usercommunities,
   };
 
-  const result = await request("POST", "/offers", upload_obj);
+  return await request("POST", "/offers", upload_obj);
+};
+
+const postRequest = async (requests, usercommunities) => {
+  const upload_obj = {
+    request: requests,
+    communities: usercommunities,
+  };
+  return await request("POST", "/requests", upload_obj);
 };
 
 const addCommunity = async (community) => {
@@ -189,6 +197,7 @@ export {
   removeUserFromCommunity,
   pushImagesToServer,
   postOffer,
+  postRequest,
   addCommunity,
   editProfile,
 };

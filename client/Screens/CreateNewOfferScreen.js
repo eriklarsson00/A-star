@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  SafeAreaView,
-  Text,
-  StyleSheet,
-  View,
-  TouchableOpacity,
-} from "react-native";
+import { Text, StyleSheet } from "react-native";
 import {
   Button,
   useTheme,
@@ -18,13 +12,13 @@ import {
   Tooltip,
 } from "@ui-kitten/components";
 import tw from "twrnc";
-import { InputNewItem } from "../Components/InputNewItem";
+import { InputNewOfferComponent } from "../Components/InputNewOfferComponent";
 import BarCodeScannerComp from "../Components/BarCodeScanner.component";
 import { MyCommunitysInfo, UserInfo } from "../assets/AppContext";
 import { NewItemCommunityComponent } from "../Components/NewItemCommunityComponent";
 import { pushImagesToServer, postOffer } from "../Services/ServerCommunication";
 
-const CreateNewItemScreen = ({ navigation }) => {
+const CreateNewOfferScreen = ({ navigation }) => {
   //CONTEXT
   const { myCommunitysInfo, setMyCommunitysInfo } =
     React.useContext(MyCommunitysInfo);
@@ -41,8 +35,7 @@ const CreateNewItemScreen = ({ navigation }) => {
   const [tooltipVisible, setTooltipVisible] = React.useState(false);
   const [images, setImages] = React.useState([]);
 
-  const theme = useTheme();
-
+  //ICONS
   const PlusIcon = () => (
     <Icon style={styles.icon} fill="black" name="plus-circle-outline" />
   );
@@ -92,7 +85,7 @@ const CreateNewItemScreen = ({ navigation }) => {
   // Lista av enskilda varor
   const addComp = ({ item, index }) => (
     <Layout>
-      <InputNewItem
+      <InputNewOfferComponent
         setProductInfo={infoHandler}
         id={compId}
         user_id={userInfo.id}
@@ -134,6 +127,7 @@ const CreateNewItemScreen = ({ navigation }) => {
     setChosenCommunity((chosenCommunity) => [...chosenCommunity, community]);
   };
 
+  // förbereder objektet för att kunna skickas till servern
   const prepareProduct = async (product, communities) => {
     let imgurl = await pushImagesToServer(
       images[product.id],
@@ -258,30 +252,11 @@ const CreateNewItemScreen = ({ navigation }) => {
   }
 };
 
-export default CreateNewItemScreen;
+export default CreateNewOfferScreen;
 
 const styles = StyleSheet.create({
   container: {
     height: "100%",
-  },
-  checkbox: {
-    paddingTop: 10,
-    paddingLeft: 20,
-  },
-  lockStyle: {
-    width: 55,
-    height: 55,
-  },
-  btn: {
-    width: 75,
-    height: 70,
-    borderColor: "grey",
-    paddingLeft: 33,
-  },
-  createBtn: {
-    alignSelf: "center",
-    width: 200,
-    height: 50,
   },
   icon: {
     width: 30,
@@ -289,9 +264,6 @@ const styles = StyleSheet.create({
   },
   container_list: {
     height: 200,
-  },
-  list_style: {
-    backgroundColor: "red",
   },
   backdrop: {
     backgroundColor: "rgba(0, 0, 0, 0.5)",
