@@ -221,8 +221,12 @@ app
   .get(transactions.getTransactionCommunity);
 
 app
-  .route("/transactions/accepted/user/:id")
-  .get(transactions.getTransactionAcceptedUser);
+  .route("/transactions/accepted/owner/:id")
+  .get(transactions.getTransactionAcceptedOwner);
+
+app
+  .route("/transactions/accepted/responder/:id")
+  .get(transactions.getTransactionAcceptedResponder);
 
 app
   .route("/transactions/pending/user/:id")
