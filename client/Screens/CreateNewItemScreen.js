@@ -142,13 +142,11 @@ const CreateNewItemScreen = ({ navigation }) => {
   };
 
   const publishOffer = () => {
-    const commArray = [];
-    for (let i = 0; i < chosenCommunity.length; i++) {
-      commArray.push(chosenCommunity[i].id);
-    }
+    const communityIds = chosenCommunity.map(({ id }) => id);
 
     productInfo.forEach((product) => {
-      prepareProduct(product, commArray);
+      prepareProduct(product, communityIds);
+      console.log(communityIds);
     });
     //skickar upp varje bild till s3 när vi publicerar inlägget
     images.forEach((image) => {
