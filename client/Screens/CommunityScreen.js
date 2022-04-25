@@ -12,15 +12,14 @@ import {
   Icon,
   List,
   useTheme,
-  ListItem,
 } from "@ui-kitten/components";
 import CommunityComponent from "../Components/CommunityComponent";
+import CreateCommunityModal from "../Components/Modals/CreateCommunityModal";
 import tw from "twrnc";
 import {
   UserInfo,
   MyCommunitysInfo,
   ShowCommunityIds,
-  ProfileImagePath,
 } from "../assets/AppContext";
 import {
   getCommunities,
@@ -42,6 +41,8 @@ export const CommunityScreen = () => {
 
   //STATE
   const [addCommunityVisible, setAddCommunityVisible] = React.useState(false);
+  const [createCommunityVisible, setCreateCommunityVisible] =
+    React.useState(false);
   const [joinCommunity, setJoinCommunity] = React.useState(false);
   const [IncorrectCommunityPassword, setIncorrectCommunityPassword] =
     React.useState(false);
@@ -82,7 +83,7 @@ export const CommunityScreen = () => {
   };
 
   const printExistingCommunities = (
-    { item, index } //DETTA ÄR VAD SOM RENDERAS FÖR VARJE ITEM I LÄGG TILL
+    { item, index } //DETTA ÄR VAD SOM RENDERAS FÖR VARJE ITEM I LÄGG TILL GRANNSKAP
   ) => (
     <TouchableOpacity
       style={[
@@ -119,7 +120,7 @@ export const CommunityScreen = () => {
             <Image
               style={styles.communityImage}
               source={{
-                uri: "https://www.uppsalahem.se/globalassets/bilder/omradesbilder/7002/Rackarberget_3.jpg?w=320", //item.imgurl,
+                uri: item.imgurl,
                 height: 80,
                 width: 80,
               }}
@@ -254,12 +255,19 @@ export const CommunityScreen = () => {
             renderItem={printExistingCommunities}
             key={giveKey}
           />
-          <Button style={tw`mt-2`} onPress={() => closeAddCommunity()}>
+          <Button
+            style={tw`mt-2`}
+            onPress={() => setCreateCommunityVisible(true)}
+          >
             Skapa nytt grannskap
           </Button>
           <Divider />
         </Card>
       </Modal>
+      <CreateCommunityModal
+        visible={createCommunityVisible}
+        setVisible={setCreateCommunityVisible}
+      />
       <Modal
         visible={joinCommunity}
         backdropStyle={styles.backdrop}
@@ -374,9 +382,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     height: 300,
   },
-  // list_style: {
-  // 	backgroundColor: "red",
-  // },
   editStyle: {
     width: 25,
     height: 25,

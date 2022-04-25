@@ -138,7 +138,7 @@ const CommunityComponent = (props) => {
             <Image
               style={tw`ml-5 rounded-md`}
               source={{
-                uri: "https://www.uppsalahem.se/globalassets/bilder/omradesbilder/7002/Rackarberget_3.jpg?w=320", //props.community.imgurl,
+                uri: props.community.imgurl,
                 height: 50,
                 width: 50,
               }}
@@ -192,50 +192,3 @@ const styles = StyleSheet.create({
 });
 
 export default CommunityComponent;
-
-//OLD layout
-{
-  /* <Layout
-style={[
-	styles.container,
-	{
-		backgroundColor: checked
-			? theme["color-primary-400"]
-			: theme["color-primary-300"],
-	},
-]}
->
-<View style={{ width: 200 }}>
-	<Text style={tw`pl-7 text-lg`}>{props.community.name}</Text>
-</View>
-
-<CheckBox
-	style={styles.radio}
-	checked={
-		checked || showCommunityIds.includes(props.community.id)
-	}
-	onChange={(nextChecked) => {
-		setChecked(nextChecked);
-		showCommunityIds.includes(props.community.id)
-			? setShowCommunityIds(
-					showCommunityIds.filter(
-						(comId) => comId != props.community.id
-					)
-			  )
-			: setShowCommunityIds([
-					...showCommunityIds,
-					props.community.id,
-			  ]);
-	}}
-/>
-<View style={{ marginLeft: 115, marginBottom: 35 }}>
-	<TouchableOpacity
-		onPress={() => {
-			setRemoveCommunityVisible(true);
-		}}
-	>
-		<CrossIcon />
-	</TouchableOpacity>
-</View>
-</Layout> */
-}
