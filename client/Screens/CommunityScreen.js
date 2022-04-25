@@ -124,7 +124,7 @@ export const CommunityScreen = () => {
 							style={styles.communityImage}
 							source={{
 								uri: item.imgurl,
-								height: 60,
+								height: 80,
 								width: 80,
 							}}
 						/>

@@ -49,7 +49,7 @@ export default function ImagePickerComp(props) {
 		if (!image.cancelled) {
 			setPickedImagePath(image.uri);
 			if (props.context == "Profile") {
-				setProfileImagePath(image.uri);
+				//	setProfileImagePath(image.uri);
 				props.updateResult(image);
 			}
 			if (props.context == "ItemImage" || "CommunityImage") {

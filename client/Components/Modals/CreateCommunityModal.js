@@ -35,10 +35,9 @@ export const CreateCommunityModal = (props) => {
 	const [communityDescription, setCommunityDescription] = React.useState("");
 	const [communityPassword, setCommunityPassword] = React.useState(null);
 	const [communityPrivate, setCommunityPrivate] = React.useState(false);
-	const [communityImageUrl, setCommunityImageUrl] = React.useState("");
-	const [image, setImage] = React.useState(
-		"https://www.uppsalahem.se/globalassets/bilder/omradesbilder/7002/Rackarberget_3.jpg?w=320"
-	);
+	const [image, setImage] = React.useState({
+		uri: "https://www.uppsalahem.se/globalassets/bilder/omradesbilder/7002/Rackarberget_3.jpg?w=320",
+	});
 	const [chooseImageVisible, setChooseImageVisible] = React.useState(false);
 
 	const [missingInformation, setMissingInformation] = React.useState(false);
@@ -79,7 +78,7 @@ export const CreateCommunityModal = (props) => {
 			<>
 				<Image
 					style={tw`rounded-full mt-2`}
-					source={{ uri: image, height: 80, width: 80 }}
+					source={{ uri: image.uri, height: 80, width: 80 }}
 				/>
 				<TouchableOpacity
 					onPress={() => {
@@ -103,9 +102,9 @@ export const CreateCommunityModal = (props) => {
 			>
 				<Card disabled={true}>
 					<ImagePicker
-						context="CommunityImage" //TODO
+						context="CommunityImage"
 						updateResult={(result) => {
-							setImage(result.uri);
+							setImage(result);
 						}}
 					/>
 					<Button
@@ -121,14 +120,19 @@ export const CreateCommunityModal = (props) => {
 
 	async function createCommunity() {
 		setMissingInformation(false);
-		if (
-			communityName == "" ||
-			communityDescription == "" ||
-			communityImageUrl == ""
-		) {
+		if (communityName == "" || communityDescription == "") {
+			setMissingInformation(true);
+		} else if (communityPrivate && communityPassword == null) {
 			setMissingInformation(true);
 		} else {
-			const newImgUrl = pushImagesToServer(image, "communityimages", null);
+			let newImgUrl = await pushImagesToServer(
+				image,
+				"communityimages",
+				null
+			);
+			console.log("newImg");
+			console.log(newImgUrl);
+			console.log("newImg end");
 			let communityData = {
 				name: communityName,
 				location: null,
@@ -138,15 +142,13 @@ export const CreateCommunityModal = (props) => {
 				password: communityPassword,
 			};
 			const result = await addCommunity(communityData);
-			console.log(result);
-			console.log("skapar");
 			props.setVisible(false);
 			setCommunityName("");
 			setCommunityDescription("");
 			setCommunityPrivate(false);
-			setCommunityImageUrl(
-				"https://www.uppsalahem.se/globalassets/bilder/omradesbilder/7002/Rackarberget_3.jpg?w=320"
-			);
+			setImage({
+				uri: "https://www.uppsalahem.se/globalassets/bilder/omradesbilder/7002/Rackarberget_3.jpg?w=320",
+			});
 			setCommunityPassword(null);
 		}
 	}

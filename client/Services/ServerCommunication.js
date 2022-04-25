@@ -67,6 +67,11 @@ const addProfile = async (profile, communities) => {
 	return updatedProfile;
 };
 
+const editProfile = async (profile, user_id) => {
+	const updatedProfile = await request("PUT", "/users/" + user_id, profile);
+	return updatedProfile;
+};
+
 const getPendingTransactions = async (user_id) => {
 	let transactions = await request(
 		"Get",
@@ -136,10 +141,10 @@ const pushImagesToServer = async (image, serverPath, userId) => {
 	if (serverPath === "Profile") {
 		url = host + "/users/profile/" + userId;
 	} else {
-		url = host + serverPath;
+		url = host + "/" + serverPath;
 	}
 
-	fetch(url, {
+	return await fetch(url, {
 		method: "POST",
 		body: body,
 		headers: {
@@ -147,7 +152,6 @@ const pushImagesToServer = async (image, serverPath, userId) => {
 		},
 	})
 		.then((data) => data.json())
-		.then((res) => console.log(res))
 		.catch((err) => console.log(err));
 };
 
@@ -161,7 +165,6 @@ const postOffer = async (offers, usercommunities) => {
 };
 
 const addCommunity = async (community) => {
-	console.log("inne");
 	return await request("POST", "/communities", community);
 };
 
@@ -187,4 +190,5 @@ export {
 	pushImagesToServer,
 	postOffer,
 	addCommunity,
+	editProfile,
 };
