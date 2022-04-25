@@ -1,7 +1,6 @@
 import React from "react";
 import {
   SafeAreaView,
-  Text,
   StyleSheet,
   TouchableOpacity,
   Image,
@@ -16,11 +15,13 @@ import {
   Icon,
   Modal,
   Card,
+  Text,
 } from "@ui-kitten/components";
 import tw from "twrnc";
 import ImagePicker from "./ImagePicker";
 import BarCodeScannerComp from "./BarCodeScanner.component";
 import { ProfileImagePath, ItemImagePath } from "../assets/AppContext";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 //TODO: Inte kunna "skapa" en vara utan att ha skrivit ett namn eller påbörjat att skapa den
 
@@ -32,8 +33,8 @@ export const InputNewItem = (props) => {
     description: "",
     quantity: "",
     time_of_creation: "",
-    time_of_purchase: "",
-    time_of_expiration: "",
+    time_of_purchase: new Date(),
+    time_of_expiration: new Date(),
     imgurl: "",
     broken_pkg: false,
   });
@@ -41,10 +42,13 @@ export const InputNewItem = (props) => {
   const [created, setCreated] = React.useState(false);
   const [barCodeShow, setBarCodeShow] = React.useState(false);
   const [image, setImage] = React.useState(null);
+  const [datePurchase, setDatePurchase] = React.useState(new Date());
+  const [dateExp, setDateExp] = React.useState(new Date());
+  const [visible, setVisible] = React.useState(false);
   const { profileImagePath, setProfileImagePath } =
     React.useContext(ProfileImagePath);
-  const [visible, setVisible] = React.useState(false);
 
+  const newDate = new Date();
   const product = props.product;
   const theme = useTheme();
 
@@ -100,6 +104,16 @@ export const InputNewItem = (props) => {
     );
   };
 
+  const updateDatePurchase = (date) => {
+    setDatePurchase(date);
+    setProductInfo({ ...productInfo, time_of_purchase: date });
+  };
+
+  const updateDateExp = (date) => {
+    setDateExp(date);
+    setProductInfo({ ...productInfo, time_of_expiration: date });
+  };
+
   const barcodeText = () => {
     if (!product) {
       setProductInfo({ ...productInfo, product_text: product });
@@ -146,18 +160,27 @@ export const InputNewItem = (props) => {
                 />
                 <ChoseImageModal />
               </TouchableOpacity>
-              <Layout style={tw`pl-5 pb-5 pr-5`}>
-                <Button
-                  style={styles.btn}
-                  appearance="ghost"
-                  accessoryLeft={BarIcon}
-                  onPress={() => {
-                    props.func(true);
+              <TouchableOpacity
+                onPress={() => {
+                  props.func(true);
+                }}
+                style={styles.AddIconContainer}
+              >
+                <Image
+                  style={{
+                    width: 70,
+                    height: 70,
+                    borderWidth: 1,
+                    borderColor: "grey",
+                    borderRadius: 4,
                   }}
-                >
-                  {" "}
-                </Button>
-              </Layout>
+                  source={{
+                    uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKFtLJb-9ebWHz70NK37A_9_bXjULFjI4M7Q&usqp=CAU",
+                    height: 150,
+                    width: 150,
+                  }}
+                />
+              </TouchableOpacity>
               <Layout style={styles.collapse}>
                 <Button
                   appearance="ghost"
@@ -191,36 +214,38 @@ export const InputNewItem = (props) => {
             />
             <Input
               style={tw`pb-2 pl-5 pr-5`}
-              placeholder="Antal*"
+              placeholder="Antal"
               value={productInfo.quantity}
               onChangeText={(value) =>
                 setProductInfo({ ...productInfo, quantity: value })
               }
             />
-            <Input
-              style={tw`pb-2 pl-5 pr-5`}
-              placeholder="Datum varan köptes"
-              value={productInfo.time_of_purchase}
-              onChangeText={(value) =>
-                setProductInfo({ ...productInfo, time_of_purchase: value })
-              }
-            />
-            <Input
-              style={tw`pb-2 pl-5 pr-5`}
-              placeholder="Datum varan skapades"
-              value={productInfo.time_of_creation}
-              onChangeText={(value) =>
-                setProductInfo({ ...productInfo, time_of_creation: value })
-              }
-            />
-            <Input
-              style={tw`pb-2 pl-5 pr-5`}
-              placeholder="Utgångsdatum"
-              value={productInfo.time_of_expiration}
-              onChangeText={(value) =>
-                setProductInfo({ ...productInfo, time_of_expiration: value })
-              }
-            />
+            <Layout style={{ flexDirection: "row", marginBottom: 5 }}>
+              <Text style={tw`pl-5 pt-1 text-base`}> Datum varan köptes: </Text>
+              <DateTimePicker
+                style={{ width: 168 }}
+                value={datePurchase}
+                mode={"date"}
+                is24Hour={true}
+                display="default"
+                onChange={(event, date) => updateDatePurchase(date)}
+              />
+            </Layout>
+            <Layout style={{ flexDirection: "row" }}>
+              <Text style={tw`pl-5 pt-1 text-base`}>
+                {" "}
+                Utgångsdatum på varan:{" "}
+              </Text>
+              <DateTimePicker
+                style={{ width: 140 }}
+                value={dateExp}
+                mode={"date"}
+                is24Hour={true}
+                minimumDate={newDate}
+                display="default"
+                onChange={(event, date) => updateDateExp(date)}
+              />
+            </Layout>
             <CheckBox
               style={styles.checkbox}
               checked={productInfo.broken_pkg}
@@ -234,7 +259,6 @@ export const InputNewItem = (props) => {
                   style={{
                     fontSize: 16,
                     paddingLeft: 5,
-                    color: theme["color-basic-700"],
                   }}
                 >
                   Bruten förpackning
@@ -259,6 +283,7 @@ export const InputNewItem = (props) => {
                   id="createItem"
                   onPress={() => {
                     handleInfo();
+                    console.log(productInfo);
                   }}
                 >
                   Skapa vara
@@ -330,18 +355,13 @@ const styles = StyleSheet.create({
     borderColor: "grey",
     paddingLeft: 33,
   },
-  createBtn: {
-    alignSelf: "center",
-    width: 200,
-    height: 50,
-  },
   icon2: {
     width: 30,
     height: 30,
   },
   collapse: {
     width: 30,
-    paddingLeft: 100,
+    paddingLeft: 130,
     height: 10,
     paddingBottom: 10,
   },
