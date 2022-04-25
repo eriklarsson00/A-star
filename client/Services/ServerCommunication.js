@@ -58,8 +58,12 @@ const getRequests = async (id, communities) => {
   return await request("GET", "/requests/other/" + id + query);
 };
 
-const getAcceptedTransactions = async (uid) => {
-  return await request("GET", `/transactions/accepted/user/${uid}`);
+const getAcceptedTransactionsOwner = async (uid) => {
+  return await request("GET", `/transactions/accepted/owner/${uid}`);
+};
+
+const getAcceptedTransactionsResponder = async (uid) => {
+  return await request("GET", `/transactions/accepted/responder/${uid}`);
 };
 
 //Sends an profile to the database, returns an array with the profile
@@ -175,7 +179,8 @@ export {
   getPendingTransactions,
   getCommunities,
   getUserCommunities,
-  getAcceptedTransactions,
+  getAcceptedTransactionsOwner,
+  getAcceptedTransactionsResponder,
   addToCommunity,
   acceptTransaction,
   ownerConfirmTransaction,
