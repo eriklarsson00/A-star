@@ -32,9 +32,7 @@ export const InputNewItem = (props) => {
     product_text: props.product,
     description: "",
     quantity: "",
-    time_of_creation: "",
     time_of_purchase: new Date(),
-    time_of_expiration: new Date(),
     imgurl: "",
     broken_pkg: false,
   });
@@ -43,7 +41,7 @@ export const InputNewItem = (props) => {
   const [barCodeShow, setBarCodeShow] = React.useState(false);
   const [image, setImage] = React.useState(null);
   const [datePurchase, setDatePurchase] = React.useState(new Date());
-  const [dateExp, setDateExp] = React.useState(new Date());
+  const [dateExp, setDateExp] = React.useState();
   const [visible, setVisible] = React.useState(false);
   const { profileImagePath, setProfileImagePath } =
     React.useContext(ProfileImagePath);
@@ -102,6 +100,36 @@ export const InputNewItem = (props) => {
         </Card>
       </Modal>
     );
+  };
+
+  const ChooseExpDate = () => {
+    if (dateExp) {
+      return (
+        <>
+          <Text style={tw`pl-5 pt-1 text-base`}> Utgångsdatum på varan: </Text>
+          <DateTimePicker
+            style={{ width: 140 }}
+            value={dateExp}
+            mode={"date"}
+            is24Hour={true}
+            minimumDate={newDate}
+            display="default"
+            onChange={(event, date) => updateDateExp(date)}
+          />
+        </>
+      );
+    } else {
+      return (
+        <Button
+          style={{ marginLeft: 20.5 }}
+          onPress={() => {
+            updateDateExp(new Date());
+          }}
+        >
+          Sätt utgångsdatum
+        </Button>
+      );
+    }
   };
 
   const updateDatePurchase = (date) => {
@@ -232,19 +260,7 @@ export const InputNewItem = (props) => {
               />
             </Layout>
             <Layout style={{ flexDirection: "row" }}>
-              <Text style={tw`pl-5 pt-1 text-base`}>
-                {" "}
-                Utgångsdatum på varan:{" "}
-              </Text>
-              <DateTimePicker
-                style={{ width: 140 }}
-                value={dateExp}
-                mode={"date"}
-                is24Hour={true}
-                minimumDate={newDate}
-                display="default"
-                onChange={(event, date) => updateDateExp(date)}
-              />
+              <ChooseExpDate />
             </Layout>
             <CheckBox
               style={styles.checkbox}
