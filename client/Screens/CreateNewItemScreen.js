@@ -50,7 +50,6 @@ const CreateNewItemScreen = ({ navigation }) => {
   // barcodescanner
   const product = (productName) => {
     setProductName(productName);
-    console.log(productName);
   };
   const barCodeActive = (barCodeShow) => {
     setBarCodeShow(barCodeShow);
@@ -81,7 +80,6 @@ const CreateNewItemScreen = ({ navigation }) => {
   const updateItem = (inputId, updatedItem) => {
     for (let i = 0; i < productInfo.length; i++) {
       if (productInfo[i].id === inputId) {
-        console.log("productInfo[i].id = " + productInfo[i].id);
         let newProductInfo = [...productInfo];
         newProductInfo[i] = updatedItem;
         setProductInfo(newProductInfo);
@@ -136,8 +134,14 @@ const CreateNewItemScreen = ({ navigation }) => {
     setChosenCommunity((chosenCommunity) => [...chosenCommunity, community]);
   };
 
-  const prepareProduct = (product, communities) => {
+  const prepareProduct = async (product, communities) => {
+    let imgurl = await pushImagesToServer(
+      images[product.id],
+      "itemimages",
+      userInfo.id
+    );
     product.id = undefined;
+    product.imgurl = imgurl;
     postOffer(product, communities);
   };
 
@@ -149,9 +153,6 @@ const CreateNewItemScreen = ({ navigation }) => {
       console.log(communityIds);
     });
     //skickar upp varje bild till s3 när vi publicerar inlägget
-    images.forEach((image) => {
-      pushImagesToServer(image, "itemimages", userInfo.id);
-    });
   };
 
   // Knapp som ska publicera inlägget
