@@ -58,6 +58,10 @@ const getRequests = async (id, communities) => {
   return await request("GET", "/requests/other/" + id + query);
 };
 
+const getAcceptedTransactions = async (uid) => {
+  return await request("GET", `/transactions/accepted/user/${uid}`);
+};
+
 //Sends an profile to the database, returns an array with the profile
 //object with their id added.
 const addProfile = async (profile, communities) => {
@@ -171,6 +175,7 @@ export {
   getPendingTransactions,
   getCommunities,
   getUserCommunities,
+  getAcceptedTransactions,
   addToCommunity,
   acceptTransaction,
   ownerConfirmTransaction,
