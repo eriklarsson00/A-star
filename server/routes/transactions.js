@@ -96,22 +96,47 @@ function getTransactionCommunity(req, res) {
     });
 }
 
-function getTransactionAcceptedUser(req, res) {
+function getTransactionAcceptedOwner(req, res) {
   const id = parseInt(req.params.id);
 
   if (isNaN(id)) {
     return res
       .status(400)
-      .json("Usage: /transactions/accepted/user/:id. id has to be a number");
+      .json("Usage: /transactions/accepted/owner/:id. id has to be a number");
   }
 
   const sql = `
-    SELECT T.* FROM Transactions T
+    SELECT T.*, U.firstname, U.lastname, U.email, U.number FROM Transactions T
     LEFT JOIN Offers O    ON T.offer_id = O.id
     LEFT JOIN Requests R  ON T.request_id = R.id
-    LEFT JOIN Users U     ON O.user_id = U.id OR R.user_id = U.id
+    LEFT JOIN Users U     ON T.responder_id = U.id
     WHERE status = 'accepted'
-      AND U.id = ${id};
+      AND (R.user_id = ${id} OR O.user_id = ${id});
+    `;
+
+  knex.raw(sql).then((transactions) => {
+    res.json(transactions[0]);
+  });
+}
+
+function getTransactionAcceptedResponder(req, res) {
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res
+      .status(400)
+      .json(
+        "Usage: /transactions/accepted/responder/:id. id has to be a number"
+      );
+  }
+
+  const sql = `
+    SELECT T.*, U.firstname, U.lastname, U.email, U.number FROM Transactions T
+    LEFT JOIN Offers O    ON T.offer_id = O.id
+    LEFT JOIN Requests R  ON T.request_id = R.id
+    LEFT JOIN Users U     ON R.user_id = U.id OR O.user_ud = U.id
+    WHERE status = 'accepted'
+      AND T.responder_id = ${id};
     `;
 
   knex.raw(sql).then((transactions) => {
@@ -358,7 +383,8 @@ export {
   getResponderTransactions,
   getListerTransactions,
   getTransactionCommunity,
-  getTransactionAcceptedUser,
+  getTransactionAcceptedOwner,
+  getTransactionAcceptedResponder,
   getTransactionPendingUser,
   getTransactionUser,
   addTransaction,
