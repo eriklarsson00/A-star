@@ -18,13 +18,13 @@ import {
   Tooltip,
 } from "@ui-kitten/components";
 import tw from "twrnc";
-import { InputNewItem } from "../Components/InputNewItem";
+import { InputNewOfferComponent } from "../Components/InputNewOfferComponent";
 import BarCodeScannerComp from "../Components/BarCodeScanner.component";
 import { MyCommunitysInfo, UserInfo } from "../assets/AppContext";
 import { NewItemCommunityComponent } from "../Components/NewItemCommunityComponent";
 import { pushImagesToServer, postOffer } from "../Services/ServerCommunication";
 
-const CreateNewItemScreen = ({ navigation }) => {
+const CreateNewOfferScreen = ({ navigation }) => {
   //CONTEXT
   const { myCommunitysInfo, setMyCommunitysInfo } =
     React.useContext(MyCommunitysInfo);
@@ -92,7 +92,7 @@ const CreateNewItemScreen = ({ navigation }) => {
   // Lista av enskilda varor
   const addComp = ({ item, index }) => (
     <Layout>
-      <InputNewItem
+      <InputNewOfferComponent
         setProductInfo={infoHandler}
         id={compId}
         user_id={userInfo.id}
@@ -134,6 +134,7 @@ const CreateNewItemScreen = ({ navigation }) => {
     setChosenCommunity((chosenCommunity) => [...chosenCommunity, community]);
   };
 
+  // förbereder objektet för att kunna skickas till servern
   const prepareProduct = async (product, communities) => {
     let imgurl = await pushImagesToServer(
       images[product.id],
@@ -258,7 +259,7 @@ const CreateNewItemScreen = ({ navigation }) => {
   }
 };
 
-export default CreateNewItemScreen;
+export default CreateNewOfferScreen;
 
 const styles = StyleSheet.create({
   container: {
