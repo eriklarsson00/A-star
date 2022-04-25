@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS Offers
     unit               TEXT       NULL,
     time_of_creation   TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP(),
     time_of_purchase   TIMESTAMP  NOT NULL,
-    time_of_expiration TIMESTAMP  NOT NULL,
+    time_of_expiration TIMESTAMP  NULL,
     imgurl             TEXT       NULL,
     broken_pkg         TINYINT(1) NOT NULL,
     CONSTRAINT offers_ibfk_1
