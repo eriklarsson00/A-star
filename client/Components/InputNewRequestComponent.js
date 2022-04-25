@@ -18,7 +18,6 @@ export const InputNewRequestComponent = (props) => {
     product_text: "",
     description: "",
     quantity: "",
-    time_of_creation: "",
     time_of_expiration: new Date(),
   });
   const [productVisible, setProductVisible] = React.useState(true);
