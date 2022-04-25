@@ -21,8 +21,6 @@ universitetets institutioner. På Rackarberget finns både studentrum och lägen
     ('Ångström', 'Här kan man plugga, man kan även hänga på takterass', NULL, "https://matsamverkan.s3.amazonaws.com/communityImages/%C3%A5ngan.jpg", true, "Demo");
 
 
-
-
     INSERT INTO Users (firstname, lastname, number, email, adress, location, imgurl, rating, raters, given, taken) VALUES
     ('Anja', 'Persson', '0735959908', 'anja.persson@icloud.com', 'Råbyvägen 53 B, 75429 Uppsala', 'Gränby', NULL, DEFAULT, DEFAULT, DEFAULT, DEFAULT),
     ('Jesus', 'Kristus', '0737895427', 'jesus.kristus@yahoo.com', 'rackarberget 12', 'Rackarberget', NULL, DEFAULT, DEFAULT, DEFAULT, DEFAULT),
