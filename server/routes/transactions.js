@@ -134,7 +134,7 @@ function getTransactionAcceptedResponder(req, res) {
     SELECT T.*, U.firstname, U.lastname, U.email, U.number FROM Transactions T
     LEFT JOIN Offers O    ON T.offer_id = O.id
     LEFT JOIN Requests R  ON T.request_id = R.id
-    LEFT JOIN Users U     ON R.user_id = U.id OR O.user_ud = U.id
+    LEFT JOIN Users U     ON R.user_id = U.id OR O.user_id = U.id
     WHERE status = 'accepted'
       AND T.responder_id = ${id};
     `;
