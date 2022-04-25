@@ -230,18 +230,6 @@ app.route("/transactions/responder/:id").get(
 //*************************IMAGES*********************
 
 app.post("/itemimages", upload.single("image"), (req, res) => {
-<<<<<<< HEAD
-  try {
-    uploadImageOnS3(req.file, "itemImages/" + req.file.filename);
-    res.json(
-      "https://matsamverkan.s3.us-east-1.amazonaws.com/itemImages/" +
-        req.file.filename
-    );
-  } catch (err) {
-    res.status(500);
-    res.json("Upload failed: " + err);
-  }
-=======
 	try {
 		uploadImageOnS3(req.file, "itemImages/" + req.file.filename);
 		res.json(
@@ -252,7 +240,6 @@ app.post("/itemimages", upload.single("image"), (req, res) => {
 		res.status(500);
 		res.json("Upload failed: " + err);
 	}
->>>>>>> feature/createCommunity
 });
 
 app.post("/communityimages", upload.single("image"), (req, res) => {
