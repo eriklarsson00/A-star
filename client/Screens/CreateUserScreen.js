@@ -1,11 +1,5 @@
 import React from "react";
-import {
-	SafeAreaView,
-	StyleSheet,
-	Image,
-	View,
-	TouchableOpacity,
-} from "react-native";
+import { StyleSheet, Image, TouchableOpacity } from "react-native";
 import {
 	Text,
 	Layout,
@@ -17,7 +11,6 @@ import {
 	Card,
 	Select,
 	SelectItem,
-	IndexPath,
 } from "@ui-kitten/components";
 import tw from "twrnc";
 import ImagePicker from "../Components/ImagePicker";

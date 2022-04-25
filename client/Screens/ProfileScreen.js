@@ -1,22 +1,7 @@
 import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-	SafeAreaView,
-	StyleSheet,
-	Image,
-	Alert,
-	ScrollView,
-} from "react-native";
-import {
-	TopNavigation,
-	Button,
-	Text,
-	Avatar,
-	Layout,
-	Card,
-	Divider,
-	useTheme,
-} from "@ui-kitten/components";
+import { StyleSheet, Image, Alert, ScrollView } from "react-native";
+import { Button, Text, Layout, Card, Divider } from "@ui-kitten/components";
 import {
 	UserInfo,
 	GoogleInfo,

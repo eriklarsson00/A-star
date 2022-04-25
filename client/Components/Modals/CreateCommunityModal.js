@@ -4,7 +4,6 @@ import {
 	View,
 	Image,
 	ScrollView,
-	FlatList,
 	TouchableOpacity,
 } from "react-native";
 import {
@@ -12,12 +11,10 @@ import {
 	Modal,
 	Card,
 	Button,
-	Layout,
 	Icon,
 	Divider,
 	Input,
 	useTheme,
-	Toggle,
 	CheckBox,
 } from "@ui-kitten/components";
 import tw from "twrnc";

@@ -12,7 +12,6 @@ import {
 	Icon,
 	List,
 	useTheme,
-	ListItem,
 } from "@ui-kitten/components";
 import CommunityComponent from "../Components/CommunityComponent";
 import CreateCommunityModal from "../Components/Modals/CreateCommunityModal";
@@ -21,7 +20,6 @@ import {
 	UserInfo,
 	MyCommunitysInfo,
 	ShowCommunityIds,
-	ProfileImagePath,
 } from "../assets/AppContext";
 import {
 	getCommunities,
@@ -389,9 +387,6 @@ const styles = StyleSheet.create({
 		backgroundColor: "white",
 		height: 300,
 	},
-	// list_style: {
-	// 	backgroundColor: "red",
-	// },
 	editStyle: {
 		width: 25,
 		height: 25,
