@@ -123,9 +123,6 @@ export const CreateCommunityModal = (props) => {
       setMissingInformation(true);
     } else {
       let newImgUrl = await pushImagesToServer(image, "communityimages", null);
-      console.log("newImg");
-      console.log(newImgUrl);
-      console.log("newImg end");
       let communityData = {
         name: communityName,
         location: null,
