@@ -1,10 +1,9 @@
 import React from "react";
-import { SafeAreaView, Text, StyleSheet } from "react-native";
-import { TopNavigation, Button, useTheme, Layout } from "@ui-kitten/components";
+import { StyleSheet } from "react-native";
+import { Button, useTheme, Layout } from "@ui-kitten/components";
 import tw from "twrnc";
 
 const AddNewItemScreen = ({ navigation }) => {
-  const [visible, setVisible] = React.useState(false);
   const theme = useTheme();
   return (
     <Layout style={styles.container}>
@@ -16,27 +15,16 @@ const AddNewItemScreen = ({ navigation }) => {
             borderColor: theme["color-primary-400"],
           },
         ]}
-        onPress={() => setVisible(true)}
+        onPress={() => navigation.navigate("CreateNewRequestScreen")}
       >
         Sökes
       </Button>
       <Button
         style={[styles.btn, { backgroundColor: theme["color-primary-500"] }]}
-        onPress={() => navigation.navigate("CreateNewItemScreen")}
+        onPress={() => navigation.navigate("CreateNewOfferScreen")}
       >
         Gives{" "}
       </Button>
-      {/* <Modal
-					presentationStyle="pageSheet"
-					visible={visible}
-					backdropStyle={styles.backdrop}
-					onBackdropPress={() => setVisible(false)}>
-					<Card disabled={true}>
-					<Text style={tw`text-lg font-semibold`}>text</Text>
-					<Divider/>
-					<Button onPress={() => setVisible(false)}>OK</Button>
-					</Card>
-				</Modal> */}
     </Layout>
   );
 };

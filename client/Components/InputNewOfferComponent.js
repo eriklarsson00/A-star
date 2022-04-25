@@ -1,12 +1,6 @@
 import React from "react";
+import { StyleSheet, TouchableOpacity, Image } from "react-native";
 import {
-  SafeAreaView,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-} from "react-native";
-import {
-  TopNavigation,
   Button,
   useTheme,
   Input,
@@ -25,7 +19,8 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 
 //TODO: Inte kunna "skapa" en vara utan att ha skrivit ett namn eller påbörjat att skapa den
 
-export const InputNewItem = (props) => {
+export const InputNewOfferComponent = (props) => {
+  // Objectet för hur en offer ska se ut
   const [productInfo, setProductInfo] = React.useState({
     id: 0,
     user_id: 0,
@@ -38,6 +33,8 @@ export const InputNewItem = (props) => {
     imgurl: "",
     broken_pkg: false,
   });
+
+  // STATES
   const [productVisible, setProductVisible] = React.useState(true);
   const [created, setCreated] = React.useState(false);
   const [barCodeShow, setBarCodeShow] = React.useState(false);
@@ -45,6 +42,7 @@ export const InputNewItem = (props) => {
   const [datePurchase, setDatePurchase] = React.useState(new Date());
   const [dateExp, setDateExp] = React.useState(new Date());
   const [visible, setVisible] = React.useState(false);
+
   const { profileImagePath, setProfileImagePath } =
     React.useContext(ProfileImagePath);
 
@@ -57,7 +55,7 @@ export const InputNewItem = (props) => {
   );
 
   const CollapseIcon = () => (
-    <Icon style={styles.icon2} fill="grey" name="collapse-outline" />
+    <Icon style={styles.iconCollapse} fill="grey" name="collapse-outline" />
   );
 
   const AddIcon = () => (
@@ -328,19 +326,6 @@ export const InputNewItem = (props) => {
 };
 
 const styles = StyleSheet.create({
-  item: {
-    width: 370,
-    alignSelf: "center",
-  },
-  icon: {
-    width: 30,
-    height: 30,
-  },
-  container: {
-    flex: 1,
-    height: "100%",
-    paddingTop: 50,
-  },
   checkbox: {
     paddingTop: 10,
     paddingLeft: 20,
@@ -349,13 +334,7 @@ const styles = StyleSheet.create({
     width: 55,
     height: 55,
   },
-  btn: {
-    width: 75,
-    height: 70,
-    borderColor: "grey",
-    paddingLeft: 33,
-  },
-  icon2: {
+  iconCollapse: {
     width: 30,
     height: 30,
   },

@@ -2,7 +2,8 @@ import React from "react";
 import { NavigationContainer, useTheme } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import AddNewItemScreen from "../Screens/AddNewItemScreen";
-import CreateNewItemScreen from "../Screens/CreateNewItemScreen";
+import CreateNewOfferScreen from "../Screens/CreateNewOfferScreen";
+import CreateNewRequestScreen from "../Screens/CreateNewRequestScreen";
 
 const Stack = createStackNavigator();
 
@@ -16,9 +17,14 @@ const NewItemNavigation = () => {
         options={{ title: "" }}
       />
       <Stack.Screen
-        name="CreateNewItemScreen"
-        component={CreateNewItemScreen}
+        name="CreateNewOfferScreen"
+        component={CreateNewOfferScreen}
         options={{ title: "Skapa din vara" }}
+      />
+      <Stack.Screen
+        name="CreateNewRequestScreen"
+        component={CreateNewRequestScreen}
+        options={{ title: "Skapa din förfrågan" }}
       />
     </Stack.Navigator>
   );
