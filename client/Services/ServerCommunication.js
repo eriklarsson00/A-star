@@ -130,6 +130,7 @@ const removeUserFromCommunity = async (userId, communityId) => {
 };
 
 const pushImagesToServer = async (image, serverPath, userId) => {
+<<<<<<< HEAD
 	const body = new FormData();
 	body.append("image", {
 		name: "photo.jpg",
@@ -153,6 +154,31 @@ const pushImagesToServer = async (image, serverPath, userId) => {
 	})
 		.then((data) => data.json())
 		.catch((err) => console.log(err));
+=======
+  const body = new FormData();
+  body.append("image", {
+    name: "photo.jpg",
+    type: image.type,
+    uri: image.uri,
+  });
+
+  var url = "";
+  if (serverPath === "Profile") {
+    url = host + "/users/profile/" + userId;
+  } else {
+    url = host + "/" + serverPath;
+  }
+
+  return await fetch(url, {
+    method: "POST",
+    body: body,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  })
+    .then((data) => data.json())
+    .catch((err) => console.log(err));
+>>>>>>> main
 };
 
 const postOffer = async (offers, usercommunities) => {
