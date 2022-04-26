@@ -1,13 +1,11 @@
 import { Modal, Text, Layout, Button, Card } from "@ui-kitten/components";
 import { View, StyleSheet } from "react-native";
-import { ownerConfirmTransaction } from "../../Services/ServerCommunication";
 
 export const OwnerContactInformationModal = (props) => {
   const item = props.item;
 
   const completedTransaction = async () => {
-    console.log("TODO: Pusha transaktionen som ownerConfirmed");
-    //await ownerConfirmTransaction(item.id);
+    props.confirmTransaction(item.id);
     props.toggleRating();
   };
 

@@ -1,11 +1,11 @@
 import { useState, useEffect, useContext } from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
-import { Text, Layout, Spinner, ListItem, List } from "@ui-kitten/components";
+import { Text, Spinner, ListItem } from "@ui-kitten/components";
 import { UserInfo } from "../assets/AppContext";
 import {
-  getAcceptedTransactionsOwner,
-  getAcceptedTransactionsResponder,
+  getOngoingTransactionsOwner,
+  ownerConfirmTransaction,
 } from "../Services/ServerCommunication";
 import { OwnerContactInformationModal } from "./Modals/OwnerContactInformationModal";
 import { RatingModal } from "./Modals/RatingModal";
@@ -25,7 +25,7 @@ export const MyListingsTransactions = () => {
 
   const fetchTransactions = async () => {
     setLoading(true);
-    let otransactions = await getAcceptedTransactionsOwner(uid);
+    let otransactions = await getOngoingTransactionsOwner(uid);
     setOwnerTransactions(otransactions);
     setLoading(false);
   };
@@ -52,7 +52,12 @@ export const MyListingsTransactions = () => {
   };
 
   const ratingCompleted = () => {
+    setRating(!rating);
     fetchTransactions();
+  };
+
+  const confirmTransaction = async (id) => {
+    await ownerConfirmTransaction(id);
   };
 
   const whatToRender = (opt1, opt2) => {
@@ -69,6 +74,7 @@ export const MyListingsTransactions = () => {
         item={item}
         toggleModal={toggleModal}
         toggleRating={toggleRating}
+        confirmTransaction={confirmTransaction}
       />
     );
 

@@ -1,19 +1,11 @@
 import { useState, useEffect, useContext } from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
-import {
-  Text,
-  Layout,
-  useTheme,
-  TopNavigation,
-  Spinner,
-  ListItem,
-  List,
-} from "@ui-kitten/components";
+import { Text, Spinner, ListItem, List } from "@ui-kitten/components";
 import { UserInfo, CommunityInfo } from "../assets/AppContext";
 import {
-  getAcceptedTransactionsOwner,
-  getAcceptedTransactionsResponder,
+  getOngoingTransactionsResponder,
+  responderConfirmTransaction,
 } from "../Services/ServerCommunication";
 import { OwnerContactInformationModal } from "./Modals/OwnerContactInformationModal";
 import { RatingModal } from "./Modals/RatingModal";
@@ -30,7 +22,7 @@ export const AnsweredListingsTransactions = () => {
 
   const fetchTransactions = async () => {
     setLoading(true);
-    let rtransactions = await getAcceptedTransactionsResponder(uid);
+    let rtransactions = await getOngoingTransactionsResponder(uid);
     setResponderTransactions(rtransactions);
     console.log("-------BESVARADE-------");
     console.log(responderTransactions);
@@ -59,7 +51,20 @@ export const AnsweredListingsTransactions = () => {
   };
 
   const ratingCompleted = () => {
+    setRating(!rating);
     fetchTransactions();
+  };
+
+  const confirmTransaction = async (id) => {
+    await responderConfirmTransaction(id);
+  };
+
+  const renderTakeOrGive = (offer) => {
+    if (offer) {
+      return "(Tas emot)";
+    } else {
+      return "(Ges bort)";
+    }
   };
 
   const whatToRender = (opt1, opt2) => {
@@ -76,6 +81,7 @@ export const AnsweredListingsTransactions = () => {
         item={item}
         toggleModal={toggleModal}
         toggleRating={toggleRating}
+        confirmTransaction={confirmTransaction}
       />
     );
 
@@ -94,7 +100,10 @@ export const AnsweredListingsTransactions = () => {
         <ListItem
           style={styles.container}
           onPress={() => toggleModal(item)}
-          title={whatToRender(item.offer_product, item.request_product)}
+          title={
+            whatToRender(item.offer_product, item.request_product) +
+            renderTakeOrGive(item.offer_product)
+          }
           description={whatToRender(
             item.offer_description,
             item.request_description
