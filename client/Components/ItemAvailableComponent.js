@@ -10,7 +10,11 @@ import {
   Icon,
 } from "@ui-kitten/components";
 import { useIsFocused } from "@react-navigation/native";
-import { MyCommunitysInfo, UserInfo } from "../assets/AppContext";
+import {
+  MyCommunitysInfo,
+  ShowCommunityIds,
+  UserInfo,
+} from "../assets/AppContext";
 import {
   getOffers,
   getMyOffers,
@@ -31,6 +35,7 @@ export const ItemAvailableComponent = () => {
   const { userInfo, setUserInfo } = React.useContext(UserInfo);
   const { myCommunitysInfo, setMyCommunitysInfo } =
     React.useContext(MyCommunitysInfo);
+  const { showCommunityIds } = React.useContext(ShowCommunityIds);
   const [takeProduct, setTakeProduct] = React.useState(false);
   const [offers, setOffers] = React.useState([]);
   const [myOffers, setMyOffers] = React.useState([]);
@@ -40,7 +45,7 @@ export const ItemAvailableComponent = () => {
   const isFocused = useIsFocused();
 
   const userId = userInfo.id;
-  const communityIds = myCommunitysInfo.map(({ id }) => id);
+  const communityIds = showCommunityIds;
 
   //fetch items on focus
   const fetchItems = async () => {
@@ -186,12 +191,18 @@ export const ItemAvailableComponent = () => {
             toggleModal(item);
           }}
           accessoryLeft={() => {
-          return(
-            <Image
-              style={tw`rounded-full`}
-              source={{ uri: item.imgurl, height: 70, width: 70, marginRight:10 }}
-            />)
-        }}
+            return (
+              <Image
+                style={tw`rounded-full`}
+                source={{
+                  uri: item.imgurl,
+                  height: 70,
+                  width: 70,
+                  marginRight: 10,
+                }}
+              />
+            );
+          }}
           // accessoryLeft={"https://picsum.photos/150/150"}
           title={`${item.product_text} ${item.quantity}`}
           description={`${item.description}`}
@@ -201,7 +212,6 @@ export const ItemAvailableComponent = () => {
     );
   };
 
- 
   const renderMyItems = (
     { item } //Used for rendering my items
   ) => (
@@ -210,17 +220,22 @@ export const ItemAvailableComponent = () => {
         style={styles.container}
         onPress={() => toggleModal(item)}
         accessoryLeft={() => {
-          return(
+          return (
             <Image
               style={tw`rounded-full`}
-              source={{ uri: item.imgurl, height: 70, width: 70, marginRight:10 }}
-            />)
+              source={{
+                uri: item.imgurl,
+                height: 70,
+                width: 70,
+                marginRight: 10,
+              }}
+            />
+          );
         }}
         accessoryRight={offerHasTransaction(item) ? TransactionIcon : null}
         title={`${item.product_text} ${item.quantity}`}
-        description={`${item.description}`}>
-        
-      </ListItem>
+        description={`${item.description}`}
+      ></ListItem>
       <TransactionInfoModal
         text={"vill hämta din vara"}
         item={item}

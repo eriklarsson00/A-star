@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { StyleSheet, View, FlatList, } from "react-native";
+import { StyleSheet, View, FlatList } from "react-native";
 import {
   Text,
   List,
@@ -12,19 +12,29 @@ import {
   Icon,
 } from "@ui-kitten/components";
 import { useIsFocused } from "@react-navigation/native";
-import { MyCommunitysInfo, UserInfo } from "../assets/AppContext";
+import {
+  MyCommunitysInfo,
+  ShowCommunityIds,
+  UserInfo,
+} from "../assets/AppContext";
 import { io } from "socket.io-client";
-import { getRequests, getMyRequests, addTransaction, getPendingTransactions,} from "../Services/ServerCommunication";
+import {
+  getRequests,
+  getMyRequests,
+  addTransaction,
+  getPendingTransactions,
+} from "../Services/ServerCommunication";
 import { host } from "../Services/ServerHost";
-import { RequestedInfoModal } from "./Modals/RequestedInfoModal"
+import { RequestedInfoModal } from "./Modals/RequestedInfoModal";
 import { GiveProductModal } from "./Modals/GiveProductModal";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { MyRequestsModal } from "./Modals/MyRequestsModal"
-import {RequestTransactionInfoModal} from "./Modals/RequestTransactionModal"
+import { MyRequestsModal } from "./Modals/MyRequestsModal";
+import { RequestTransactionInfoModal } from "./Modals/RequestTransactionModal";
 export const ItemRequestedComponent = () => {
   const { userInfo, setUserInfo } = React.useContext(UserInfo);
   const { myCommunitysInfo, setMyCommunitysInfo } =
     React.useContext(MyCommunitysInfo);
+  const { showCommunityIds } = React.useContext(ShowCommunityIds);
   const [myRequests, setMyRequests] = React.useState([]);
   const [requests, setRequests] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
@@ -34,19 +44,17 @@ export const ItemRequestedComponent = () => {
   const [takeProduct, setTakeProduct] = React.useState(false);
   const [transactions, setTransactions] = React.useState([]);
   const userId = userInfo.id;
-  const communityIds = myCommunitysInfo.map(({ id }) => id);
+  const communityIds = showCommunityIds;
 
   const TransactionIcon = (props) => (
-  <Icon {...props} fill="red" name="info-outline" />
-);
+    <Icon {...props} fill="red" name="info-outline" />
+  );
   //fetch items on focus
   useEffect(() => {
-    
     if (isFocused) fetchItems();
   }, [isFocused]);
 
   const socketRef = React.useRef();
-
 
   //WebSocket handling
   React.useEffect(() => {
@@ -79,16 +87,15 @@ export const ItemRequestedComponent = () => {
   }, []);
 
   const fetchItems = async () => {
-      setLoading(true);
-      let myItems = await getMyRequests(userId);
-      let otherItems = await getRequests(userId, communityIds);
-      setMyRequests(myItems);
-      setRequests(otherItems);
+    setLoading(true);
+    let myItems = await getMyRequests(userId);
+    let otherItems = await getRequests(userId, communityIds);
+    setMyRequests(myItems);
+    setRequests(otherItems);
     let transactions = await getPendingTransactions(userId);
     setTransactions(transactions);
-     setLoading(false);
-    };
-
+    setLoading(false);
+  };
 
   const getTransaction = (request) => {
     if (!requestHasTransaction(request)) {
@@ -132,7 +139,7 @@ export const ItemRequestedComponent = () => {
     fetchItems();
     toggleModal(item);
   };
-  
+
   const toggleModal = (item) => {
     toggleVisible(requests, item);
     toggleVisible(myRequests, item);
@@ -141,12 +148,9 @@ export const ItemRequestedComponent = () => {
     setMyRequests([...myRequests]);
   };
 
-
   const renderMyItems = (
     { item } //Used for rendering my items
-  ) => 
-    
-    (
+  ) => (
     <View>
       <ListItem
         style={styles.container}
@@ -156,23 +160,23 @@ export const ItemRequestedComponent = () => {
         onPress={() => {
           toggleModal(item);
         }}
-      />   
-            <RequestTransactionInfoModal
+      />
+      <RequestTransactionInfoModal
         item={item}
         text={"vill ge dig denna vara"}
         toggleModal={toggleModal}
         transaction={getTransaction(item)}
       />
     </View>
-);
-    const updateDate = (date) => {
+  );
+  const updateDate = (date) => {
     setDate(date);
   };
 
-   const toggleTake = () => {
+  const toggleTake = () => {
     setTakeProduct(!takeProduct);
   };
-    const renderRequestedItem = ({ item }) => {
+  const renderRequestedItem = ({ item }) => {
     let infoModal = (
       <RequestedInfoModal
         item={item}
@@ -196,13 +200,13 @@ export const ItemRequestedComponent = () => {
     return (
       <View>
         <ListItem
-        style={styles.container}
-        title={`${item.product_text}`}
-        description={`${item.description}`}
-        onPress={() => {
-          toggleModal(item);
-        }}
-      />
+          style={styles.container}
+          title={`${item.product_text}`}
+          description={`${item.description}`}
+          onPress={() => {
+            toggleModal(item);
+          }}
+        />
         {modal}
       </View>
     );
