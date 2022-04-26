@@ -17,6 +17,7 @@ import { io } from "socket.io-client";
 import { getRequests, getMyRequests, addTransaction, getPendingTransactions,} from "../Services/ServerCommunication";
 import { host } from "../Services/ServerHost";
 import { RequestedInfoModal } from "./Modals/RequestedInfoModal"
+import { TransactionInfoModal } from "./Modals/TransactionInfoModal"
 import { GiveProductModal } from "./Modals/GiveProductModal";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { MyRequestsModal } from "./Modals/MyRequestsModal"
@@ -88,12 +89,20 @@ export const ItemRequestedComponent = () => {
      setLoading(false);
     };
 
+
+  const getTransaction = (request) => {
+    if (!requestHasTransaction(request)) {
+      return null;
+    }
+    return transactions.find(({ request_id }) => request_id == request.id);
+  };
+
   const removeRequest = (array, id) => {
     return array.filter((request) => request.id != id);
   };
 
-  const offerHasTransaction = (request) => {
-    return getTransactionIds().includes(requests.id);
+  const requestHasTransaction = (request) => {
+    return getTransactionIds().includes(request.id);
   };
 
   const getTransactionIds = () => {
@@ -140,7 +149,7 @@ export const ItemRequestedComponent = () => {
       <ListItem
         style={styles.container}
         title={`${item.product_text}`}
-        accessoryRight={offerHasTransaction(item) ? TransactionIcon : null}
+        accessoryRight={requestHasTransaction(item) ? TransactionIcon : null}
         description={`${item.description}`}
         onPress={() => {
           toggleModal(item);
@@ -149,6 +158,12 @@ export const ItemRequestedComponent = () => {
       <MyRequestsModal
         item={item}
         toggleModal={toggleModal}
+      />
+            <TransactionInfoModal
+        item={item}
+        text={"vill ge dig denna vara"}
+        toggleModal={toggleModal}
+        transaction={getTransaction(item)}
       />
     </View>
   );
