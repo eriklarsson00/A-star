@@ -62,7 +62,7 @@ export const StartScreen = ({ navigation }) => {
   }
 
   const easySignIn = async () => {
-    let users = await getUserProfileByEmail("anja.persson@icloud.com");
+    let users = await getUserProfileByEmail("anja.pärsson@icloud.com");
 
     if (users.length !== 0) {
       try {

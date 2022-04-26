@@ -1,24 +1,8 @@
 import React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { StyleSheet, Image, Alert, ScrollView } from "react-native";
+import { Button, Text, Layout, Card, Divider } from "@ui-kitten/components";
 import {
-  SafeAreaView,
-  StyleSheet,
-  Image,
-  Alert,
-  ScrollView,
-} from "react-native";
-import {
-  TopNavigation,
-  Button,
-  Text,
-  Avatar,
-  Layout,
-  Card,
-  Divider,
-  useTheme,
-} from "@ui-kitten/components";
-import {
-  ProfileImagePath,
   UserInfo,
   GoogleInfo,
   UserLoggedIn,
@@ -28,8 +12,6 @@ import tw from "twrnc";
 import { deleteProfile } from "../Services/ServerCommunication";
 
 export const ProfileScreen = () => {
-  const { profileImagePath, setProfileImagePath } =
-    React.useContext(ProfileImagePath);
   const { userInfo, setUserInfo } = React.useContext(UserInfo);
   const { setLoggedIn } = React.useContext(UserLoggedIn);
   const { setGoogleInfo } = React.useContext(GoogleInfo);
@@ -85,7 +67,7 @@ export const ProfileScreen = () => {
         <Image
           style={tw`rounded-full`}
           source={{
-            uri: userInfo.imgurl ? userInfo.imgurl : profileImagePath,
+            uri: userInfo.imgurl,
             height: 150,
             width: 150,
           }}

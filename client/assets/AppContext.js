@@ -15,6 +15,3 @@ export const MyCommunitysInfo = React.createContext();
 
 /* info om användaren. Innehåller ett objekt med fälten som ska finnas i databasen */
 export const UserInfo = React.createContext();
-
-/*url till profilbilden som tas från imagepicker */
-export const ProfileImagePath = React.createContext();

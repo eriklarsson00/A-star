@@ -221,8 +221,12 @@ app
   .get(transactions.getTransactionCommunity);
 
 app
-  .route("/transactions/accepted/user/:id")
-  .get(transactions.getTransactionAcceptedUser);
+  .route("/transactions/accepted/owner/:id")
+  .get(transactions.getTransactionAcceptedOwner);
+
+app
+  .route("/transactions/accepted/responder/:id")
+  .get(transactions.getTransactionAcceptedResponder);
 
 app
   .route("/transactions/pending/user/:id")
@@ -243,13 +247,28 @@ app.post("/itemimages", upload.single("image"), (req, res) => {
   try {
     uploadImageOnS3(req.file, "itemImages/" + req.file.filename);
     res.json(
-      "https://matsamverkan.s3.us-east-1.amazonaws.com/" + req.file.filename
+      "https://matsamverkan.s3.us-east-1.amazonaws.com/itemImages/" +
+        req.file.filename
     );
   } catch (err) {
     res.status(500);
     res.json("Upload failed: " + err);
   }
 });
+
+app.post("/communityimages", upload.single("image"), (req, res) => {
+  try {
+    uploadImageOnS3(req.file, "communityImages/" + req.file.filename);
+    res.json(
+      "https://matsamverkan.s3.us-east-1.amazonaws.com/communityImages/" +
+        req.file.filename
+    );
+  } catch (err) {
+    res.status(500);
+    res.json("Upload failed: " + err);
+  }
+});
+
 //*************************SERVER*************************
 
 if (sserver) {

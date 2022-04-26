@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS Communities
         PRIMARY KEY,
     name        VARCHAR(255) NOT NULL,
     description TEXT         NULL,
-    location    TEXT         NOT NULL,
+    location    TEXT         NULL,
     imgurl      TEXT         NULL,
     private     TINYINT(1)   NOT NULL,
     password    TEXT         NULL,
@@ -63,9 +63,10 @@ CREATE TABLE IF NOT EXISTS Offers
     product_text       TEXT       NULL,
     description        TEXT       NULL,
     quantity           INT        NOT NULL,
-    time_of_creation   TIMESTAMP  NOT NULL,
+    unit               TEXT       NULL,
+    time_of_creation   TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP(),
     time_of_purchase   TIMESTAMP  NOT NULL,
-    time_of_expiration TIMESTAMP  NOT NULL,
+    time_of_expiration TIMESTAMP  NULL,
     imgurl             TEXT       NULL,
     broken_pkg         TINYINT(1) NOT NULL,
     CONSTRAINT offers_ibfk_1
@@ -83,7 +84,8 @@ CREATE TABLE IF NOT EXISTS Requests
     product_text       TEXT      NOT NULL,
     description        TEXT      NULL,
     quantity           INT       NOT NULL,
-    time_of_creation   TIMESTAMP NOT NULL,
+    unit               TEXT      NULL,
+    time_of_creation   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
     time_of_expiration TIMESTAMP NULL,
     CONSTRAINT requests_ibfk_1
         FOREIGN KEY (user_id) REFERENCES Users (id)
@@ -127,7 +129,8 @@ CREATE TABLE IF NOT EXISTS Transactions
     request_id         INT       NULL,
     status             TEXT      NOT NULL,
     responder_id       INT       NOT NULL,
-    time_of_creation   TIMESTAMP NOT NULL,
+    time_of_creation   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    time_of_update     TIMESTAMP NULL,
     time_of_expiration TIMESTAMP NOT NULL,
     CONSTRAINT transactions_ibfk_1
         FOREIGN KEY (offer_id) REFERENCES Offers (id)
