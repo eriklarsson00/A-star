@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { View, FlatList } from "react-native";
+import { View, FlatList, StyleSheet } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import {
   Text,
@@ -15,21 +15,21 @@ import {
   getAcceptedTransactionsOwner,
   getAcceptedTransactionsResponder,
 } from "../Services/ServerCommunication";
+import { OwnerContactInformationModal } from "./Modals/OwnerContactInformationModal";
+import { RatingModal } from "./Modals/RatingModal";
 import tw from "twrnc";
 
 export const AnsweredListingsTransactions = () => {
   const { userInfo, setUserInfo } = useContext(UserInfo);
-  const [ownerTransactions, setOwnerTransactions] = useState([]);
   const [responderTransactions, setResponderTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const isFocused = useIsFocused();
+  const [rating, setRating] = useState(false);
 
+  const isFocused = useIsFocused();
   const uid = userInfo.id;
 
   const fetchTransactions = async () => {
     setLoading(true);
-    let otransactions = await getAcceptedTransactionsOwner(uid);
-    setOwnerTransactions(otransactions);
     let rtransactions = await getAcceptedTransactionsResponder(uid);
     setResponderTransactions(rtransactions);
     console.log("-------BESVARADE-------");
@@ -41,16 +41,69 @@ export const AnsweredListingsTransactions = () => {
     if (isFocused) fetchTransactions();
   }, [isFocused]);
 
-  const renderAcceptedTransactions = ({ item }) => (
-    <View>
-      <ListItem
-        style={styles.container}
-        onPress={() => console.log("todo:visa kontaktinfo")}
-        title={`${item.product_text} ${item.quantity}`}
-        description={`${item.description}`}
+  const toggleVisible = (array, item) => {
+    return array.map((offer) => {
+      if (offer == item) {
+        offer.visible = !offer.visible;
+      }
+    });
+  };
+
+  const toggleModal = (item) => {
+    toggleVisible(responderTransactions, item);
+    setResponderTransactions([...responderTransactions]);
+  };
+
+  const toggleRating = () => {
+    setRating(!rating);
+  };
+
+  const ratingCompleted = () => {
+    fetchTransactions();
+  };
+
+  const whatToRender = (opt1, opt2) => {
+    if (opt1 !== null) {
+      return `${opt1}`;
+    } else {
+      return `${opt2}`;
+    }
+  };
+
+  const renderAcceptedTransactions = ({ item }) => {
+    let contactModal = (
+      <OwnerContactInformationModal
+        item={item}
+        toggleModal={toggleModal}
+        toggleRating={toggleRating}
       />
-    </View>
-  );
+    );
+
+    let ratingModal = (
+      <RatingModal
+        item={item}
+        toggleModal={toggleModal}
+        ratingCompleted={ratingCompleted}
+      />
+    );
+
+    let modal = !rating ? contactModal : ratingModal;
+
+    return (
+      <View>
+        <ListItem
+          style={styles.container}
+          onPress={() => toggleModal(item)}
+          title={whatToRender(item.offer_product, item.request_product)}
+          description={whatToRender(
+            item.offer_description,
+            item.request_description
+          )}
+        />
+        {modal}
+      </View>
+    );
+  };
 
   const flatListHeader = () => {
     return (
@@ -90,8 +143,8 @@ export const AnsweredListingsTransactions = () => {
   const LoadedView = () => (
     <FlatList
       style={{ flex: 1 }}
-      //data={}
-      //renderItem={renderAcceptedTransactions}
+      data={responderTransactions}
+      renderItem={renderAcceptedTransactions}
       ListHeaderComponent={flatListHeader}
       ListFooterComponent={flatListFooter}
     ></FlatList>
@@ -99,3 +152,12 @@ export const AnsweredListingsTransactions = () => {
 
   return loading ? <LoadingView /> : <LoadedView />;
 };
+
+const styles = StyleSheet.create({
+  container: {
+    marginTop: 15,
+    height: 100,
+    marginRight: 10,
+    marginLeft: 10,
+  },
+});

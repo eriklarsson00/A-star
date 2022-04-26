@@ -101,7 +101,7 @@ const acceptTransaction = async (id) => {
 };
 
 const ownerConfirmTransaction = async (id) => {
-  return await request("PUT", `/transactions/${id}/ownerComnfirm`);
+  return await request("PUT", `/transactions/${id}/ownerConfirm`);
 };
 
 const responderConfirmTransaction = async (id) => {

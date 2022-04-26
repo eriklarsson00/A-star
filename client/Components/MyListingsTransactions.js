@@ -27,7 +27,6 @@ export const MyListingsTransactions = () => {
     setLoading(true);
     let otransactions = await getAcceptedTransactionsOwner(uid);
     setOwnerTransactions(otransactions);
-    console.log(otransactions);
     setLoading(false);
   };
 
@@ -52,6 +51,10 @@ export const MyListingsTransactions = () => {
     setRating(!rating);
   };
 
+  const ratingCompleted = () => {
+    fetchTransactions();
+  };
+
   const whatToRender = (opt1, opt2) => {
     if (opt1 !== null) {
       return `${opt1}`;
@@ -69,7 +72,13 @@ export const MyListingsTransactions = () => {
       />
     );
 
-    let ratingModal = <RatingModal item={item} toggleModal={toggleModal} />;
+    let ratingModal = (
+      <RatingModal
+        item={item}
+        toggleModal={toggleModal}
+        ratingCompleted={ratingCompleted}
+      />
+    );
 
     let modal = !rating ? contactModal : ratingModal;
 
@@ -118,7 +127,7 @@ export const MyListingsTransactions = () => {
     ></FlatList>
   );
 
-  return null || loading ? <LoadingView /> : <LoadedView />;
+  return loading ? <LoadingView /> : <LoadedView />;
 };
 
 const styles = StyleSheet.create({
