@@ -206,15 +206,15 @@ function addTransaction(req, res) {
   knex("Transactions")
     .insert(transaction)
     .catch((err) => {
-      res.status(500).json(err);
+      return res.status(500).json(err);
     })
     .then((id) => {
-      if (id !== undefined) res.json("Transaction inserted with id: " + id);
+      return res.json("Transaction inserted with id: " + id);
     });
 }
 
 function updateTransaction(req, res) {
-  let id = parseInt(req.params.id);
+  const id = parseInt(req.params.id);
   const body = req.body;
 
   if (!transactionChecker(body))
@@ -230,16 +230,15 @@ function updateTransaction(req, res) {
     .where("id", id)
     .update(body)
     .catch((err) => {
-      res.status(500).json(err);
-      id = undefined;
+      return res.status(500).json(err);
     })
     .then(() => {
-      if (id !== undefined) res.json("Transaction updated with id: " + id);
+      return res.json("Transaction updated with id: " + id);
     });
 }
 
 function deleteTransaction(req, res) {
-  let id = parseInt(req.params.id);
+  const id = parseInt(req.params.id);
 
   if (isNaN(id)) {
     return res
@@ -251,16 +250,15 @@ function deleteTransaction(req, res) {
     .where("id", id)
     .delete()
     .catch((err) => {
-      res.status(500).json(err);
-      id = undefined;
+      return res.status(500).json(err);
     })
     .then(() => {
-      if (id !== undefined) res.json("Transaction has been removed");
+      return res.json("Transaction has been removed");
     });
 }
 
 function acceptTransaction(req, res) {
-  let id = parseInt(req.params.id);
+  const id = parseInt(req.params.id);
 
   if (isNaN(id)) {
     return res
@@ -276,16 +274,15 @@ function acceptTransaction(req, res) {
   knex
     .raw(sql)
     .catch((err) => {
-      res.status(500).json(err);
-      id = undefined;
+      return res.status(500).json(err);
     })
     .then(() => {
-      if (id !== undefined) res.json("Transaction has been updated");
+      return res.json("Transaction has been updated");
     });
 }
 
 function ownerConfirmTransaction(req, res) {
-  let id = parseInt(req.params.id);
+  const id = parseInt(req.params.id);
 
   if (isNaN(id)) {
     return res
@@ -301,15 +298,13 @@ function ownerConfirmTransaction(req, res) {
   knex
     .raw(getSql)
     .catch((err) => {
-      res.status(500).json(err);
-      id = undefined;
+      return res.status(500).json(err);
     })
     .then((t) => {
       let updateSql;
 
-      if (id == undefined || !t || !t[0] || t[0].lenght == 0) {
-        res.json("no entry found");
-        return;
+      if (!t || !t[0] || t[0].lenght == 0) {
+        return res.json("no entry found");
       } else if (t.status === "accepted") {
         updateSql = `
           UPDATE Transactions SET status = 'ownerConfirmed'
@@ -325,17 +320,16 @@ function ownerConfirmTransaction(req, res) {
       knex
         .raw(updateSql)
         .catch((err) => {
-          res.status(500).json(err);
-          id = undefined;
+          return res.status(500).json(err);
         })
         .then(() => {
-          if (id !== undefined) res.json("Transaction has been updated");
+          res.json("Transaction has been updated");
         });
     });
 }
 
 function responderConfirmTransaction(req, res) {
-  let id = parseInt(req.params.id);
+  const id = parseInt(req.params.id);
 
   if (isNaN(id)) {
     return res
@@ -351,15 +345,13 @@ function responderConfirmTransaction(req, res) {
   knex
     .raw(getSql)
     .catch((err) => {
-      res.status(500).json(err);
-      id = undefined;
+      return res.status(500).json(err);
     })
     .then((t) => {
       let updateSql;
 
       if (id == undefined || !t || !t[0] || t[0].lenght == 0) {
-        res.json("no entry found");
-        return;
+        return res.json("no entry found");
       } else if (t.status === "accepted") {
         updateSql = `
           UPDATE Transactions SET status = 'responderConfirmed'
@@ -375,11 +367,10 @@ function responderConfirmTransaction(req, res) {
       knex
         .raw(updateSql)
         .catch((err) => {
-          res.status(500).json(err);
-          id = undefined;
+          return res.status(500).json(err);
         })
         .then(() => {
-          if (id !== undefined) res.json("Transaction has been updated");
+          return res.json("Transaction has been updated");
         });
     });
 }
