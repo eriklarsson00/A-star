@@ -48,7 +48,7 @@ export const TransactionInfoModal = (props) => {
     if (transaction) {
       return (
         <View>
-          <Text>{responder.firstname} vill hämta din vara </Text>
+          <Text>{responder.firstname} {props.text} </Text>
           <Text>
             {moment(transaction.time_of_expiration).format("dddd Do MMM hh:mm")}
           </Text>

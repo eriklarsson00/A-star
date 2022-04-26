@@ -216,6 +216,7 @@ export const ItemAvailableComponent = () => {
         
       </ListItem>
       <TransactionInfoModal
+        text={"vill hämta din vara"}
         item={item}
         toggleModal={toggleModal}
         transaction={getTransaction(item)}
