@@ -56,7 +56,7 @@ export const ItemAvailableComponent = () => {
   };
 
   React.useEffect(() => {
-    if (isFocused) fetchItems();
+    if (isFocused) return fetchItems();
   }, [isFocused]);
 
   const socketRef = React.useRef();
@@ -65,31 +65,37 @@ export const ItemAvailableComponent = () => {
   React.useEffect(() => {
     socketRef.current = io(host);
 
-    socketRef.current.emit("communities", {
-      ids: communityIds.map((id) => id.toString()),
-    });
-
-    socketRef.current.on("offer", (offer) => {
-      offer.visible = false;
-      if (offer.user_id == userId) {
-        setMyOffers([...myOffers, offer]);
-      } else {
-        setOffers([...offers, offer]);
-      }
+    socketRef.current.on("offer", (offerobj) => {
+      const offer = offerobj.offer;
+      const communities = offerobj.communities;
+      if (
+        offer.user_id != userId &&
+        communities.map((i) => communityIds.includes(i)).includes(true)
+      )
+        addOffer(offer);
     });
 
     socketRef.current.on("deleteOffer", (id) => {
-      console.log(id);
-      removeOffer(myOffers, id);
-      removeOffer(offers, id);
-      setOffers([...offers]);
-      setMyOffers([...myOffers]);
+      removeOffer(id);
+    });
+
+    socketRef.current.on("transaction", (transaction) => {
+      console.log(transaction);
+      updateTransactions(transaction);
     });
 
     return () => {
       socketRef.current.disconnect();
     };
-  }, []);
+  }, [offers, transactions]);
+
+  const updateTransactions = (transaction) => {
+    setTransactions([...transactions, transaction]);
+  };
+
+  const addOffer = (offer) => {
+    setOffers([...offers, offer]);
+  };
 
   const getTransaction = (offer) => {
     if (!offerHasTransaction(offer)) {
@@ -106,8 +112,8 @@ export const ItemAvailableComponent = () => {
     return transactions.map(({ offer_id }) => offer_id);
   };
 
-  const removeOffer = (array, id) => {
-    return array.filter((offer) => offer.id != id);
+  const removeOffer = (id) => {
+    return setOffers(offers.filter((offer) => offer.id != id));
   };
 
   const toggleVisible = (array, item) => {
