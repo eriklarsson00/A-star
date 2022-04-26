@@ -7,7 +7,7 @@ import tw from "twrnc";
 
 import { ItemAvailableComponent } from "../Components/ItemAvailableComponent";
 import { ItemRequestedComponent } from "../Components/ItemRequestedComponent";
-import { BlockedDiscover } from "../Components/BlockedDiscovery";
+import { BlockedDiscover } from "../Components/BlockedDiscoveryComponent";
 
 const TopTabs = createMaterialTopTabNavigator();
 

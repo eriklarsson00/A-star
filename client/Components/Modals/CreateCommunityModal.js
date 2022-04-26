@@ -21,7 +21,7 @@ import {
   CheckBox,
 } from "@ui-kitten/components";
 import tw from "twrnc";
-import ImagePicker from "../ImagePicker";
+import ImagePicker from "../ImagePickerComponent";
 import {
   addCommunity,
   getCommunities,
