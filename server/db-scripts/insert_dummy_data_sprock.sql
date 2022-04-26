@@ -12,17 +12,16 @@ BEGIN
     TRUNCATE TABLE Users;
 
     INSERT INTO Communities (name, description, location, imgurl, private, password) VALUES
-    ('Majklockan', 'Majklockan är beläget i Flogsta som idag har rikligt med studentbostäder.', NULL, "https://matsamverkan.s3.amazonaws.com/communityImages/majklockan.jpg", false, NULL),
-    ('Kantorn', 'Rikshems välplanerade studentbostäder i Kvarngärdet är belägna på Kantorsgatan, cirka 2 kilometer norr om Uppsala centrum.', NULL, "https://matsamverkan.s3.amazonaws.com/communityImages/kantorn.jpeg", false, NULL),
-    ('Triangeln', 'Triangeln är beläget mellan S:t Johannesgatan och Karlsrogatan vid Rackarberget.', NULL, "https://matsamverkan.s3.amazonaws.com/communityImages/triangeln.jpeg", false, NULL);
-    ('Rackarberget', 'Rackarberget ligger vackert beläget intill Gamla Studentstaden. Härifrån är det nära till centrum och många av
-universitetets institutioner. På Rackarberget finns både studentrum och lägenheter', NULL, "https://matsamverkan.s3.amazonaws.com/communityImages/Rackis.jpg", false, NULL);
-    ('Ultuna', 'beskv.', NULL, "https://matsamverkan.s3.amazonaws.com/communityImages/ultuna.jpeg", false, NULL);
-    ('Ångström', 'Här kan man plugga, man kan även hänga på takterass', NULL, "https://matsamverkan.s3.amazonaws.com/communityImages/%C3%A5ngan.jpg", true, "Demo");
+    ('Majklockan', 'Majklockan är beläget i Flogsta som idag har rikligt med studentbostäder.', NULL, 'https://matsamverkan.s3.amazonaws.com/communityImages/majklockan.jpg', false, NULL),
+    ('Kantorn', 'Rikshems välplanerade studentbostäder i Kvarngärdet är belägna på Kantorsgatan, cirka 2 kilometer norr om Uppsala centrum.', NULL, 'https://matsamverkan.s3.amazonaws.com/communityImages/kantorn.jpeg', false, NULL),
+    ('Triangeln', 'Triangeln är beläget mellan S:t Johannesgatan och Karlsrogatan vid Rackarberget.', NULL, 'https://matsamverkan.s3.amazonaws.com/communityImages/triangeln.jpeg', false, NULL),
+    ('Rackarberget', 'Rackarberget ligger vackert beläget intill Gamla Studentstaden. Härifrån är det nära till centrum och många av universitetets institutioner. På Rackarberget finns både studentrum och lägenheter', NULL, 'https://matsamverkan.s3.amazonaws.com/communityImages/Rackis.jpg', false, NULL),
+    ('Ultuna', 'beskv.', NULL, 'https://matsamverkan.s3.amazonaws.com/communityImages/ultuna.jpeg', false, NULL),
+    ('Ångström', 'Här kan man plugga, man kan även hänga på takterass', NULL, 'https://matsamverkan.s3.amazonaws.com/communityImages/%C3%A5ngan.jpg', true, 'Demo');
 
 
     INSERT INTO Users (firstname, lastname, number, email, adress, location, imgurl, rating, raters, given, taken) VALUES
-    ('Anja', 'Persson', '0735959908', 'anja.persson@icloud.com', 'Råbyvägen 53 B, 75429 Uppsala', 'Gränby', NULL, DEFAULT, DEFAULT, DEFAULT, DEFAULT),
+    ('Anja', 'Pärsson', '0735959908', 'anja.parsson@icloud.com', 'Råbyvägen 53 B, 75429 Uppsala', 'Gränby', 'https://matsamverkan.s3.amazonaws.com/profilePictures/anja.jpeg', 1000, 270, 23, 19),
     ('Jesus', 'Kristus', '0737895427', 'jesus.kristus@yahoo.com', 'rackarberget 12', 'Rackarberget', NULL, DEFAULT, DEFAULT, DEFAULT, DEFAULT),
     ('Anders', 'Bagge', '0761745770', 'ansders.bagge@telia.com', 'luthagsesplanaden 18', 'Luthagen', NULL, DEFAULT, DEFAULT, DEFAULT, DEFAULT),
     ('Eric', 'Saade', '0731234567', 'eric.saade@outlook.com', 'kungsgatan 30', 'city', NULL, DEFAULT, DEFAULT, DEFAULT, DEFAULT),
@@ -83,8 +82,8 @@ universitetets institutioner. På Rackarberget finns både studentrum och lägen
     (4, NULL, 'pending', 1, CURRENT_TIMESTAMP()),
     (5, NULL, 'completed', 1, CURRENT_TIMESTAMP()),
     (6, NULL, 'completed', 1, CURRENT_TIMESTAMP()),
-    (NULL, 1, 'accepted', 1, CURRENT_TIMESTAMP()),
-    (NULL, 2, 'accepted', 1, CURRENT_TIMESTAMP()),
+    (NULL, 1, 'accepted', 4, CURRENT_TIMESTAMP()),
+    (NULL, 2, 'accepted', 4, CURRENT_TIMESTAMP()),
     (NULL, 3, 'pending', 1, CURRENT_TIMESTAMP()),
     (NULL, 4, 'pending', 1, CURRENT_TIMESTAMP()),
     (NULL, 5, 'completed', 1, CURRENT_TIMESTAMP()),
