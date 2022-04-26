@@ -7,15 +7,20 @@ import {
   getAcceptedTransactionsOwner,
   getAcceptedTransactionsResponder,
 } from "../Services/ServerCommunication";
-import { ContactInformationModal } from "./Modals/ContactInformationModal";
+import { OwnerContactInformationModal } from "./Modals/OwnerContactInformationModal";
+import { RatingModal } from "./Modals/RatingModal";
 import tw from "twrnc";
 
 export const MyListingsTransactions = () => {
+  // CONTEXT
   const { userInfo, setUserInfo } = useContext(UserInfo);
+
+  // STATE
   const [ownerTransactions, setOwnerTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const isFocused = useIsFocused();
+  const [rating, setRating] = useState(false);
 
+  const isFocused = useIsFocused();
   const uid = userInfo.id;
 
   const fetchTransactions = async () => {
@@ -39,10 +44,12 @@ export const MyListingsTransactions = () => {
   };
 
   const toggleModal = (item) => {
-    //let newModals = toggleVisible(ownerTransactions, item);
-    //console.log("hej");
     toggleVisible(ownerTransactions, item);
     setOwnerTransactions([...ownerTransactions]);
+  };
+
+  const toggleRating = () => {
+    setRating(!rating);
   };
 
   const whatToRender = (opt1, opt2) => {
@@ -53,20 +60,34 @@ export const MyListingsTransactions = () => {
     }
   };
 
-  const renderAcceptedTransactions = ({ item }) => (
-    <View>
-      <ListItem
-        style={styles.container}
-        onPress={() => toggleModal(item)}
-        title={whatToRender(item.offer_product, item.request_product)}
-        description={whatToRender(
-          item.offer_description,
-          item.request_description
-        )}
+  const renderAcceptedTransactions = ({ item }) => {
+    let contactModal = (
+      <OwnerContactInformationModal
+        item={item}
+        toggleModal={toggleModal}
+        toggleRating={toggleRating}
       />
-      <ContactInformationModal item={item} toggleModal={toggleModal} />
-    </View>
-  );
+    );
+
+    let ratingModal = <RatingModal item={item} toggleModal={toggleModal} />;
+
+    let modal = !rating ? contactModal : ratingModal;
+
+    return (
+      <View>
+        <ListItem
+          style={styles.container}
+          onPress={() => toggleModal(item)}
+          title={whatToRender(item.offer_product, item.request_product)}
+          description={whatToRender(
+            item.offer_description,
+            item.request_description
+          )}
+        />
+        {modal}
+      </View>
+    );
+  };
 
   const flatListHeader = () => {
     return (
@@ -97,7 +118,7 @@ export const MyListingsTransactions = () => {
     ></FlatList>
   );
 
-  return loading ? <LoadingView /> : <LoadedView />;
+  return null || loading ? <LoadingView /> : <LoadedView />;
 };
 
 const styles = StyleSheet.create({

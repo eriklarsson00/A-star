@@ -1,19 +1,17 @@
 import { Modal, Text, Layout, Button, Card } from "@ui-kitten/components";
 import { View } from "react-native";
 
-export const ContactInformationModal = (props) => {
+export const RatingModal = (props) => {
   const item = props.item;
 
-  const completedTransaction = () => {
-    //acceptTransaction(transaction.id);
-    console.log("Todo: Review");
-    props.toggleModal(item);
+  const ratingComplete = async () => {
+    console.log("whoo");
   };
 
   const Info = () => {
     return (
       <View>
-        <Text category={"h2"}>Kontaktinfo</Text>
+        <Text category={"h2"}>Hur upplevde du transaktionen?</Text>
         <Text>
           Namn: {item.firstname} {item.lastname}{" "}
         </Text>
@@ -26,7 +24,7 @@ export const ContactInformationModal = (props) => {
             marginTop: 10,
           }}
         >
-          <Button onPress={() => completedTransaction()} status={"success"}>
+          <Button onPress={() => ratingComplete()} status={"success"}>
             <Text>Bytet är genomfört</Text>
           </Button>
         </Layout>
