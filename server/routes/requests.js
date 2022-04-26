@@ -89,12 +89,12 @@ function addRequest(req, res) {
     })
     .then(() => {
       if (request_id == -1) return;
-      communities.forEach((community) => {
-        knex("CommunityListings").insert({
-          community_id: community,
-          request_id: request_id,
-        });
+      const communityRequests = communities.map((community) => {
+        return { community_id: community, request_id: request_id };
       });
+      knex("CommunityListings")
+        .insert(communityRequests)
+        .catch((err) => console.log(err));
     });
 }
 
