@@ -24,6 +24,7 @@ import tw from "twrnc";
 import ImagePicker from "../ImagePicker";
 import {
   addCommunity,
+  getCommunities,
   pushImagesToServer,
 } from "../../Services/ServerCommunication";
 
@@ -138,8 +139,7 @@ export const CreateCommunityModal = (props) => {
         password: communityPassword,
       };
       const result = await addCommunity(communityData);
-      console.log(result);
-      console.log("skapar");
+      props.getComm();
       props.setVisible(false);
       setCommunityName("");
       setCommunityDescription("");
