@@ -285,7 +285,7 @@ function acceptTransaction(req, res) {
 }
 
 function ownerConfirmTransaction(req, res) {
-  const id = parseInt(req.params.id);
+  let id = parseInt(req.params.id);
 
   if (isNaN(id)) {
     return res
