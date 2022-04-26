@@ -35,7 +35,7 @@ BEGIN
 
 
     INSERT INTO Offers (user_id, product_id, product_text, description, quantity, unit, time_of_purchase, time_of_expiration, imgurl, broken_pkg) VALUES
-    (1, 1, 'Banan', 'Ska bort i helgen och behöver bli av med mina bananer.', 4, 'st', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL, true),
+    (1, 1, 'Banan', 'Ska bort i helgen och behöver bli av med mina bananer.', 4, 'st', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'https://upload.wikimedia.org/wikipedia/commons/d/de/Bananavarieties.jpg', true),
     (1, 1, 'Äpple', 'Köpte för många och kommer inte hinna äta alla själv.', 7, 'st', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL, false),
     (1, 1, 'Marsipan', 'Använde till bakning men kommer inte behöva resten.', 100, 'g', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL, true),
     (2, 1, 'Kyckling', 'Blev över från matlagningen.', 200, 'g', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL, false),
