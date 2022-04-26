@@ -68,7 +68,6 @@ function addOffer(req, res) {
   const body = req.body;
   const offer = body.offer;
   const communities = body.communities;
-  console.log(communities);
 
   if (!body || !offerChecker(offer))
     return res.status(400).json("Invalid offer properties");

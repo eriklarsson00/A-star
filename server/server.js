@@ -221,12 +221,12 @@ app
   .get(transactions.getTransactionCommunity);
 
 app
-  .route("/transactions/accepted/owner/:id")
-  .get(transactions.getTransactionAcceptedOwner);
+  .route("/transactions/ongoing/owner/:id")
+  .get(transactions.getTransactionOngoingOwner);
 
 app
-  .route("/transactions/accepted/responder/:id")
-  .get(transactions.getTransactionAcceptedResponder);
+  .route("/transactions/ongoing/responder/:id")
+  .get(transactions.getTransactionOngoingResponder);
 
 app
   .route("/transactions/pending/user/:id")
@@ -237,9 +237,6 @@ app.route("/transactions/user/:id").get(transactions.getTransactionUser);
 app
   .route("/transactions/responder/:id")
   .get(transactions.getResponderTransactions);
-
-// Okänt användningsområde (dessutom icke fungerande)
-//app.route("/transactions/lister/:id").get(transactions.getListerTransactions);
 
 //*************************IMAGES*********************
 
