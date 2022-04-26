@@ -31,7 +31,7 @@ export const TransactionInfoModal = (props) => {
   };
 
   useEffect(() => {
-    getResponder();
+    return getResponder();
   }, []);
 
   const accept = () => {
