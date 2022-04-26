@@ -19,9 +19,7 @@ import {
   deleteTransaction,
 } from "../../Services/ServerCommunication";
 
-export const TransactionInfoModal = (props) => {
-  const available = props.available
-  console.log(available);
+export const RequestTransactionInfoModal = (props) => {
   const item = props.item;
   const transaction = props.transaction;
   const [responder, setResponder] = useState({});
@@ -32,9 +30,8 @@ export const TransactionInfoModal = (props) => {
     setResponder(responder[0]);
   };
 
-  
   useEffect(() => {
-    return getResponder();
+    getResponder();
   }, []);
 
   const accept = () => {
@@ -76,42 +73,32 @@ export const TransactionInfoModal = (props) => {
       return (
         <View>
           <View
-            style={{
-              flexDirection: "row",
-              flex: 1,
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
+          style={{
+            flexDirection: "column",
+            flex: 1,
+            justifyContent: "space-between",
+            alignItems: "left",
+          }}
           >
-            <Layout style={tw`py-10`}>
-              <Image
-                style={tw`rounded-full`}
-                source={{
-                  uri: item.imgurl,
-                  height: 100,
-                  width: 100,
-                }}
-              />
-            </Layout>
-            <Text category={"s1"} style={{ marginLeft: 20 }}>
-              {item.product_text}
+          <Text category={"h6"} style={{ marginLeft: 20}}>Vara</Text>
+          <Text category={"s1"} style={{ marginLeft: 20, borderBottomWidth: 1, }}>
+            {item.product_text}
             </Text>
-            <Text category={"s1"} style={{ marginLeft: 20 }}>
-              {item.quantity}
+          <Text category={"h6"} style={{ marginLeft: 20, marginTop: 10 }}>Antal</Text>
+          <Text category={"s1"} style={{ marginLeft: 20 }}>
+            {item.quantity}
             </Text>
-          </View>
-
-          <Text style={{ marginBottom: 10 }}>
-            Utgångsdag: {moment(item.time_of_expiration).format("DD-MM-YYYY")}
-          </Text>
-          <Text style={{ marginBottom: 10 }}>
-            Bruten förpackning: {item.broken_pkg ? "Japp" : "Nepp"}{" "}
-          </Text>
-          <Text style={{ marginBottom: 10 }}>Din vara</Text>
-          <Text style={{ marginBottom: 10 }}>{item.description}</Text>
+            <Text category={"h5"} style={{ marginLeft: 20, marginTop: 10 }}>Senast Inom</Text>
+          <Text category={"s1"} style={{ marginLeft: 20 }}>
+            {item.time_of_expiration}
+            </Text>
         </View>
-      )
-      
+        
+          <Text category={"h5"} style={{ marginBottom: 10, marginLeft: 20, marginTop: 10 }}>Beskrivning</Text>
+          <Text category={"s1"} style={{ marginBottom: 10 }}>{item.description}</Text>
+          
+        </View>
+      );
     }
   };
 
@@ -128,4 +115,4 @@ export const TransactionInfoModal = (props) => {
   );
 };
 
-export default TransactionInfoModal;
+

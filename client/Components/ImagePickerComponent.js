@@ -9,8 +9,6 @@ export default function ImagePickerComp(props) {
   // The path of the picked image
 
   const [pickedImagePath, setPickedImagePath] = useState(null);
-  const { profileImagePath, setProfileImagePath } =
-    React.useContext(ProfileImagePath);
   const { userInfo, setUserInfo } = React.useContext(UserInfo);
 
   const resizeImage = async (result, resize = 0.05) => {

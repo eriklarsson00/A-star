@@ -1,4 +1,4 @@
-import * as React from "react";
+/*import * as React from "react";
 import { Marker, MapView, Callout } from "react-native-maps";
 
 import { StyleSheet, Text, View, Dimensions } from "react-native";
@@ -47,3 +47,4 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+*/

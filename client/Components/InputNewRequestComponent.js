@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import {
   Button,
   useTheme,
@@ -7,6 +7,8 @@ import {
   Layout,
   Icon,
   Text,
+  Select,
+  SelectItem,
 } from "@ui-kitten/components";
 import tw from "twrnc";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -18,6 +20,7 @@ export const InputNewRequestComponent = (props) => {
     product_text: "",
     description: "",
     quantity: "",
+    unit: "",
     time_of_expiration: new Date(),
   });
   const [productVisible, setProductVisible] = React.useState(true);
@@ -26,6 +29,9 @@ export const InputNewRequestComponent = (props) => {
 
   const newDate = new Date(); // behövs för kalendern
   const theme = useTheme();
+
+  const [selectedUnitIndex, setSelectedUnitIndex] = React.useState();
+  const units = ["ml", "dl", "l", "g", "kg", "st"];
 
   // Icons
   const CollapseIcon = () => (
@@ -52,6 +58,13 @@ export const InputNewRequestComponent = (props) => {
   const updateDateExp = (date) => {
     setDateExp(date);
     setProductInfo({ ...productInfo, time_of_expiration: date });
+  };
+
+  //printar ut units i drop down menu
+  const printUnits = (title) => <SelectItem key={title} title={title} />;
+
+  const handelDelete = () => {
+    // TODO: ska ta bort den skapade varan!
   };
 
   return (
@@ -88,14 +101,31 @@ export const InputNewRequestComponent = (props) => {
               setProductInfo({ ...productInfo, description: value })
             }
           />
-          <Input
-            style={tw`pb-2 pl-5 pr-5`}
-            placeholder="Antal"
-            value={productInfo.quantity}
-            onChangeText={(value) =>
-              setProductInfo({ ...productInfo, quantity: value })
-            }
-          />
+          <View style={{ flexDirection: "row" }}>
+            <Input
+              style={[tw`pb-2 pl-5 pr-5`, { width: 150 }]}
+              placeholder="Antal"
+              value={productInfo.quantity}
+              onChangeText={(value) =>
+                setProductInfo({ ...productInfo, quantity: value })
+              }
+            />
+            <Select
+              value={units[selectedUnitIndex - 1]}
+              selectedIndex={selectedUnitIndex}
+              onSelect={(index) => {
+                setSelectedUnitIndex(index);
+                setProductInfo({
+                  ...productInfo,
+                  unit: units[selectedUnitIndex - 1],
+                });
+              }}
+              placeholder="enhet"
+              style={{ width: 115 }}
+            >
+              {units.map(printUnits)}
+            </Select>
+          </View>
           <Layout style={{ flexDirection: "row" }}>
             <Text style={tw`pl-5 pt-1 pb-5 text-base`}>
               {" "}
@@ -113,15 +143,31 @@ export const InputNewRequestComponent = (props) => {
           </Layout>
           <Layout style={tw`pl-5`}>
             {created && (
-              <Button
-                style={{ width: 140 }}
-                id="createItem"
-                onPress={() => {
-                  handleChange();
-                }}
-              >
-                Ändra vara
-              </Button>
+              <Layout style={{ flexDirection: "row" }}>
+                <Button
+                  style={{ width: 140 }}
+                  id="createItem"
+                  onPress={() => {
+                    handleChange();
+                  }}
+                >
+                  Ändra vara
+                </Button>
+                <Button
+                  style={{
+                    width: 140,
+                    marginLeft: 40,
+                    backgroundColor: theme["color-danger-500"],
+                    borderColor: theme["color-danger-500"],
+                  }}
+                  id="deleteItem"
+                  onPress={() => {
+                    handleDelete();
+                  }}
+                >
+                  Ta bort vara
+                </Button>
+              </Layout>
             )}
             {!created && (
               <Button

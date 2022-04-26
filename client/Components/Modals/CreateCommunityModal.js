@@ -4,6 +4,7 @@ import {
   View,
   Image,
   ScrollView,
+  FlatList,
   TouchableOpacity,
 } from "react-native";
 import {
@@ -11,16 +12,19 @@ import {
   Modal,
   Card,
   Button,
+  Layout,
   Icon,
   Divider,
   Input,
   useTheme,
+  Toggle,
   CheckBox,
 } from "@ui-kitten/components";
 import tw from "twrnc";
-import ImagePicker from "../ImagePicker";
+import ImagePicker from "../ImagePickerComponent";
 import {
   addCommunity,
+  getCommunities,
   pushImagesToServer,
 } from "../../Services/ServerCommunication";
 
@@ -32,9 +36,10 @@ export const CreateCommunityModal = (props) => {
   const [communityDescription, setCommunityDescription] = React.useState("");
   const [communityPassword, setCommunityPassword] = React.useState(null);
   const [communityPrivate, setCommunityPrivate] = React.useState(false);
-  const [image, setImage] = React.useState({
-    uri: "https://www.uppsalahem.se/globalassets/bilder/omradesbilder/7002/Rackarberget_3.jpg?w=320",
-  });
+  const [communityImageUrl, setCommunityImageUrl] = React.useState("");
+  const [image, setImage] = React.useState(
+    "https://www.uppsalahem.se/globalassets/bilder/omradesbilder/7002/Rackarberget_3.jpg?w=320"
+  );
   const [chooseImageVisible, setChooseImageVisible] = React.useState(false);
 
   const [missingInformation, setMissingInformation] = React.useState(false);
@@ -75,7 +80,7 @@ export const CreateCommunityModal = (props) => {
       <>
         <Image
           style={tw`rounded-full mt-2`}
-          source={{ uri: image.uri, height: 80, width: 80 }}
+          source={{ uri: image, height: 80, width: 80 }}
         />
         <TouchableOpacity
           onPress={() => {
@@ -99,9 +104,9 @@ export const CreateCommunityModal = (props) => {
       >
         <Card disabled={true}>
           <ImagePicker
-            context="CommunityImage"
+            context="CommunityImage" //TODO
             updateResult={(result) => {
-              setImage(result);
+              setImage(result.uri);
             }}
           />
           <Button
@@ -117,12 +122,14 @@ export const CreateCommunityModal = (props) => {
 
   async function createCommunity() {
     setMissingInformation(false);
-    if (communityName == "" || communityDescription == "") {
-      setMissingInformation(true);
-    } else if (communityPrivate && communityPassword == null) {
+    if (
+      communityName == "" ||
+      communityDescription == "" ||
+      communityImageUrl == ""
+    ) {
       setMissingInformation(true);
     } else {
-      let newImgUrl = await pushImagesToServer(image, "communityimages", null);
+      const newImgUrl = pushImagesToServer(image, "communityimages", null);
       let communityData = {
         name: communityName,
         location: null,
@@ -132,13 +139,14 @@ export const CreateCommunityModal = (props) => {
         password: communityPassword,
       };
       const result = await addCommunity(communityData);
+      props.getComm();
       props.setVisible(false);
       setCommunityName("");
       setCommunityDescription("");
       setCommunityPrivate(false);
-      setImage({
-        uri: "https://www.uppsalahem.se/globalassets/bilder/omradesbilder/7002/Rackarberget_3.jpg?w=320",
-      });
+      setCommunityImageUrl(
+        "https://www.uppsalahem.se/globalassets/bilder/omradesbilder/7002/Rackarberget_3.jpg?w=320"
+      );
       setCommunityPassword(null);
     }
   }

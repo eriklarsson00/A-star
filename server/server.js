@@ -45,6 +45,14 @@ io.on("connection", (socket) => {
     `Connected to WebSocket server\n ${connectedClients()}`
   );
 
+<<<<<<< HEAD
+=======
+  socket.on("communities", (communities) => {
+    console.log(communities);
+    socket.join(communities.ids);
+  });
+
+>>>>>>> main
   socket.broadcast.emit(
     "message",
     `A new client connected to the WebSocket server\n ${connectedClients()}`
@@ -137,7 +145,14 @@ app
   .get(offers.getOffers)
   .post((req, res) => {
     offers.addOffer(req, res);
+<<<<<<< HEAD
     io.sockets.emit("offer", req.body);
+=======
+    const communities = req.body.communities;
+    communities?.forEach((community) => {
+      io.sockets.to(community).emit("offer", req.body.offer);
+    });
+>>>>>>> main
   });
 
 app
@@ -166,7 +181,14 @@ app
   .get(requests.getRequests)
   .post((req, res) => {
     requests.addRequest(req, res);
+<<<<<<< HEAD
     io.sockets.emit("offer", req.body.offer);
+=======
+    const communities = req.body.communities;
+    communities?.forEach((community) => {
+      io.sockets.to(community).emit("request", req.body.request);
+    });
+>>>>>>> main
   });
 
 app
@@ -187,10 +209,14 @@ app.route("/requests/other/:user").get(requests.getOtherRequestsCommunity);
 app
   .route("/transactions")
   .get(transactions.getTransactions)
+<<<<<<< HEAD
   .post((req, res) => {
     transactions.addTransaction(req, res);
     io.sockets.emit("transaction", req.body);
   });
+=======
+  .post(transactions.addTransaction);
+>>>>>>> main
 
 app
   .route("/transactions/:id")
@@ -213,12 +239,21 @@ app
   .get(transactions.getTransactionCommunity);
 
 app
+<<<<<<< HEAD
   .route("/transactions/accepted/owner/:id")
   .get(transactions.getTransactionAcceptedOwner);
 
 app
   .route("/transactions/accepted/responder/:id")
   .get(transactions.getTransactionAcceptedResponder);
+=======
+  .route("/transactions/ongoing/owner/:id")
+  .get(transactions.getTransactionOngoingOwner);
+
+app
+  .route("/transactions/ongoing/responder/:id")
+  .get(transactions.getTransactionOngoingResponder);
+>>>>>>> main
 
 app
   .route("/transactions/pending/user/:id")
@@ -229,9 +264,12 @@ app.route("/transactions/user/:id").get(transactions.getTransactionUser);
 app
   .route("/transactions/responder/:id")
   .get(transactions.getResponderTransactions);
+<<<<<<< HEAD
 
 // Okänt användningsområde (dessutom icke fungerande)
 //app.route("/transactions/lister/:id").get(transactions.getListerTransactions);
+=======
+>>>>>>> main
 
 //*************************IMAGES*********************
 

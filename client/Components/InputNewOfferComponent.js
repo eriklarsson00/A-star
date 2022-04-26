@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, TouchableOpacity, Image } from "react-native";
+import { StyleSheet, TouchableOpacity, Image, View } from "react-native";
 import {
   Button,
   useTheme,
@@ -10,10 +10,12 @@ import {
   Modal,
   Card,
   Text,
+  Select,
+  SelectItem,
 } from "@ui-kitten/components";
 import tw from "twrnc";
-import ImagePicker from "./ImagePicker";
-import BarCodeScannerComp from "./BarCodeScanner.component";
+import ImagePicker from "./ImagePickerComponent";
+import BarCodeScannerComp from "./BarCodeScannerComponent";
 import { ProfileImagePath, ItemImagePath } from "../assets/AppContext";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
@@ -27,6 +29,7 @@ export const InputNewOfferComponent = (props) => {
     product_text: props.product,
     description: "",
     quantity: "",
+    unit: "",
     time_of_purchase: new Date(),
     imgurl: "",
     broken_pkg: false,
@@ -41,9 +44,11 @@ export const InputNewOfferComponent = (props) => {
   const [dateExp, setDateExp] = React.useState();
   const [visible, setVisible] = React.useState(false);
 
+  const [selectedUnitIndex, setSelectedUnitIndex] = React.useState();
+
   const newDate = new Date();
-  const product = props.product;
   const theme = useTheme();
+  const units = ["ml", "dl", "l", "g", "kg", "st"];
 
   const CollapseIcon = () => (
     <Icon style={styles.iconCollapse} fill="grey" name="collapse-outline" />
@@ -135,20 +140,14 @@ export const InputNewOfferComponent = (props) => {
     setProductInfo({ ...productInfo, time_of_expiration: date });
   };
 
+  //printar ut units i drop down menu
+  const printUnits = (title) => <SelectItem key={title} title={title} />;
+
   if (barCodeShow === false) {
     return (
       <Layout style={{ backgroundColor: theme["color-basic-300"] }}>
         {productVisible && (
-          <Layout
-            style={{
-              borderWidth: 1,
-              borderColor: "gainsboro",
-              marginLeft: 10,
-              marginRight: 10,
-              paddingTop: 15,
-              paddingBottom: 15,
-            }}
-          >
+          <Layout style={styles.itemContainer}>
             <Layout style={{ flexDirection: "row" }}>
               <TouchableOpacity
                 onPress={() => {
@@ -157,13 +156,7 @@ export const InputNewOfferComponent = (props) => {
                 style={styles.AddIconContainer}
               >
                 <Image
-                  style={{
-                    width: 70,
-                    height: 70,
-                    borderWidth: 1,
-                    borderColor: "grey",
-                    borderRadius: 4,
-                  }}
+                  style={styles.featureImage}
                   source={{
                     uri:
                       image === null
@@ -182,13 +175,7 @@ export const InputNewOfferComponent = (props) => {
                 style={styles.AddIconContainer}
               >
                 <Image
-                  style={{
-                    width: 70,
-                    height: 70,
-                    borderWidth: 1,
-                    borderColor: "grey",
-                    borderRadius: 4,
-                  }}
+                  style={styles.featureImage}
                   source={{
                     uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKFtLJb-9ebWHz70NK37A_9_bXjULFjI4M7Q&usqp=CAU",
                     height: 150,
@@ -227,14 +214,31 @@ export const InputNewOfferComponent = (props) => {
                 setProductInfo({ ...productInfo, description: value })
               }
             />
-            <Input
-              style={tw`pb-2 pl-5 pr-5`}
-              placeholder="Antal"
-              value={productInfo.quantity}
-              onChangeText={(value) =>
-                setProductInfo({ ...productInfo, quantity: value })
-              }
-            />
+            <View style={{ flexDirection: "row" }}>
+              <Input
+                style={[tw`pb-2 pl-5 pr-5`, { width: 150 }]}
+                placeholder="Antal"
+                value={productInfo.quantity}
+                onChangeText={(value) =>
+                  setProductInfo({ ...productInfo, quantity: value })
+                }
+              />
+              <Select
+                value={units[selectedUnitIndex - 1]}
+                selectedIndex={selectedUnitIndex}
+                onSelect={(index) => {
+                  setSelectedUnitIndex(index);
+                  setProductInfo({
+                    ...productInfo,
+                    unit: units[index - 1],
+                  });
+                }}
+                placeholder="enhet"
+                style={{ width: 115 }}
+              >
+                {units.map(printUnits)}
+              </Select>
+            </View>
             <Layout style={{ flexDirection: "row", marginBottom: 5 }}>
               <Text style={tw`pl-5 pt-1 text-base`}> Datum varan köptes: </Text>
               <DateTimePicker
@@ -286,7 +290,6 @@ export const InputNewOfferComponent = (props) => {
                   id="createItem"
                   onPress={() => {
                     handleInfo();
-                    console.log(productInfo);
                   }}
                 >
                   Skapa vara
@@ -297,13 +300,10 @@ export const InputNewOfferComponent = (props) => {
         )}
         {!productVisible && (
           <Layout
-            style={{
-              width: 370,
-              alignSelf: "center",
-              paddingBottom: 5,
-              paddingTop: 5,
-              backgroundColor: theme["color-basic-300"],
-            }}
+            style={[
+              styles.compactProductContainer,
+              { backgroundColor: theme["color-basic-300"] },
+            ]}
           >
             <Button
               style={{
@@ -331,17 +331,32 @@ export const InputNewOfferComponent = (props) => {
 };
 
 const styles = StyleSheet.create({
+  AddIconContainer: {
+    backgroundColor: "white",
+    justifyContent: "center",
+    alignContent: "center",
+    paddingLeft: 20,
+    paddingBottom: 20,
+  },
+  backdrop: {
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  featureImage: {
+    width: 70,
+    height: 70,
+    borderWidth: 1,
+    borderColor: "grey",
+    borderRadius: 4,
+  },
   checkbox: {
     paddingTop: 10,
     paddingLeft: 20,
   },
-  lockStyle: {
-    width: 55,
-    height: 55,
-  },
-  iconCollapse: {
-    width: 30,
-    height: 30,
+  compactProductContainer: {
+    width: 370,
+    alignSelf: "center",
+    paddingBottom: 5,
+    paddingTop: 5,
   },
   collapse: {
     width: 30,
@@ -349,14 +364,20 @@ const styles = StyleSheet.create({
     height: 10,
     paddingBottom: 10,
   },
-  backdrop: {
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  iconCollapse: {
+    width: 30,
+    height: 30,
   },
-  AddIconContainer: {
-    backgroundColor: "white",
-    justifyContent: "center",
-    alignContent: "center",
-    paddingLeft: 20,
-    paddingBottom: 20,
+  itemContainer: {
+    borderWidth: 1,
+    borderColor: "gainsboro",
+    marginLeft: 10,
+    marginRight: 10,
+    paddingTop: 15,
+    paddingBottom: 15,
+  },
+  lockStyle: {
+    width: 55,
+    height: 55,
   },
 });
