@@ -156,7 +156,6 @@ const pushImagesToServer = async (image, serverPath, userId) => {
 };
 
 const postOffer = async (offers, usercommunities) => {
-  console.log("inne i post offer ");
   const upload_obj = {
     offer: offers,
     communities: usercommunities,
