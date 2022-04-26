@@ -332,7 +332,7 @@ function ownerConfirmTransaction(req, res) {
 
       if (!t || !t[0] || t[0].lenght == 0) {
         res.json("no entry found");
-      } else if (t.status === "accepted") {
+      } else if (t[0].status === "accepted") {
         updateSql = `
           UPDATE Transactions SET status = 'ownerConfirmed'
           WHERE id = ${id};
@@ -379,7 +379,7 @@ function responderConfirmTransaction(req, res) {
 
       if (id == undefined || !t || !t[0] || t[0].lenght == 0) {
         return res.json("no entry found");
-      } else if (t.status === "accepted") {
+      } else if (t[0].status === "accepted") {
         updateSql = `
           UPDATE Transactions SET status = 'responderConfirmed'
           WHERE id = ${id};

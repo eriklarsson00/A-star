@@ -67,7 +67,7 @@ BEGIN
     INSERT INTO CommunityUser (community_id, user_id) VALUES
     (1, 1), (2, 1), (3, 1), (4, 1), (5, 1), (6, 1), (1, 2), (1, 3), (1, 4), (2, 2), 
     (3, 4), (1, 5), (2, 6), (3, 7), (4, 8), (5, 9), (6, 10), (1, 11), (6, 5), (5, 6), 
-    (4, 7), (3, 8), (2, 9), (1, 10), (2, 11), (3, 4), (4, 5);
+    (4, 7), (3, 8), (2, 9), (1, 10), (2, 11), (4, 5);
 
     INSERT INTO CommunityListings (community_id, request_id, offer_id) VALUES
     (1, 1, NULL), (1, 2, NULL), (1, 3, NULL), (1, 8, NULL), (1, 9, NULL), (1, 10, NULL), 
