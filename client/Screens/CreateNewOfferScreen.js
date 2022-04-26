@@ -136,7 +136,7 @@ const CreateNewOfferScreen = ({ navigation }) => {
     );
     product.id = undefined;
     product.imgurl = imgurl;
-    postOffer(product, communities);
+    await postOffer(product, communities);
   };
 
   const publishOffer = () => {

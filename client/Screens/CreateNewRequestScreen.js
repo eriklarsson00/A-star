@@ -113,7 +113,7 @@ const CreateNewRequestScreen = ({ navigation }) => {
   // Förbereder objectet (efterfrågade produkten) som ska skapas
   const prepareProduct = async (product, communities) => {
     product.id = undefined; // sätter den "lokala" id till undefined för att db ska strunta i det
-    postRequest(product, communities);
+    await postRequest(product, communities);
   };
 
   // Ska skicka alla skapade varor till server
