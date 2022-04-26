@@ -26,10 +26,10 @@ import {
 } from "../Services/ServerCommunication";
 import { host } from "../Services/ServerHost";
 import { RequestedInfoModal } from "./Modals/RequestedInfoModal";
-import { TransactionInfoModal } from "./Modals/TransactionInfoModal";
 import { GiveProductModal } from "./Modals/GiveProductModal";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { MyRequestsModal } from "./Modals/MyRequestsModal";
+import { RequestTransactionInfoModal } from "./Modals/RequestTransactionModal";
 export const ItemRequestedComponent = () => {
   const { userInfo, setUserInfo } = React.useContext(UserInfo);
   const { myCommunitysInfo, setMyCommunitysInfo } =
@@ -161,8 +161,7 @@ export const ItemRequestedComponent = () => {
           toggleModal(item);
         }}
       />
-      <MyRequestsModal item={item} toggleModal={toggleModal} />
-      <TransactionInfoModal
+      <RequestTransactionInfoModal
         item={item}
         text={"vill ge dig denna vara"}
         toggleModal={toggleModal}
