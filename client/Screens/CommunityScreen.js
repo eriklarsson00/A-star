@@ -58,13 +58,13 @@ export const CommunityScreen = () => {
   const theme = useTheme();
 
   React.useEffect(() => {
-    const getComm = async () => {
-      setDataBaseCommunities(await getAllCommunities());
-    };
     getComm();
     setMyCommunityNames(myCommunitysInfo.map((comm) => comm.name));
   }, [isFocused]);
 
+  const getComm = async () => {
+    setDataBaseCommunities(await getAllCommunities());
+  };
   //FUNKTIONER SOM RETURNERAR KOD
   const printCommunity = ({ item, index }) => (
     <CommunityComponent
@@ -267,6 +267,7 @@ export const CommunityScreen = () => {
       <CreateCommunityModal
         visible={createCommunityVisible}
         setVisible={setCreateCommunityVisible}
+        getComm={getComm}
       />
       <Modal
         visible={joinCommunity}
