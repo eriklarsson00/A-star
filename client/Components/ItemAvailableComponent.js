@@ -52,8 +52,6 @@ export const ItemAvailableComponent = () => {
     setLoading(true);
     let myItems = await getMyOffers(userId);
     let otherItems = await getOffers(userId, communityIds);
-    console.log("------------------------");
-    //console.log(co);
     let transactions = await getPendingTransactions(userId);
 
     setTransactions(transactions);
