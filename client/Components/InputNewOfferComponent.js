@@ -15,8 +15,8 @@ import {
   Tooltip,
 } from "@ui-kitten/components";
 import tw from "twrnc";
-import ImagePicker from "./ImagePicker";
-import BarCodeScannerComp from "./BarCodeScanner.component";
+import ImagePickerComp from "./ImagePickerComponent";
+import BarCodeScannerComp from "./BarCodeScannerComponent";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 //TODO: Inte kunna "skapa" en vara utan att ha skrivit ett namn eller påbörjat att skapa den
@@ -93,7 +93,7 @@ export const InputNewOfferComponent = (props) => {
         }}
       >
         <Card disabled={true}>
-          <ImagePicker
+          <ImagePickerComp
             context="ItemImage"
             updateResult={(result) => {
               setImage(result);

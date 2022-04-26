@@ -27,6 +27,7 @@ const CreateNewRequestScreen = ({ navigation }) => {
   const [productInfo, setProductInfo] = React.useState([]);
   const [compId, setCompId] = React.useState(0);
   const [count, setCount] = React.useState([0]);
+  const [deleted, setDeleted] = React.useState([]);
   const [createPost, setCreatePost] = React.useState(false);
   const [chosenCommunity, setChosenCommunity] = React.useState([]);
   const [tooltipVisible, setTooltipVisible] = React.useState(false);
@@ -41,6 +42,7 @@ const CreateNewRequestScreen = ({ navigation }) => {
   // koppla mellan parent och child (InpuNewRequestComponent)
   // Funktionen ska lägga in ett nytt object i listan av alla objekt i inlägget
   const infoHandler = (input) => {
+    console.log("infoHandler");
     setProductInfo((productInfo) => [...productInfo, input]);
   };
 
@@ -51,33 +53,15 @@ const CreateNewRequestScreen = ({ navigation }) => {
 
   // ska ta bort en skapad vara OBS inte inlägg
   const handleDelete = (itemId) => {
-    console.log("INNAN");
-    console.log(productInfo);
+    console.log(itemId);
+    console.log("COUNTEN");
+    console.log(count);
     setProductInfo(
       productInfo.filter((item) => {
-        item.id !== itemId;
+        return item.id !== itemId;
       })
     );
-
-    // let newData = productInfo.filter((item) => {
-    //   item.id !== itemId;
-    // });
-    // console.log("NEEEW");
-    // console.log(newData);
-    // //setProductInfo(newData);
-    // //setCount((count) => [...count, compId]);
-    // setProductInfo(newData);
-    console.log("EFTER");
-    console.log(productInfo);
-
-    // setMyCommunitysInfo(
-    //   myCommunitysInfo.filter((community) => community.id != props.community.id)
-    // );
-    // const newComps = count.filter((item) => {
-    //   return item !== itemId;
-    // });
-    setCount(count.filter((item) => item !== itemId));
-    //console.log(count);
+    setDeleted((deleted) => [...deleted, itemId]);
   };
 
   // Ska skapa en ny vara/produkt i inlägget
@@ -91,6 +75,7 @@ const CreateNewRequestScreen = ({ navigation }) => {
       if (productInfo[i].id === inputId) {
         let newProductInfo = [...productInfo];
         newProductInfo[i] = updatedItem;
+        console.log("updateItem");
         setProductInfo(newProductInfo);
         return;
       }
@@ -99,18 +84,24 @@ const CreateNewRequestScreen = ({ navigation }) => {
   };
 
   // Lista av enskilda efterfrågande varor
-  const addComp = ({ item, index }) => (
-    <Layout>
-      <InputNewRequestComponent
-        setProductInfo={infoHandler}
-        id={item}
-        user_id={userInfo.id}
-        setId={addId}
-        setChange={updateItem}
-        handleDel={handleDelete}
-      />
-    </Layout>
-  );
+  const addComp = ({ item, index }) => {
+    if (deleted.includes(item)) {
+      return;
+    } else {
+      return (
+        <Layout>
+          <InputNewRequestComponent
+            setProductInfo={infoHandler}
+            id={item}
+            user_id={userInfo.id}
+            setId={addId}
+            setChange={updateItem}
+            handleDel={handleDelete}
+          />
+        </Layout>
+      );
+    }
+  };
 
   // funktion som behövs för listor
   const giveKey = ({ item, index }) => reuturn(item);
@@ -143,10 +134,7 @@ const CreateNewRequestScreen = ({ navigation }) => {
 
   // Förbereder objectet (efterfrågade produkten) som ska skapas
   const prepareProduct = async (product, communities) => {
-    console.log("prep prod");
-    console.log(communities);
     product.id = undefined; // sätter den "lokala" id till undefined för att db ska strunta i det
-    console.log("nu händer det");
     postRequest(product, communities);
   };
 
@@ -211,7 +199,10 @@ const CreateNewRequestScreen = ({ navigation }) => {
         <Button
           style={{ width: 300, alignSelf: "center" }}
           onPress={() => {
-            setCreatePost(true);
+            console.log(productInfo);
+            console.log(count);
+            console.log(deleted);
+            //setCreatePost(true);
           }}
         >
           {" "}

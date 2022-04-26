@@ -186,7 +186,6 @@ export const InputNewRequestComponent = (props) => {
                   }}
                   id="deleteItem"
                   onPress={() => {
-                    console.log(productInfo.id);
                     props.handleDel(productInfo.id);
                   }}
                 >
