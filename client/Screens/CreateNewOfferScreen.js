@@ -32,7 +32,10 @@ const CreateNewOfferScreen = ({ navigation }) => {
   const [barCodeShow, setBarCodeShow] = React.useState(false);
   const [createPost, setCreatePost] = React.useState(false);
   const [chosenCommunity, setChosenCommunity] = React.useState([]);
-  const [tooltipVisible, setTooltipVisible] = React.useState(false);
+  const [communityTooltipVisible, setCommunityTooltipVisible] =
+    React.useState(false);
+  const [createTooltipVisible, setCreateTooltipVisible] = React.useState(false);
+
   const [images, setImages] = React.useState([]);
 
   //ICONS
@@ -127,6 +130,13 @@ const CreateNewOfferScreen = ({ navigation }) => {
     setChosenCommunity((chosenCommunity) => [...chosenCommunity, community]);
   };
 
+  const tryCreatePost = () => {
+    if (productInfo.length == 0) {
+      console.log("tooom");
+    }
+    // setCreatePost(true);
+  };
+
   // förbereder objektet för att kunna skickas till servern
   const prepareProduct = async (product, communities) => {
     let imgurl = await pushImagesToServer(
@@ -136,25 +146,35 @@ const CreateNewOfferScreen = ({ navigation }) => {
     );
     product.id = undefined;
     product.imgurl = imgurl;
-    postOffer(product, communities);
+    await postOffer(product, communities);
   };
 
   const publishOffer = () => {
     const communityIds = chosenCommunity.map(({ id }) => id);
 
-    productInfo.forEach((product) => {
-      prepareProduct(product, communityIds);
-      console.log(communityIds);
+    productInfo.forEach(async (product) => {
+      await prepareProduct(product, communityIds);
     });
     //skickar upp varje bild till s3 när vi publicerar inlägget
   };
+
+  //Skapa-inläggknappen
+  const createPostButton = () => (
+    <Button
+      style={{ width: 300, alignSelf: "center" }}
+      onPress={setCreateTooltipVisible}
+    >
+      {" "}
+      Skapa Inlägg
+    </Button>
+  );
 
   // Knapp som ska publicera inlägget
   const renderPublishButton = () => (
     <Button
       onPress={() => {
         if (chosenCommunity.length == 0) {
-          setTooltipVisible(true);
+          setCommunityTooltipVisible(true);
         } else {
           publishOffer();
           setCreatePost(false);
@@ -199,15 +219,15 @@ const CreateNewOfferScreen = ({ navigation }) => {
             backgroundColor: "rgba(255, 250, 240, 0.08)",
           }}
         >
-          <Button
-            style={{ width: 300, alignSelf: "center" }}
-            onPress={() => {
-              setCreatePost(true);
-            }}
-          >
-            {" "}
-            Skapa Inlägg
-          </Button>
+          <Layout style={{ paddingTop: 10 }}>
+            <Tooltip
+              anchor={createPostButton}
+              visible={createTooltipVisible}
+              onBackdropPress={() => setCreateTooltipVisible(false)}
+            >
+              Du har inte skapat några inlägg!
+            </Tooltip>
+          </Layout>
         </Layout>
         <Modal
           visible={createPost}
@@ -237,8 +257,8 @@ const CreateNewOfferScreen = ({ navigation }) => {
             <Layout style={{ paddingTop: 10 }}>
               <Tooltip
                 anchor={renderPublishButton}
-                visible={tooltipVisible}
-                onBackdropPress={() => setTooltipVisible(false)}
+                visible={communityTooltipVisible}
+                onBackdropPress={() => setCommunityTooltipVisible(false)}
               >
                 Du måste välja ett grannskap först!
               </Tooltip>

@@ -9,6 +9,7 @@ import {
   Text,
   Select,
   SelectItem,
+  Tooltip,
 } from "@ui-kitten/components";
 import tw from "twrnc";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -26,6 +27,7 @@ export const InputNewRequestComponent = (props) => {
   const [productVisible, setProductVisible] = React.useState(true);
   const [created, setCreated] = React.useState(false);
   const [dateExp, setDateExp] = React.useState(new Date());
+  const [toolTipVisible, setToolTipVisible] = React.useState(false);
 
   const newDate = new Date(); // behövs för kalendern
   const theme = useTheme();
@@ -40,6 +42,16 @@ export const InputNewRequestComponent = (props) => {
 
   // Sker när användaren "skapar" en vara (OBS inte inlägget)
   const handleInfo = () => {
+    if (
+      productInfo.product_text === "" ||
+      productInfo.quantity === "" ||
+      productInfo.unit === "" ||
+      productInfo.time_of_expiration === null
+    ) {
+      setToolTipVisible(true);
+      return;
+    }
+
     if (!created) {
       props.setId(1);
       setCreated(true);
@@ -67,6 +79,18 @@ export const InputNewRequestComponent = (props) => {
     // TODO: ska ta bort den skapade varan!
   };
 
+  const publishButton = () => (
+    <Button
+      style={{ width: 120 }}
+      id="createItem"
+      onPress={() => {
+        handleInfo();
+      }}
+    >
+      Skapa vara
+    </Button>
+  );
+
   return (
     <Layout style={{ backgroundColor: theme["color-basic-300"] }}>
       {productVisible && (
@@ -82,7 +106,7 @@ export const InputNewRequestComponent = (props) => {
           </Layout>
           <Input
             style={tw`pb-2 pl-5 pr-5`}
-            placeholder="Typ av vara"
+            placeholder="Typ av vara*"
             value={productInfo.product_text}
             onChangeText={(value) =>
               setProductInfo({
@@ -104,7 +128,7 @@ export const InputNewRequestComponent = (props) => {
           <View style={{ flexDirection: "row" }}>
             <Input
               style={[tw`pb-2 pl-5 pr-5`, { width: 150 }]}
-              placeholder="Antal"
+              placeholder="Antal*"
               value={productInfo.quantity}
               onChangeText={(value) =>
                 setProductInfo({ ...productInfo, quantity: value })
@@ -117,11 +141,11 @@ export const InputNewRequestComponent = (props) => {
                 setSelectedUnitIndex(index);
                 setProductInfo({
                   ...productInfo,
-                  unit: units[selectedUnitIndex - 1],
+                  unit: units[index - 1],
                 });
               }}
-              placeholder="enhet"
-              style={{ width: 115 }}
+              placeholder="enhet *"
+              style={{ width: 125 }}
             >
               {units.map(printUnits)}
             </Select>
@@ -162,7 +186,8 @@ export const InputNewRequestComponent = (props) => {
                   }}
                   id="deleteItem"
                   onPress={() => {
-                    handleDelete();
+                    console.log(productInfo.id);
+                    props.handleDel(productInfo.id);
                   }}
                 >
                   Ta bort vara
@@ -170,15 +195,15 @@ export const InputNewRequestComponent = (props) => {
               </Layout>
             )}
             {!created && (
-              <Button
-                style={{ width: 120 }}
-                id="createItem"
-                onPress={() => {
-                  handleInfo();
-                }}
-              >
-                Skapa vara
-              </Button>
+              <Layout style={{ paddingTop: 10 }}>
+                <Tooltip
+                  anchor={publishButton}
+                  visible={toolTipVisible}
+                  onBackdropPress={() => setToolTipVisible(false)}
+                >
+                  Du måste fylla alla obligatoriska fält!
+                </Tooltip>
+              </Layout>
             )}
           </Layout>
         </Layout>
@@ -203,7 +228,7 @@ export const InputNewRequestComponent = (props) => {
           >
             <Text style={{ fontSize: 20 }}>{productInfo.product_text}</Text>
             <Text>
-              {"\n"}Antal: {productInfo.quantity}
+              {"\n"}Antal: {productInfo.quantity} {productInfo.unit}
             </Text>
           </Button>
         </Layout>

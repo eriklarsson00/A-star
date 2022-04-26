@@ -49,10 +49,40 @@ const CreateNewRequestScreen = ({ navigation }) => {
     setCompId(compId + input);
   };
 
+  // ska ta bort en skapad vara OBS inte inlägg
+  const handleDelete = (itemId) => {
+    console.log("INNAN");
+    console.log(productInfo);
+    setProductInfo(
+      productInfo.filter((item) => {
+        item.id !== itemId;
+      })
+    );
+
+    // let newData = productInfo.filter((item) => {
+    //   item.id !== itemId;
+    // });
+    // console.log("NEEEW");
+    // console.log(newData);
+    // //setProductInfo(newData);
+    // //setCount((count) => [...count, compId]);
+    // setProductInfo(newData);
+    console.log("EFTER");
+    console.log(productInfo);
+
+    // setMyCommunitysInfo(
+    //   myCommunitysInfo.filter((community) => community.id != props.community.id)
+    // );
+    // const newComps = count.filter((item) => {
+    //   return item !== itemId;
+    // });
+    setCount(count.filter((item) => item !== itemId));
+    //console.log(count);
+  };
+
   // Ska skapa en ny vara/produkt i inlägget
   const newComp = () => {
-    const length = count.length;
-    setCount((count) => [...count, length]);
+    setCount((count) => [...count, compId]);
   };
 
   // ska updatera en vara, INTE skapa en ny
@@ -73,10 +103,11 @@ const CreateNewRequestScreen = ({ navigation }) => {
     <Layout>
       <InputNewRequestComponent
         setProductInfo={infoHandler}
-        id={compId}
+        id={item}
         user_id={userInfo.id}
         setId={addId}
         setChange={updateItem}
+        handleDel={handleDelete}
       />
     </Layout>
   );
@@ -112,13 +143,17 @@ const CreateNewRequestScreen = ({ navigation }) => {
 
   // Förbereder objectet (efterfrågade produkten) som ska skapas
   const prepareProduct = async (product, communities) => {
+    console.log("prep prod");
+    console.log(communities);
     product.id = undefined; // sätter den "lokala" id till undefined för att db ska strunta i det
+    console.log("nu händer det");
     postRequest(product, communities);
   };
 
   // Ska skicka alla skapade varor till server
   const publishOffer = () => {
     const communityIds = chosenCommunity.map(({ id }) => id); // tar ut alla ids från "mina" communities
+    console.log(communityIds);
     productInfo.forEach((product) => {
       prepareProduct(product, communityIds); // går igenom alla efterfrågningar som skapats
     });
