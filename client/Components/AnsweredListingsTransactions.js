@@ -24,8 +24,6 @@ export const AnsweredListingsTransactions = () => {
     setLoading(true);
     let rtransactions = await getOngoingTransactionsResponder(uid);
     setResponderTransactions(rtransactions);
-    console.log("-------BESVARADE-------");
-    console.log(responderTransactions);
     setLoading(false);
   };
 
@@ -59,19 +57,11 @@ export const AnsweredListingsTransactions = () => {
     await responderConfirmTransaction(id);
   };
 
-  const renderTakeOrGive = (offer) => {
-    if (offer) {
-      return "(Tas emot)";
-    } else {
-      return "(Ges bort)";
-    }
-  };
-
   const whatToRender = (opt1, opt2) => {
     if (opt1 !== null) {
-      return `${opt1}`;
+      return `${opt1} `;
     } else {
-      return `${opt2}`;
+      return `${opt2} `;
     }
   };
 
@@ -100,10 +90,7 @@ export const AnsweredListingsTransactions = () => {
         <ListItem
           style={styles.container}
           onPress={() => toggleModal(item)}
-          title={
-            whatToRender(item.offer_product, item.request_product) +
-            renderTakeOrGive(item.offer_product)
-          }
+          title={whatToRender(item.offer_product, item.request_product)}
           description={whatToRender(
             item.offer_description,
             item.request_description
