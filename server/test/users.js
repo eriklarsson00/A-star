@@ -35,7 +35,7 @@ export function userTests(server) {
     it("should get user by email", (done) => {
       chai
         .request(server)
-        .get("/users/email/anja.persson@icloud.com")
+        .get("/users/email/anja.pärsson@icloud.com")
         .end((err, res) => {
           res.should.have.status(200);
           res.text.length.should.not.be.eql(0);

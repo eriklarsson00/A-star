@@ -310,15 +310,11 @@ export function transactionTests(server) {
     });
   });
 
-  describe("/transactions/lister", () => {
-    // ?
-  });
-
-  describe("/transactions/accepted/user", () => {
-    it("should get accepted transactions for a user", function (done) {
+  describe("/transactions/ongoing/owner", () => {
+    it("should get ongoing transactions for an owner", function (done) {
       chai
         .request(server)
-        .get("/transactions/accepted/user/1")
+        .get("/transactions/ongoing/owner/1")
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -329,11 +325,11 @@ export function transactionTests(server) {
           done();
         });
     });
-    it("should not get accepted transactions for a user", function (done) {
+    it("should not get ongoing transactions for an owner", function (done) {
       // Invalid id
       chai
         .request(server)
-        .get("/transactions/accepted/user/InvalidId")
+        .get("/transactions/ongoing/owner/InvalidId")
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -346,7 +342,52 @@ export function transactionTests(server) {
       // Bad id
       chai
         .request(server)
-        .get("/transactions/accepted/user/-1")
+        .get("/transactions/ongoing/owner/-1")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(200);
+          res.body.should.be.a("array");
+          res.body.length.should.be.eql(0);
+          done();
+        });
+    });
+  });
+
+  describe("/transactions/ongoing/responder", () => {
+    it("should get ongoing transactions for a responder", function (done) {
+      chai
+        .request(server)
+        .get("/transactions/ongoing/responder/1")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(200);
+          res.body.should.be.a("array");
+          res.body.length.should.not.be.eql(0);
+          done();
+        });
+    });
+    it("should not get ongoing transactions for a responder", function (done) {
+      // Invalid id
+      chai
+        .request(server)
+        .get("/transactions/ongoing/responder/InvalidId")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(400);
+          res.body.should.be.a("string");
+          res.body.length.should.not.be.eql(0);
+        });
+
+      // Bad id
+      chai
+        .request(server)
+        .get("/transactions/ongoing/responder/-1")
         .end((err, res) => {
           if (err) {
             console.error(err);

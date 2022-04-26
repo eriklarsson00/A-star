@@ -106,13 +106,13 @@ function getTransactionCommunity(req, res) {
     );
 }
 
-function getTransactionAcceptedOwner(req, res) {
+function getTransactionOngoingOwner(req, res) {
   const id = parseInt(req.params.id);
 
   if (isNaN(id)) {
     return res
       .status(400)
-      .json("Usage: /transactions/accepted/owner/:id. id has to be a number");
+      .json("Usage: /transactions/ongoing/owner/:id. id has to be a number");
   }
 
   const sql = `
@@ -124,7 +124,7 @@ function getTransactionAcceptedOwner(req, res) {
     LEFT JOIN Offers O    ON T.offer_id = O.id
     LEFT JOIN Requests R  ON T.request_id = R.id
     LEFT JOIN Users U     ON T.responder_id = U.id
-    WHERE status = 'accepted'
+    WHERE status in ('accepted', 'responderConfirmed')
       AND (R.user_id = ${id} OR O.user_id = ${id});
     `;
 
@@ -138,14 +138,14 @@ function getTransactionAcceptedOwner(req, res) {
   );
 }
 
-function getTransactionAcceptedResponder(req, res) {
+function getTransactionOngoingResponder(req, res) {
   const id = parseInt(req.params.id);
 
   if (isNaN(id)) {
     return res
       .status(400)
       .json(
-        "Usage: /transactions/accepted/responder/:id. id has to be a number"
+        "Usage: /transactions/ongoing/responder/:id. id has to be a number"
       );
   }
 
@@ -158,7 +158,7 @@ function getTransactionAcceptedResponder(req, res) {
     LEFT JOIN Offers O    ON T.offer_id = O.id
     LEFT JOIN Requests R  ON T.request_id = R.id
     LEFT JOIN Users U     ON R.user_id = U.id OR O.user_id = U.id
-    WHERE status = 'accepted'
+    WHERE status in ('accepted', 'ownerConfirmed')
       AND T.responder_id = ${id};
     `;
 
@@ -413,8 +413,8 @@ export {
   getResponderTransactions,
   getListerTransactions,
   getTransactionCommunity,
-  getTransactionAcceptedOwner,
-  getTransactionAcceptedResponder,
+  getTransactionOngoingOwner,
+  getTransactionOngoingResponder,
   getTransactionPendingUser,
   getTransactionUser,
   addTransaction,
