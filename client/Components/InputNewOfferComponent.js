@@ -14,8 +14,8 @@ import {
   SelectItem,
 } from "@ui-kitten/components";
 import tw from "twrnc";
-import ImagePicker from "./ImagePicker";
-import BarCodeScannerComp from "./BarCodeScanner.component";
+import ImagePicker from "./ImagePickerComponent";
+import BarCodeScannerComp from "./BarCodeScannerComponent";
 import { ProfileImagePath, ItemImagePath } from "../assets/AppContext";
 import DateTimePicker from "@react-native-community/datetimepicker";
 

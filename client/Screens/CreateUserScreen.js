@@ -13,7 +13,7 @@ import {
   SelectItem,
 } from "@ui-kitten/components";
 import tw from "twrnc";
-import ImagePicker from "../Components/ImagePicker";
+import ImagePicker from "../Components/ImagePickerComponent";
 import {
   ShowCommunityIds,
   MyCommunitysInfo,
