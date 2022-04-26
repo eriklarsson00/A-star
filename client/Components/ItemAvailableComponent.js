@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View, FlatList } from "react-native";
+import { StyleSheet, View, FlatList, Image } from "react-native";
 import {
   Text,
   List,
@@ -22,7 +22,7 @@ import ProductInfoModal from "./Modals/ProductInfoModal";
 import TakeProductModal from "./Modals/TakeProductModal";
 import TransactionInfoModal from "./Modals/TransactionInfoModal";
 import { host } from "../Services/ServerHost";
-
+import tw from "twrnc";
 const TransactionIcon = (props) => (
   <Icon {...props} fill="red" name="info-outline" />
 );
@@ -179,6 +179,13 @@ export const ItemAvailableComponent = () => {
           onPress={() => {
             toggleModal(item);
           }}
+          accessoryLeft={() => {
+          return(
+            <Image
+              style={tw`rounded-full`}
+              source={{ uri: item.imgurl, height: 70, width: 70, marginRight:10 }}
+            />)
+        }}
           // accessoryLeft={"https://picsum.photos/150/150"}
           title={`${item.product_text} ${item.quantity}`}
           description={`${item.description}`}
@@ -188,6 +195,7 @@ export const ItemAvailableComponent = () => {
     );
   };
 
+ 
   const renderMyItems = (
     { item } //Used for rendering my items
   ) => (
@@ -195,10 +203,18 @@ export const ItemAvailableComponent = () => {
       <ListItem
         style={styles.container}
         onPress={() => toggleModal(item)}
+        accessoryLeft={() => {
+          return(
+            <Image
+              style={tw`rounded-full`}
+              source={{ uri: item.imgurl, height: 70, width: 70, marginRight:10 }}
+            />)
+        }}
         accessoryRight={offerHasTransaction(item) ? TransactionIcon : null}
         title={`${item.product_text} ${item.quantity}`}
-        description={`${item.description}`}
-      />
+        description={`${item.description}`}>
+        
+      </ListItem>
       <TransactionInfoModal
         item={item}
         toggleModal={toggleModal}
