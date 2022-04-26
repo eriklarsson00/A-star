@@ -68,7 +68,6 @@ function addOffer(req, res) {
   const body = req.body;
   const offer = body.offer;
   const communities = body.communities;
-  console.log(communities);
 
   if (!body || !offerChecker(offer))
     return res.status(400).json("Invalid offer properties");
@@ -86,14 +85,12 @@ function addOffer(req, res) {
     })
     .then(() => {
       if (offer_id == -1 || !communities) return;
-      communities.forEach((community) => {
-        knex("CommunityListings")
-          .insert({
-            community_id: community,
-            offer_id: offer_id,
-          })
-          .catch((err) => console.log(err));
+      const communityOffers = communities.map((community) => {
+        return { community_id: community, offer_id: offer_id };
       });
+      knex("CommunityListings")
+        .insert(communityOffers)
+        .catch((err) => console.log(err));
     });
 }
 

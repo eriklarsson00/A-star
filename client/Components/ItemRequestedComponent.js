@@ -8,37 +8,49 @@ import {
   Modal,
   Card,
   Spinner,
+  Button,
+  Icon,
 } from "@ui-kitten/components";
 import { useIsFocused } from "@react-navigation/native";
-import { MyCommunitysInfo, UserInfo } from "../assets/AppContext";
+import {
+  MyCommunitysInfo,
+  ShowCommunityIds,
+  UserInfo,
+} from "../assets/AppContext";
 import { io } from "socket.io-client";
-import { getRequests, getMyRequests } from "../Services/ServerCommunication";
+import {
+  getRequests,
+  getMyRequests,
+  addTransaction,
+  getPendingTransactions,
+} from "../Services/ServerCommunication";
 import { host } from "../Services/ServerHost";
-
+import { RequestedInfoModal } from "./Modals/RequestedInfoModal";
+import { GiveProductModal } from "./Modals/GiveProductModal";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { MyRequestsModal } from "./Modals/MyRequestsModal";
+import { RequestTransactionInfoModal } from "./Modals/RequestTransactionModal";
 export const ItemRequestedComponent = () => {
   const { userInfo, setUserInfo } = React.useContext(UserInfo);
   const { myCommunitysInfo, setMyCommunitysInfo } =
     React.useContext(MyCommunitysInfo);
+  const { showCommunityIds } = React.useContext(ShowCommunityIds);
   const [myRequests, setMyRequests] = React.useState([]);
   const [requests, setRequests] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const { community } = React.useContext(MyCommunitysInfo);
   const isFocused = useIsFocused();
-
+  const [date, setDate] = React.useState(new Date());
+  const [takeProduct, setTakeProduct] = React.useState(false);
+  const [transactions, setTransactions] = React.useState([]);
   const userId = userInfo.id;
-  const communityIds = myCommunitysInfo.map(({ id }) => id);
+  const communityIds = showCommunityIds;
 
+  const TransactionIcon = (props) => (
+    <Icon {...props} fill="red" name="info-outline" />
+  );
   //fetch items on focus
   useEffect(() => {
-    const fetchItems = async () => {
-      setLoading(true);
-      let myItems = await getMyRequests(userId);
-      let otherItems = await getRequests(userId, communityIds);
-      setMyRequests(myItems);
-      setRequests(otherItems);
-      setLoading(false);
-    };
-
     if (isFocused) fetchItems();
   }, [isFocused]);
 
@@ -74,10 +86,35 @@ export const ItemRequestedComponent = () => {
     };
   }, []);
 
+  const fetchItems = async () => {
+    setLoading(true);
+    let myItems = await getMyRequests(userId);
+    let otherItems = await getRequests(userId, communityIds);
+    setMyRequests(myItems);
+    setRequests(otherItems);
+    let transactions = await getPendingTransactions(userId);
+    setTransactions(transactions);
+    setLoading(false);
+  };
+
+  const getTransaction = (request) => {
+    if (!requestHasTransaction(request)) {
+      return null;
+    }
+    return transactions.find(({ request_id }) => request_id == request.id);
+  };
+
   const removeRequest = (array, id) => {
     return array.filter((request) => request.id != id);
   };
 
+  const requestHasTransaction = (request) => {
+    return getTransactionIds().includes(request.id);
+  };
+
+  const getTransactionIds = () => {
+    return transactions.map(({ request_id }) => request_id);
+  };
   const toggleVisible = (array, item) => {
     return array.map((request) => {
       if (request == item) {
@@ -86,32 +123,94 @@ export const ItemRequestedComponent = () => {
     });
   };
 
+  const makeTransaction = async (item) => {
+    const transaction = {
+      offer_id: null,
+      request_id: item.id,
+      status: "pending",
+      responder_id: userId,
+      time_of_creation: new Date(),
+      time_of_expiration: date,
+    };
+
+    console.log(transaction);
+
+    await addTransaction(transaction);
+    fetchItems();
+    toggleModal(item);
+  };
+
   const toggleModal = (item) => {
     toggleVisible(requests, item);
     toggleVisible(myRequests, item);
+    setTakeProduct(false);
     setRequests([...requests]);
     setMyRequests([...myRequests]);
   };
 
-  const renderItem = ({ item }) => (
+  const renderMyItems = (
+    { item } //Used for rendering my items
+  ) => (
     <View>
       <ListItem
         style={styles.container}
         title={`${item.product_text}`}
+        accessoryRight={requestHasTransaction(item) ? TransactionIcon : null}
         description={`${item.description}`}
         onPress={() => {
           toggleModal(item);
         }}
       />
-      <Modal
-        visible={item.visible}
-        backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}
-        onBackdropPress={() => toggleModal(item)}
-      >
-        <Card></Card>
-      </Modal>
+      <RequestTransactionInfoModal
+        item={item}
+        text={"vill ge dig denna vara"}
+        toggleModal={toggleModal}
+        transaction={getTransaction(item)}
+      />
     </View>
   );
+  const updateDate = (date) => {
+    setDate(date);
+  };
+
+  const toggleTake = () => {
+    setTakeProduct(!takeProduct);
+  };
+  const renderRequestedItem = ({ item }) => {
+    let infoModal = (
+      <RequestedInfoModal
+        item={item}
+        toggleModal={toggleModal}
+        toggleTake={toggleTake}
+      />
+    );
+
+    let giveProductModal = (
+      <GiveProductModal
+        item={item}
+        date={date}
+        toggleModal={toggleModal}
+        updateDate={updateDate}
+        makeTransaction={makeTransaction}
+      />
+    );
+
+    let modal = !takeProduct ? infoModal : giveProductModal;
+
+    return (
+      <View>
+        <ListItem
+          style={styles.container}
+          title={`${item.product_text}`}
+          description={`${item.description}`}
+          onPress={() => {
+            toggleModal(item);
+          }}
+        />
+        {modal}
+      </View>
+    );
+  };
 
   const flatListHeader = () => {
     return (
@@ -131,7 +230,7 @@ export const ItemRequestedComponent = () => {
           scrollEnabled={false}
           data={requests}
           ItemSeparatorComponent={Divider}
-          renderItem={renderItem}
+          renderItem={renderRequestedItem}
         />
       </>
     );
@@ -147,7 +246,7 @@ export const ItemRequestedComponent = () => {
     <FlatList
       data={myRequests}
       ItemSeparatorComponent={Divider}
-      renderItem={renderItem}
+      renderItem={renderMyItems}
       ListHeaderComponent={flatListHeader}
       ListFooterComponent={flatListFooter}
     >

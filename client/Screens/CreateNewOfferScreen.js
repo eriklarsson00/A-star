@@ -13,7 +13,7 @@ import {
 } from "@ui-kitten/components";
 import tw from "twrnc";
 import { InputNewOfferComponent } from "../Components/InputNewOfferComponent";
-import BarCodeScannerComp from "../Components/BarCodeScanner.component";
+import BarCodeScannerComp from "../Components/BarCodeScannerComponent";
 import { MyCommunitysInfo, UserInfo } from "../assets/AppContext";
 import { NewItemCommunityComponent } from "../Components/NewItemCommunityComponent";
 import { pushImagesToServer, postOffer } from "../Services/ServerCommunication";

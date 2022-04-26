@@ -33,7 +33,7 @@ export const InputNewRequestComponent = (props) => {
   const theme = useTheme();
 
   const [selectedUnitIndex, setSelectedUnitIndex] = React.useState();
-  const units = ["ml", "dl", "g", "st"];
+  const units = ["ml", "dl", "l", "g", "kg", "st"];
 
   // Icons
   const CollapseIcon = () => (

@@ -35,7 +35,7 @@ BEGIN
 
 
     INSERT INTO Offers (user_id, product_id, product_text, description, quantity, unit, time_of_purchase, time_of_expiration, imgurl, broken_pkg) VALUES
-    (1, 1, 'Banan', 'Ska bort i helgen och behöver bli av med mina bananer.', 4, 'st', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL, true),
+    (1, 1, 'Banan', 'Ska bort i helgen och behöver bli av med mina bananer.', 4, 'st', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'https://upload.wikimedia.org/wikipedia/commons/d/de/Bananavarieties.jpg', true),
     (1, 1, 'Äpple', 'Köpte för många och kommer inte hinna äta alla själv.', 7, 'st', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL, false),
     (1, 1, 'Marsipan', 'Använde till bakning men kommer inte behöva resten.', 100, 'g', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL, true),
     (2, 1, 'Kyckling', 'Blev över från matlagningen.', 200, 'g', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL, false),
@@ -65,7 +65,9 @@ BEGIN
     (11, 'Morötter', 'Morot med dip är underskattat som snacks på fredagskvällen!', 200, 'g', CURRENT_TIMESTAMP());
 
     INSERT INTO CommunityUser (community_id, user_id) VALUES
-    (1, 1), (2, 1), (1, 2), (1, 3), (1, 4), (2, 2), (3, 1), (3, 4);
+    (1, 1), (2, 1), (3, 1), (4, 1), (5, 1), (6, 1), (1, 2), (1, 3), (1, 4), (2, 2), 
+    (3, 4), (1, 5), (2, 6), (3, 7), (4, 8), (5, 9), (6, 10), (1, 11), (6, 5), (5, 6), 
+    (4, 7), (3, 8), (2, 9), (1, 10), (2, 11), (4, 5);
 
     INSERT INTO CommunityListings (community_id, request_id, offer_id) VALUES
     (1, 1, NULL), (1, 2, NULL), (1, 3, NULL), (1, 8, NULL), (1, 9, NULL), (1, 10, NULL), 

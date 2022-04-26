@@ -58,6 +58,14 @@ const getRequests = async (id, communities) => {
   return await request("GET", "/requests/other/" + id + query);
 };
 
+const getOngoingTransactionsOwner = async (uid) => {
+  return await request("GET", `/transactions/ongoing/owner/${uid}`);
+};
+
+const getOngoingTransactionsResponder = async (uid) => {
+  return await request("GET", `/transactions/ongoing/responder/${uid}`);
+};
+
 //Sends an profile to the database, returns an array with the profile
 //object with their id added.
 const addProfile = async (profile, communities) => {
@@ -93,7 +101,7 @@ const acceptTransaction = async (id) => {
 };
 
 const ownerConfirmTransaction = async (id) => {
-  return await request("PUT", `/transactions/${id}/ownerComnfirm`);
+  return await request("PUT", `/transactions/${id}/ownerConfirm`);
 };
 
 const responderConfirmTransaction = async (id) => {
@@ -200,6 +208,8 @@ export {
   getPendingTransactions,
   getCommunities,
   getUserCommunities,
+  getOngoingTransactionsOwner,
+  getOngoingTransactionsResponder,
   addToCommunity,
   acceptTransaction,
   ownerConfirmTransaction,
