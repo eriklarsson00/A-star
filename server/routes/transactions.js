@@ -70,9 +70,14 @@ function getListerTransactions(req, res) {
     .leftJoin("Transactions", "Transactions.id", "Transactions.transaction_id")
     .where("Transactions.user_id", id)
     .orWhere("Transactions.user_id", id)
-    .then((transactions) => {
-      res.json(transactions);
-    });
+    .then(
+      (transactions) => {
+        res.json(transactions);
+      },
+      (err) => {
+        return res.status(500).json(err);
+      }
+    );
 }
 
 function getTransactionCommunity(req, res) {
@@ -91,9 +96,14 @@ function getTransactionCommunity(req, res) {
         "LEFT JOIN Communities C ON C.id = CL.community_id WHERE T.id = " +
         id
     )
-    .then((communities) => {
-      res.json(communities[0]);
-    });
+    .then(
+      (communities) => {
+        res.json(communities[0]);
+      },
+      (err) => {
+        return res.status(500).json(err);
+      }
+    );
 }
 
 function getTransactionAcceptedOwner(req, res) {
@@ -118,9 +128,14 @@ function getTransactionAcceptedOwner(req, res) {
       AND (R.user_id = ${id} OR O.user_id = ${id});
     `;
 
-  knex.raw(sql).then((transactions) => {
-    res.json(transactions[0]);
-  });
+  knex.raw(sql).then(
+    (transactions) => {
+      res.json(transactions[0]);
+    },
+    (err) => {
+      return res.status(500).json(err);
+    }
+  );
 }
 
 function getTransactionAcceptedResponder(req, res) {
@@ -147,9 +162,14 @@ function getTransactionAcceptedResponder(req, res) {
       AND T.responder_id = ${id};
     `;
 
-  knex.raw(sql).then((transactions) => {
-    res.json(transactions[0]);
-  });
+  knex.raw(sql).then(
+    (transactions) => {
+      res.json(transactions[0]);
+    },
+    (err) => {
+      return res.status(500).json(err);
+    }
+  );
 }
 
 function getTransactionPendingUser(req, res) {
@@ -169,9 +189,14 @@ function getTransactionPendingUser(req, res) {
       AND U.id = ${id};
     `;
 
-  knex.raw(sql).then((transactions) => {
-    res.json(transactions[0]);
-  });
+  knex.raw(sql).then(
+    (transactions) => {
+      res.json(transactions[0]);
+    },
+    (err) => {
+      return res.status(500).json(err);
+    }
+  );
 }
 
 function getTransactionUser(req, res) {
@@ -205,12 +230,14 @@ function addTransaction(req, res) {
   transaction.status = "pending";
   knex("Transactions")
     .insert(transaction)
-    .catch((err) => {
-      return res.status(500).json(err);
-    })
-    .then((id) => {
-      return res.json("Transaction inserted with id: " + id);
-    });
+    .then(
+      (id) => {
+        return res.json("Transaction inserted with id: " + id);
+      },
+      (err) => {
+        return res.status(500).json(err);
+      }
+    );
 }
 
 function updateTransaction(req, res) {
@@ -229,12 +256,14 @@ function updateTransaction(req, res) {
   knex("Transactions")
     .where("id", id)
     .update(body)
-    .catch((err) => {
-      return res.status(500).json(err);
-    })
-    .then(() => {
-      return res.json("Transaction updated with id: " + id);
-    });
+    .then(
+      () => {
+        return res.json("Transaction updated with id: " + id);
+      },
+      (err) => {
+        return res.status(500).json(err);
+      }
+    );
 }
 
 function deleteTransaction(req, res) {
@@ -249,12 +278,14 @@ function deleteTransaction(req, res) {
   knex("Transactions")
     .where("id", id)
     .delete()
-    .catch((err) => {
-      return res.status(500).json(err);
-    })
-    .then(() => {
-      return res.json("Transaction has been removed");
-    });
+    .then(
+      () => {
+        return res.json("Transaction has been removed");
+      },
+      (err) => {
+        return res.status(500).json(err);
+      }
+    );
 }
 
 function acceptTransaction(req, res) {
@@ -271,14 +302,14 @@ function acceptTransaction(req, res) {
     WHERE id = ${id};
   `;
 
-  knex
-    .raw(sql)
-    .catch((err) => {
-      return res.status(500).json(err);
-    })
-    .then(() => {
+  knex.raw(sql).then(
+    () => {
       return res.json("Transaction has been updated");
-    });
+    },
+    (err) => {
+      return res.status(500).json(err);
+    }
+  );
 }
 
 function ownerConfirmTransaction(req, res) {
@@ -295,16 +326,12 @@ function ownerConfirmTransaction(req, res) {
     FOR UPDATE;
   `;
 
-  knex
-    .raw(getSql)
-    .catch((err) => {
-      return res.status(500).json(err);
-    })
-    .then((t) => {
+  knex.raw(getSql).then(
+    (t) => {
       let updateSql;
 
       if (!t || !t[0] || t[0].lenght == 0) {
-        return res.json("no entry found");
+        res.json("no entry found");
       } else if (t.status === "accepted") {
         updateSql = `
           UPDATE Transactions SET status = 'ownerConfirmed'
@@ -317,15 +344,19 @@ function ownerConfirmTransaction(req, res) {
         `;
       }
 
-      knex
-        .raw(updateSql)
-        .catch((err) => {
-          return res.status(500).json(err);
-        })
-        .then(() => {
+      knex.raw(updateSql).then(
+        () => {
           res.json("Transaction has been updated");
-        });
-    });
+        },
+        (err) => {
+          throw err;
+        }
+      );
+    },
+    (err) => {
+      res.status(500).json(err);
+    }
+  );
 }
 
 function responderConfirmTransaction(req, res) {
@@ -342,12 +373,8 @@ function responderConfirmTransaction(req, res) {
     FOR UPDATE;
   `;
 
-  knex
-    .raw(getSql)
-    .catch((err) => {
-      return res.status(500).json(err);
-    })
-    .then((t) => {
+  knex.raw(getSql).then(
+    (t) => {
       let updateSql;
 
       if (id == undefined || !t || !t[0] || t[0].lenght == 0) {
@@ -364,15 +391,19 @@ function responderConfirmTransaction(req, res) {
         `;
       }
 
-      knex
-        .raw(updateSql)
-        .catch((err) => {
-          return res.status(500).json(err);
-        })
-        .then(() => {
-          return res.json("Transaction has been updated");
-        });
-    });
+      knex.raw(updateSql).then(
+        () => {
+          res.json("Transaction has been updated");
+        },
+        (err) => {
+          throw err;
+        }
+      );
+    },
+    (err) => {
+      res.status(500).json(err);
+    }
+  );
 }
 
 export {
