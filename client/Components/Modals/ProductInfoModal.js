@@ -15,6 +15,7 @@ import tw from "twrnc";
 
 export const ProductInfoModal = (props) => {
   const item = props.item;
+  console.log(item.imgurl);
   return (
     <Modal //Modal for additional information about a product
       visible={item.visible}

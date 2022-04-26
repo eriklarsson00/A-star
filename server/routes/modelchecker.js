@@ -11,14 +11,11 @@ const communityChecker = (body) => {
 };
 
 const offerChecker = (body) => {
-  return checker(
-    "user_id quantity time_of_purchase time_of_expiration broken_pkg",
-    body
-  );
+  return checker("user_id quantity time_of_purchase broken_pkg", body);
 };
 
 const requestChecker = (body) => {
-  return checker("user_id product_text quantity time_of_expiration", body);
+  return checker("user_id product_text quantity", body);
 };
 
 const transactionChecker = (body) => {
