@@ -214,7 +214,7 @@ function addTransaction(req, res) {
 }
 
 function updateTransaction(req, res) {
-  const id = parseInt(req.params.id);
+  let id = parseInt(req.params.id);
   const body = req.body;
 
   if (!transactionChecker(body))
@@ -239,7 +239,7 @@ function updateTransaction(req, res) {
 }
 
 function deleteTransaction(req, res) {
-  const id = parseInt(req.params.id);
+  let id = parseInt(req.params.id);
 
   if (isNaN(id)) {
     return res
@@ -260,7 +260,7 @@ function deleteTransaction(req, res) {
 }
 
 function acceptTransaction(req, res) {
-  const id = parseInt(req.params.id);
+  let id = parseInt(req.params.id);
 
   if (isNaN(id)) {
     return res
@@ -285,7 +285,7 @@ function acceptTransaction(req, res) {
 }
 
 function ownerConfirmTransaction(req, res) {
-  const id = parseInt(req.params.id);
+  let id = parseInt(req.params.id);
 
   if (isNaN(id)) {
     return res
@@ -335,7 +335,7 @@ function ownerConfirmTransaction(req, res) {
 }
 
 function responderConfirmTransaction(req, res) {
-  const id = parseInt(req.params.id);
+  let id = parseInt(req.params.id);
 
   if (isNaN(id)) {
     return res

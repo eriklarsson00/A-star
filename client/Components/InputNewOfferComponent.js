@@ -48,7 +48,7 @@ export const InputNewOfferComponent = (props) => {
 
   const newDate = new Date();
   const theme = useTheme();
-  const units = ["ml", "dl", "g", "st"];
+  const units = ["ml", "dl", "l", "g", "kg", "st"];
 
   const CollapseIcon = () => (
     <Icon style={styles.iconCollapse} fill="grey" name="collapse-outline" />
