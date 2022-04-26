@@ -321,7 +321,7 @@ function ownerConfirmTransaction(req, res) {
       .json("Usage: /transactions/:id/ownerConfirm. id has to be a number");
   }
   const getSql = `
-    SELECT * FROM TRANSACTIONS
+    SELECT * FROM Transactions
     WHERE id = ${id}
     FOR UPDATE;
   `;
@@ -368,7 +368,7 @@ function responderConfirmTransaction(req, res) {
       .json("Usage: /transactions/:id/responderConfirm. id has to be a number");
   }
   const getSql = `
-    SELECT * FROM TRANSACTIONS
+    SELECT * FROM Transactions
     WHERE id = ${id}
     FOR UPDATE;
   `;
