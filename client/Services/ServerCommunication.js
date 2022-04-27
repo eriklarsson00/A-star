@@ -205,7 +205,7 @@ const addCommunity = async (community) => {
 export {
   getMyActiveOffers,
   getOffers,
-  getMyActiveRequests as getMyRequests,
+  getMyActiveRequests,
   getRequests,
   getUserProfileById,
   getUserProfileByEmail,

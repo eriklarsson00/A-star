@@ -65,7 +65,7 @@ function getMyActiveRequests(req, res) {
     .raw(
       `
     SELECT R.* FROM Requests R
-    LEFT JOIN Transactions T ON t.request_id = R.id
+    LEFT JOIN Transactions T ON T.request_id = R.id
     WHERE R.user_id = ${userId}
       AND (T.status IS NULL OR T.status = 'pending');
   `
