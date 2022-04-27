@@ -86,6 +86,8 @@ export const ItemAvailableComponent = () => {
 
     socketRef.current.on("transaction", (transaction) => {
       updateTransactions(transaction);
+      if (transaction.offer_id != null)
+        removeOffer(transaction.offer_id)
     });
 
     return () => {
@@ -116,8 +118,16 @@ export const ItemAvailableComponent = () => {
     return transactions.map(({ offer_id }) => offer_id);
   };
 
+  const removeTransaction = (id) => {
+    return setTransactions(transactions.filter((transaction) => transaction.id != id));
+  };
+
   const removeOffer = (id) => {
     return setOffers(offers.filter((offer) => offer.id != id));
+  };
+
+  const removeMyOffer = (id) => {
+    return setMyOffers(myOffers.filter((offer) => offer.id != id));
   };
 
   const toggleVisible = (array, item) => {
@@ -237,6 +247,8 @@ export const ItemAvailableComponent = () => {
         item={item}
         toggleModal={toggleModal}
         transaction={getTransaction(item)}
+        removeTransaction={removeTransaction}
+        removeMyOffer={removeMyOffer}
       />
     </View>
   );
@@ -272,7 +284,7 @@ export const ItemAvailableComponent = () => {
 
   const LoadedView = () => (
     <FlatList
-      style={{ flex: 1 }}
+      style={{ flex: 1}}
       data={myOffers}
       renderItem={renderMyItems}
       ListHeaderComponent={flatListHeader}
@@ -289,6 +301,7 @@ const styles = StyleSheet.create({
     height: 100,
     marginRight: 10,
     marginLeft: 10,
+    borderRadius: 10,
   },
   spaceBetween: {
     marginBottom: 10,
