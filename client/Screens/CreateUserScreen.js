@@ -187,21 +187,25 @@ export const CreateUserScreen = () => {
         <Input
           label="Förnamn"
           value={firstName}
+          style={{ marginTop: 40, marginBottom: 8 }}
           onChangeText={(nextValue) => setFirstName(nextValue)}
         />
         <Input
           label="Efternamn"
           value={lastName}
+          style={{ marginBottom: 8 }}
           onChangeText={(nextValue) => setLastName(nextValue)}
         />
         <Input
           label="Telefonnummer"
           value={phoneNumber}
+          style={{ marginBottom: 8 }}
           onChangeText={(nextValue) => setPhoneNumber(nextValue)}
         />
         <Input
           label="Adress"
           value={adress}
+          style={{ marginBottom: 8 }}
           onChangeText={(nextValue) => setAdress(nextValue)}
         />
         <SelectCommunity />
@@ -215,6 +219,7 @@ export const CreateUserScreen = () => {
             adress === ""
           }
           style={{
+            marginTop: 30,
             backgroundColor:
               firstName === "" ||
               lastName === "" ||
@@ -236,10 +241,13 @@ const styles = StyleSheet.create({
     flex: 1,
     height: "100%",
     paddingTop: 50,
+    paddingLeft: 7,
+    paddingRight: 7,
   },
   createUserContainer: {
     flex: 1,
     flexDirection: "column",
+    marginTop: 15,
     alignItems: "center",
   },
   lockStyle: {

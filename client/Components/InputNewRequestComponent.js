@@ -33,7 +33,7 @@ export const InputNewRequestComponent = (props) => {
   const theme = useTheme();
 
   const [selectedUnitIndex, setSelectedUnitIndex] = React.useState();
-  const units = ["ml", "dl", "l", "g", "kg", "st"];
+  const units = ["dl", "l", "g", "kg", "st"];
 
   // Icons
   const CollapseIcon = () => (
@@ -225,10 +225,16 @@ export const InputNewRequestComponent = (props) => {
               setProductVisible(true);
             }}
           >
-            <Text style={{ fontSize: 20 }}>{productInfo.product_text}</Text>
-            <Text>
-              {"\n"}Antal: {productInfo.quantity} {productInfo.unit}
-            </Text>
+            {created && (
+              <Text style={{ fontSize: 20 }}>{productInfo.product_text}</Text>
+            )}
+            {created && (
+              <Text>
+                {"\n"}
+                {productInfo.quantity} {productInfo.unit}
+              </Text>
+            )}
+            {!created && <Text>*Efterfrågan är inte skapad*</Text>}
           </Button>
         </Layout>
       )}
