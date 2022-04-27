@@ -229,6 +229,36 @@ function getUserCommunities(req, res) {
     });
 }
 
+function rateUser(req, res) {
+  const body = req.body;
+  const id = parseInt(req.params.id);
+  const rating = parseInt(body ? body.rating : "");
+
+  if (isNaN(id) || isNaN(rating)) {
+    return res.status(400).json("Body needs to contain 'user_id' and 'rating'");
+  }
+
+  if (rating < 1 || rating > 5) {
+    return res.status(400).json("ratting has to be between 1 and 5");
+  }
+
+  knex
+    .raw(
+      `
+      UPDATE Users SET rating = rating + ${rating}, raters = raters + 1  
+      WHERE id = ${id};
+    `
+    )
+    .then(
+      () => {
+        return res.json("Rating recieved");
+      },
+      (err) => {
+        return res.status(500).json(err);
+      }
+    );
+}
+
 export {
   getUser,
   getUsers,
@@ -240,4 +270,5 @@ export {
   addUserToCommunity,
   removeUserFromCommunity,
   getUserCommunities,
+  rateUser,
 };

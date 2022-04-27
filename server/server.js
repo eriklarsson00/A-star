@@ -106,6 +106,8 @@ app.post(
   users.updateProfilePicture
 );
 
+app.route("/users/:id/rate").put(users.rateUser);
+
 app
   .route("/users/:id")
   .get(users.getUser)
