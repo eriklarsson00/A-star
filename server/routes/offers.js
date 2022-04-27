@@ -61,7 +61,7 @@ function getMyActiveOffers(req, res) {
     .raw(
       `
     SELECT O.* FROM Offers O
-    LEFT JOIN Transactions T ON t.request_id = O.id
+    LEFT JOIN Transactions T ON T.offer_id = O.id
     WHERE O.user_id = ${userId}
       AND (T.status IS NULL OR T.status = 'pending');
   `
