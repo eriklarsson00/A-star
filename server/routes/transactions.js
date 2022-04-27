@@ -162,7 +162,7 @@ function getTransactionOngoingResponder(req, res) {
     LEFT JOIN Offers O    ON T.offer_id = O.id
     LEFT JOIN Requests R  ON T.request_id = R.id
     LEFT JOIN Users U     ON R.user_id = U.id OR O.user_id = U.id
-    WHERE status in ('accepted', 'ownerConfirmed')
+    WHERE status in ('accepted', 'ownerConfirmed', 'pending')
       AND T.responder_id = ${id};
     `;
 
