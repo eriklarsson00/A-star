@@ -30,6 +30,8 @@ import { GiveProductModal } from "./Modals/GiveProductModal";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { MyRequestsModal } from "./Modals/MyRequestsModal";
 import { RequestTransactionInfoModal } from "./Modals/RequestTransactionModal";
+import moment from "moment";
+import "moment/locale/sv"
 export const ItemRequestedComponent = () => {
   const { userInfo, setUserInfo } = React.useContext(UserInfo);
   const { myCommunitysInfo, setMyCommunitysInfo } =
@@ -215,6 +217,10 @@ export const ItemRequestedComponent = () => {
       <View>
         <ListItem
           style={styles.container}
+          accessoryRight={() => {
+            return(
+              <Text style={{ top: 25, fontSize: 10 }}> {moment(item.time_of_creation).fromNow()}</Text>
+            )}}
           title={`${item.product_text} | ${item.quantity} ${item.unit ?? ""}`}
           description={`${item.description}`}
           onPress={() => {

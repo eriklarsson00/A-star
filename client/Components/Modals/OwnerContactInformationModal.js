@@ -1,8 +1,8 @@
 import { Modal, Text, Layout, Button, Card } from "@ui-kitten/components";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Image } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
-
+import tw from "twrnc";
 export const OwnerContactInformationModal = (props) => {
   const item = props.item;
 
@@ -14,7 +14,7 @@ export const OwnerContactInformationModal = (props) => {
   const Info = () => {
     return (
       <View>
-        <Text category={"h1"} style={{ marginTop: 40, marginBottom: 25 }}>
+        <Text category={"h3"} style={{ marginTop: 40, marginBottom: 25 }}>
           Kontaktinfo
         </Text>
         {props.text}
