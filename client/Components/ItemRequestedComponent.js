@@ -199,7 +199,8 @@ export const ItemRequestedComponent = () => {
     );
 
     let modal = !takeProduct ? infoModal : giveProductModal;
-
+    if (takeProduct) {
+    }
     return (
       <View>
         <ListItem
