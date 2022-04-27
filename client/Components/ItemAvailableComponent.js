@@ -117,6 +117,10 @@ export const ItemAvailableComponent = () => {
     return transactions.map(({ offer_id }) => offer_id);
   };
 
+  const removeTransaction = (id) => {
+    return setTransactions(transactions.filter((transaction) => transaction.id != id));
+  };
+
   const removeOffer = (id) => {
     return setOffers(offers.filter((offer) => offer.id != id));
   };
@@ -241,6 +245,8 @@ export const ItemAvailableComponent = () => {
         item={item}
         toggleModal={toggleModal}
         transaction={getTransaction(item)}
+        removeTransaction={removeTransaction}
+        removeOffer={removeOffer}
       />
     </View>
   );

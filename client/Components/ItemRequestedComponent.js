@@ -97,6 +97,9 @@ export const ItemRequestedComponent = () => {
     setLoading(false);
   };
 
+  const removeTransaction = (id) => {
+    return setTransactions(transactions.filter((transaction) => transaction.id != id));
+  };
   const getTransaction = (request) => {
     if (!requestHasTransaction(request)) {
       return null;
@@ -166,6 +169,8 @@ export const ItemRequestedComponent = () => {
         text={"vill ge dig denna vara"}
         toggleModal={toggleModal}
         transaction={getTransaction(item)}
+        removeTransaction={removeTransaction}
+        removeRequest={removeRequest}
       />
     </View>
   );
