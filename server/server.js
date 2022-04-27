@@ -148,7 +148,7 @@ app
 
 app.route("/offers/user/:id").get(offers.getUserOffers);
 
-app.route("/offers/other/:user").get(offers.getOtherOffersCommunity);
+app.route("/offers/other/:userId").get(offers.getOtherOffersCommunity);
 
 //*************************REQUESTS*************************
 
@@ -177,7 +177,7 @@ app
 
 app.route("/requests/user/:id").get(requests.getUserRequests);
 
-app.route("/requests/other/:user").get(requests.getOtherRequestsCommunity);
+app.route("/requests/other/:userId").get(requests.getOtherRequestsCommunity);
 
 //*************************TRANSACTIONS*************************
 

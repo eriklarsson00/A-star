@@ -1,5 +1,10 @@
 import { createRequire } from "module";
-import { checkIntID, checkEmptyBody, checkEmptyParam } from "./common.js";
+import {
+  checkIntID,
+  checkEmptyBody,
+  checkEmptyParam,
+  stdErrorHandler,
+} from "./common.js";
 import { uploadImageOnS3 } from "./upload.js";
 const require = createRequire(import.meta.url);
 
@@ -17,24 +22,30 @@ const knex = require("knex")({
 function getUsers(req, res) {
   knex("Users")
     .select()
-    .then((users) => {
-      res.json(users);
-    });
+    .then(
+      (users) => {
+        return res.json(users);
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function getUser(req, res) {
   const id = req.params.id;
 
-  if (checkIntID(id, res, "Usage: /users/:id. id has to be a number")) {
-    return;
+  if (isNaN(id)) {
+    return res.status(400).json("Usage: /users/:id. id has to be a number");
   }
 
   knex("Users")
     .select()
     .where("id", id)
-    .then((users) => {
-      res.json(users);
-    });
+    .then(
+      (users) => {
+        return res.json(users);
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function getUserEmail(req, res) {
@@ -48,9 +59,12 @@ function getUserEmail(req, res) {
   knex("Users")
     .select()
     .where("email", email)
-    .then((users) => {
-      res.json(users);
-    });
+    .then(
+      (users) => {
+        return res.json(users);
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function addUser(req, res) {
@@ -62,12 +76,12 @@ function addUser(req, res) {
 
   knex("Users")
     .insert(body)
-    .catch((err) => {
-      res.status(500).json(err);
-    })
-    .then((id) => {
-      if (id !== undefined) res.json("User inserted with id: " + id);
-    });
+    .then(
+      (id) => {
+        return res.json("User inserted with id: " + id);
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function updateUser(req, res) {
@@ -84,13 +98,12 @@ function updateUser(req, res) {
   knex("Users")
     .where("id", id)
     .update(body)
-    .catch((err) => {
-      res.status(500).json(err);
-      id = undefined;
-    })
-    .then(() => {
-      if (id !== undefined) res.json("User updated");
-    });
+    .then(
+      () => {
+        return res.json("User updated");
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 async function updateProfilePicture(req, res) {
@@ -98,58 +111,65 @@ async function updateProfilePicture(req, res) {
   const id = parseInt(req.params.id);
 
   if (!file || isNaN(id)) {
-    res.status(400).json("File to upload is not present or id is malformed");
-    return;
+    return res
+      .status(400)
+      .json("File to upload is not present or id is malformed");
   }
 
-  uploadImageOnS3(file, "profilePictures/" + file.filename).then((data) => {
-    const loc = data.Location;
+  uploadImageOnS3(file, "profilePictures/" + file.filename).then(
+    (data) => {
+      const loc = data.Location;
 
-    if (!loc) {
-      return res.status(500).json("Could not upload image to S3");
-    }
+      if (!loc) {
+        return res.status(500).json("Could not upload image to S3");
+      }
 
-    knex("Users")
-      .where("id", id)
-      .update({ imgurl: loc })
-      .catch((err) => {
-        res.status(500).json(err);
-      })
-      .then(() => {
-        res.json(loc);
-      });
-  });
+      knex("Users")
+        .where("id", id)
+        .update({ imgurl: loc })
+        .then(
+          () => {
+            return res.json(loc);
+          },
+          (err) => {
+            throw err;
+          }
+        );
+    },
+    (err) => stdErrorHandler(err, res)
+  );
 }
 
 function deleteUser(req, res) {
   const id = parseInt(req.params.id);
 
-  if (checkIntID(id, res, "Usage: /users/:id. id has to be a number")) {
-    return;
+  if (isNaN(id)) {
+    return res.status(400).json("Usage: /users/:id. id has to be a number");
   }
+
+  const removedUser = {
+    firstname: "removed",
+    lastname: "removed",
+    number: "removed",
+    email: "removed",
+    adress: "removed",
+    location: "removed",
+    imgurl: "removed",
+    rating: -1,
+    raters: -1,
+    given: -1,
+    taken: -1,
+  };
 
   knex("Users")
     .where("id", id)
-    .update({
-      firstname: "removed",
-      lastname: "removed",
-      number: "removed",
-      email: "removed",
-      adress: "removed",
-      location: "removed",
-      imgurl: "removed",
-      rating: -1,
-      raters: -1,
-      given: -1,
-      taken: -1,
-    })
-    .catch((err) => {
-      res.status(500).json(err);
-      id = undefined;
-    })
-    .then(() => {
-      if (id !== undefined) res.json("User has been removed");
-    });
+    .update(removedUser)
+    .then(
+      () => {
+        return res.json("User has been removed");
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function addUserToCommunity(req, res) {
@@ -163,22 +183,21 @@ function addUserToCommunity(req, res) {
   const community_id = parseInt(body.community_id);
 
   if (isNaN(user_id) || isNaN(community_id)) {
-    res.status(400).json("Body needs to contain 'user_id' and 'community_id'");
-    return;
+    return res
+      .status(400)
+      .json("Body needs to contain 'user_id' and 'community_id'");
   }
 
   knex("CommunityUser")
     .insert(body)
-    .catch((err) => {
-      res.status(500).json(err);
-      return;
-    })
-    .then((id) => {
-      if (id !== undefined)
-        res.json(
-          `User with id ${body.user_id} added to community with id ${body.community_id}`
-        );
-    });
+    .then(
+      () => {
+        const msg = `User with id ${body.user_id} 
+                   added to community with id ${body.community_id}`;
+        return res.json(msg);
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function removeUserFromCommunity(req, res) {
@@ -192,31 +211,32 @@ function removeUserFromCommunity(req, res) {
   const community_id = parseInt(body.community_id);
 
   if (isNaN(user_id) || isNaN(community_id)) {
-    res.status(400).json("Body needs to contain 'user_id' and 'community_id'");
-    return;
+    return res
+      .status(400)
+      .json("Body needs to contain 'user_id' and 'community_id'");
   }
 
   knex("CommunityUser")
     .where("user_id", user_id)
     .andWhere("community_id", community_id)
     .del()
-    .catch((err) => {
-      res.status(500).json(err);
-      return;
-    })
-    .then(() => {
-      res.json(
-        `User with id ${body.user_id} removed from community with id ${body.community_id}`
-      );
-    });
+    .then(
+      () => {
+        const msg = `User with id ${body.user_id} 
+                   removed from community with id ${body.community_id}`;
+        return res.json(msg);
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function getUserCommunities(req, res) {
   const id = parseInt(req.params.id);
-  const errMsg = "Usage: /users/communities/:id. id has to be a number";
 
-  if (checkIntID(id, res, errMsg)) {
-    return;
+  if (isNaN(id)) {
+    return res
+      .status(400)
+      .json("Usage: /users/communities/:id. id has to be a number");
   }
 
   knex("Communities")
@@ -224,9 +244,12 @@ function getUserCommunities(req, res) {
     .leftJoin("CommunityUser", "CommunityUser.community_id", "Communities.id")
     .leftJoin("Users", "Users.id", "CommunityUser.user_id")
     .where("Users.id", id)
-    .then((communities) => {
-      res.json(communities);
-    });
+    .then(
+      (communities) => {
+        return res.json(communities);
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function rateUser(req, res) {
@@ -253,9 +276,7 @@ function rateUser(req, res) {
       () => {
         return res.json("Rating recieved");
       },
-      (err) => {
-        return res.status(500).json(err);
-      }
+      (err) => stdErrorHandler(err, res)
     );
 }
 

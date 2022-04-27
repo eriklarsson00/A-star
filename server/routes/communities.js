@@ -21,9 +21,12 @@ function getCommunities(req, res) {
         "LEFT JOIN CommunityUser CU ON CU.community_id = C.id " +
         "GROUP BY C.id, CU.community_id"
     )
-    .then((communities) => {
-      return res.json(communities[0]);
-    }, stdErrorHandler);
+    .then(
+      (communities) => {
+        return res.json(communities[0]);
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function getCommunity(req, res) {
@@ -43,9 +46,12 @@ function getCommunity(req, res) {
     GROUP BY CU.community_id
   `;
 
-  knex.raw(sql).then((communities) => {
-    return res.json(communities[0]);
-  }, stdErrorHandler);
+  knex.raw(sql).then(
+    (communities) => {
+      return res.json(communities[0]);
+    },
+    (err) => stdErrorHandler(err, res)
+  );
 }
 
 function addCommunity(req, res) {
@@ -60,9 +66,12 @@ function addCommunity(req, res) {
     .catch((err) => {
       res.status(500).json(err);
     })
-    .then((id) => {
-      return res.json("Community inserted with id: " + id);
-    }, stdErrorHandler);
+    .then(
+      (id) => {
+        return res.json("Community inserted with id: " + id);
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function updateCommunity(req, res) {
@@ -82,9 +91,12 @@ function updateCommunity(req, res) {
   knex("Communities")
     .where("id", id)
     .update(body)
-    .then(() => {
-      return res.json("Community updated with id: " + id);
-    }, stdErrorHandler);
+    .then(
+      () => {
+        return res.json("Community updated with id: " + id);
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function deleteCommunity(req, res) {
@@ -99,9 +111,12 @@ function deleteCommunity(req, res) {
   knex("Communities")
     .where("id", id)
     .del()
-    .then(() => {
-      return res.json("Community deleted with id: " + id);
-    }, stdErrorHandler);
+    .then(
+      () => {
+        return res.json("Community deleted with id: " + id);
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function getCommunityMembers(req, res) {
@@ -115,9 +130,12 @@ function getCommunityMembers(req, res) {
 
   knex
     .raw("SELECT COUNT(id) FROM CommunityUser WHERE community_id = " + id)
-    .then((amount) => {
-      return res.json(amount[0]);
-    }, stdErrorHandler);
+    .then(
+      (amount) => {
+        return res.json(amount[0]);
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 export {
