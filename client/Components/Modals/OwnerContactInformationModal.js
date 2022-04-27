@@ -1,5 +1,7 @@
 import { Modal, Text, Layout, Button, Card } from "@ui-kitten/components";
 import { View, StyleSheet } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import moment from "moment";
 
 export const OwnerContactInformationModal = (props) => {
   const item = props.item;
@@ -12,14 +14,21 @@ export const OwnerContactInformationModal = (props) => {
   const Info = () => {
     return (
       <View>
-        <Text category={"h1"} style={{ marginTop: 40, marginBottom: 50 }}>
+        <Text category={"h1"} style={{ marginTop: 40, marginBottom: 25 }}>
           Kontaktinfo
         </Text>
+        {props.text}
         <Text style={styles.space_between}>
-          Namn: {item.firstname} {item.lastname}{" "}
+          {item.firstname} {item.lastname}{" "}
         </Text>
         <Text style={styles.space_between}>Telefonnummer: {item.number}</Text>
         <Text style={styles.space_between}>Email: {item.email}</Text>
+        <Layout style={{ flexDirection: "row", marginTop: 40 }}>
+          <Text category={"s1"}>Bestämt utbyte: </Text>
+          <Text>
+            {moment(item.time_of_expiration).format("dddd Do MMM hh:mm")}
+          </Text>
+        </Layout>
         <Layout
           style={{
             flexDirection: "row",
@@ -29,7 +38,7 @@ export const OwnerContactInformationModal = (props) => {
         >
           <Button
             onPress={() => completedTransaction()}
-            style={{ marginTop: 100, flex: 1 }}
+            style={{ marginTop: 70, flex: 1 }}
           >
             <Text>Bytet är genomfört</Text>
           </Button>
@@ -60,6 +69,6 @@ const styles = StyleSheet.create({
     alignContent: "center",
   },
   space_between: {
-    marginBottom: 15,
+    marginBottom: 8,
   },
 });

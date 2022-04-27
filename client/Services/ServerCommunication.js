@@ -108,6 +108,11 @@ const responderConfirmTransaction = async (id) => {
   return await request("PUT", `/transactions/${id}/responderConfirm`);
 };
 
+const updateRating = async (user_id, rating) => {
+  let msg_body = { rating: rating };
+  return await request("PUT", `/users/${user_id}/rate`, msg_body);
+};
+
 const addToCommunity = async (profile_id, communities) => {
   // Should be refactored to only send one request with all communities
   for (const id of communities) {
@@ -201,6 +206,7 @@ export {
   acceptTransaction,
   ownerConfirmTransaction,
   responderConfirmTransaction,
+  updateRating,
   addTransaction,
   deleteProfile,
   deleteTransaction,
