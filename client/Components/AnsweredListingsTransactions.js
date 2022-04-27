@@ -2,12 +2,13 @@ import { useState, useEffect, useContext } from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import { Text, Spinner, ListItem, List, Icon } from "@ui-kitten/components";
-import { UserInfo, CommunityInfo } from "../assets/AppContext";
+import { UserInfo } from "../assets/AppContext";
 import {
   getOngoingTransactionsResponder,
   responderConfirmTransaction,
 } from "../Services/ServerCommunication";
 import { OwnerContactInformationModal } from "./Modals/OwnerContactInformationModal";
+import { AwaitingConfirmationModal } from "./Modals/AwaitingConfirmationModal";
 import { RatingModal } from "./Modals/RatingModal";
 import tw from "twrnc";
 
@@ -22,6 +23,7 @@ const ReceiveIcon = (props) => (
 export const AnsweredListingsTransactions = () => {
   const { userInfo, setUserInfo } = useContext(UserInfo);
   const [responderTransactions, setResponderTransactions] = useState([]);
+  const [pendingTransactions, setPendingTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [rating, setRating] = useState(false);
 
@@ -30,8 +32,18 @@ export const AnsweredListingsTransactions = () => {
 
   const fetchTransactions = async () => {
     setLoading(true);
-    let rtransactions = await getOngoingTransactionsResponder(uid);
-    setResponderTransactions(rtransactions);
+    let pending = [];
+    let accepted = [];
+    let alltransactions = await getOngoingTransactionsResponder(uid);
+    for (const trans of alltransactions) {
+      if (trans.status === "pending") {
+        pending.push(trans);
+      } else {
+        accepted.push(trans);
+      }
+    }
+    setPendingTransactions(pending);
+    setResponderTransactions(accepted);
     setLoading(false);
   };
 
@@ -49,7 +61,9 @@ export const AnsweredListingsTransactions = () => {
 
   const toggleModal = (item) => {
     toggleVisible(responderTransactions, item);
+    toggleVisible(pendingTransactions, item);
     setResponderTransactions([...responderTransactions]);
+    setPendingTransactions([...pendingTransactions]);
   };
 
   const toggleRating = () => {
@@ -153,6 +167,28 @@ export const AnsweredListingsTransactions = () => {
     );
   };
 
+  const renderPendingTransactions = ({ item }) => {
+    return (
+      <View>
+        <ListItem
+          style={styles.container}
+          onPress={() => toggleModal(item)}
+          accessoryLeft={renderTransactionIcon(item.offer_product)}
+          title={whatToRender(item.offer_product, item.request_product)}
+          description={whatToRender(
+            item.offer_description,
+            item.request_description
+          )}
+        />
+        <AwaitingConfirmationModal
+          item={item}
+          text={renderGiveOrTake(item.offer_product, item.request_product)}
+          toggleModal={toggleModal}
+        />
+      </View>
+    );
+  };
+
   const flatListFooter = () => {
     return (
       <View>
@@ -161,8 +197,8 @@ export const AnsweredListingsTransactions = () => {
         </Text>
         <List
           scrollEnabled={false}
-          /*data={}
-          renderItem={}*/
+          data={pendingTransactions}
+          renderItem={renderPendingTransactions}
         />
       </View>
     );
