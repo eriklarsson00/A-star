@@ -539,7 +539,7 @@ export function transactionTests(server) {
     it("should let owner confirm a transaction", function (done) {
       chai
         .request(server)
-        .put("/transactions/7/ownerConfirm")
+        .put("/transactions/2/ownerConfirm")
         .end((err, res) => {
           if (err) {
             console.error(err);

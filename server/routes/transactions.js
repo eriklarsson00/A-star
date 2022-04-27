@@ -408,24 +408,43 @@ async function incrementUserStat(transactionId) {
   let responder;
   let transaction = await knex("Transactions")
     .select()
-    .where("id", transactionId);
+    .where("id", transactionId)
+    .then((result) => result[0]);
 
   responder = await knex("Users")
     .select()
-    .where("id", transaction.responder_id);
+    .where("id", transaction.responder_id)
+    .then((result) => result[0]);
 
   if (transaction && transaction.request_id) {
-    owner = await knex("Requests").select().where("id", transaction.request_id);
+    const request = await knex("Requests")
+      .select()
+      .where("id", transaction.request_id)
+      .then((result) => result[0]);
+    owner = await knex("Users")
+      .select()
+      .where("id", request.user_id)
+      .then((result) => result[0]);
+
     owner.taken += 1;
     responder.given += 1;
   } else {
-    owner = await knex("Offers").select().where("id", transaction.offer_id);
+    const offer = await knex("Offers")
+      .select()
+      .where("id", transaction.offer_id)
+      .then((result) => result[0]);
+
+    owner = await knex("Users")
+      .select()
+      .where("id", offer.user_id)
+      .then((result) => result[0]);
+
     owner.given += 1;
     responder.taken += 1;
   }
 
-  await knex("Users").update(owner).where("id", owner.id);
-  await knex("Users").update(responder).where("id", responder.id);
+  await knex("Users").where("id", owner.id).update(owner);
+  await knex("Users").where("id", responder.id).update(responder);
 }
 
 export {
