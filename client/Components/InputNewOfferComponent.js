@@ -50,7 +50,7 @@ export const InputNewOfferComponent = (props) => {
 
   const newDate = new Date();
   const theme = useTheme();
-  const units = ["ml", "dl", "l", "g", "kg", "st"];
+  const units = ["dl", "l", "g", "kg", "st"];
 
   const CollapseIcon = () => (
     <Icon style={styles.iconCollapse} fill="grey" name="collapse-outline" />
@@ -296,10 +296,17 @@ export const InputNewOfferComponent = (props) => {
                 </Text>
               )}
             </CheckBox>
-            <Layout style={{ paddingLeft: 228 }}>
-              {created && (
+
+            {created && (
+              <Layout
+                style={{
+                  flexDirection: "row",
+                  paddingLeft: 20,
+                  paddingTop: 15,
+                }}
+              >
                 <Button
-                  style={{ width: 120 }}
+                  style={{ width: 140 }}
                   id="createItem"
                   onPress={() => {
                     handleChange();
@@ -307,19 +314,33 @@ export const InputNewOfferComponent = (props) => {
                 >
                   Ändra vara
                 </Button>
-              )}
-              {!created && (
-                <Layout style={{ paddingTop: 10 }}>
-                  <Tooltip
-                    anchor={publishButton}
-                    visible={toolTipVisible}
-                    onBackdropPress={() => setToolTipVisible(false)}
-                  >
-                    Du måste fylla alla obligatoriska fält!
-                  </Tooltip>
-                </Layout>
-              )}
-            </Layout>
+                <Button
+                  style={{
+                    width: 140,
+                    marginLeft: 40,
+                    backgroundColor: theme["color-danger-500"],
+                    borderColor: theme["color-danger-500"],
+                  }}
+                  id="deleteItem"
+                  onPress={() => {
+                    props.handleDel(productInfo.id);
+                  }}
+                >
+                  Ta bort vara
+                </Button>
+              </Layout>
+            )}
+            {!created && (
+              <Layout style={{ paddingTop: 10, paddingLeft: 20 }}>
+                <Tooltip
+                  anchor={publishButton}
+                  visible={toolTipVisible}
+                  onBackdropPress={() => setToolTipVisible(false)}
+                >
+                  Du måste fylla alla obligatoriska fält!
+                </Tooltip>
+              </Layout>
+            )}
           </Layout>
         )}
         {!productVisible && (
@@ -373,7 +394,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   checkbox: {
-    paddingTop: 10,
+    paddingTop: 15,
     paddingLeft: 20,
   },
   compactProductContainer: {

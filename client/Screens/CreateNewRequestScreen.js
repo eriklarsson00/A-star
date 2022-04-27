@@ -31,6 +31,7 @@ const CreateNewRequestScreen = ({ navigation }) => {
   const [createPost, setCreatePost] = React.useState(false);
   const [chosenCommunity, setChosenCommunity] = React.useState([]);
   const [tooltipVisible, setTooltipVisible] = React.useState(false);
+  const [createTooltipVisible, setCreateTooltipVisible] = React.useState(false);
 
   const theme = useTheme();
 
@@ -42,7 +43,6 @@ const CreateNewRequestScreen = ({ navigation }) => {
   // koppla mellan parent och child (InpuNewRequestComponent)
   // Funktionen ska lägga in ett nytt object i listan av alla objekt i inlägget
   const infoHandler = (input) => {
-    console.log("infoHandler");
     setProductInfo((productInfo) => [...productInfo, input]);
   };
 
@@ -53,9 +53,6 @@ const CreateNewRequestScreen = ({ navigation }) => {
 
   // ska ta bort en skapad vara OBS inte inlägg
   const handleDelete = (itemId) => {
-    console.log(itemId);
-    console.log("COUNTEN");
-    console.log(count);
     setProductInfo(
       productInfo.filter((item) => {
         return item.id !== itemId;
@@ -75,7 +72,6 @@ const CreateNewRequestScreen = ({ navigation }) => {
       if (productInfo[i].id === inputId) {
         let newProductInfo = [...productInfo];
         newProductInfo[i] = updatedItem;
-        console.log("updateItem");
         setProductInfo(newProductInfo);
         return;
       }
@@ -141,7 +137,6 @@ const CreateNewRequestScreen = ({ navigation }) => {
   // Ska skicka alla skapade varor till server
   const publishOffer = () => {
     const communityIds = chosenCommunity.map(({ id }) => id); // tar ut alla ids från "mina" communities
-    console.log(communityIds);
     productInfo.forEach((product) => {
       prepareProduct(product, communityIds); // går igenom alla efterfrågningar som skapats
     });
@@ -164,6 +159,23 @@ const CreateNewRequestScreen = ({ navigation }) => {
     </Button>
   );
 
+  // Ska skapa inlägget men INTE publicera det
+  const createPostButton = () => (
+    <Button
+      style={styles.createBtn}
+      onPress={() => {
+        if (productInfo.length == 0) {
+          setCreateTooltipVisible(true);
+        } else {
+          setCreatePost(true);
+        }
+      }}
+    >
+      {" "}
+      Skapa Inlägg
+    </Button>
+  );
+
   return (
     <Layout style={styles.container}>
       <List
@@ -173,13 +185,7 @@ const CreateNewRequestScreen = ({ navigation }) => {
         key={giveKey}
       />
 
-      <Layout
-        style={{
-          alignSelf: "left",
-          paddingLeft: 30,
-          backgroundColor: "rgba(255, 250, 240, 0.08)",
-        }}
-      >
+      <Layout style={styles.addRequest}>
         <Button
           appearance="ghost"
           accessoryLeft={PlusIcon}
@@ -190,24 +196,14 @@ const CreateNewRequestScreen = ({ navigation }) => {
           Lägg till en ny förfrågan{" "}
         </Button>
       </Layout>
-      <Layout
-        style={{
-          paddingBottom: 15,
-          backgroundColor: "rgba(255, 250, 240, 0.08)",
-        }}
-      >
-        <Button
-          style={{ width: 300, alignSelf: "center" }}
-          onPress={() => {
-            console.log(productInfo);
-            console.log(count);
-            console.log(deleted);
-            //setCreatePost(true);
-          }}
+      <Layout style={tw`pb-4`}>
+        <Tooltip
+          anchor={createPostButton}
+          visible={createTooltipVisible}
+          onBackdropPress={() => setCreateTooltipVisible(false)}
         >
-          {" "}
-          Skapa Inlägg
-        </Button>
+          Du har inte skapat några inlägg!
+        </Tooltip>
       </Layout>
       <Modal
         visible={createPost}
@@ -234,7 +230,7 @@ const CreateNewRequestScreen = ({ navigation }) => {
             key={giveKey}
           />
 
-          <Layout style={{ paddingTop: 10 }}>
+          <Layout style={tw`pt-4`}>
             <Tooltip
               anchor={renderPublishButton}
               visible={tooltipVisible}
@@ -252,17 +248,25 @@ const CreateNewRequestScreen = ({ navigation }) => {
 export default CreateNewRequestScreen;
 
 const styles = StyleSheet.create({
+  addRequest: {
+    alignSelf: "flex-start",
+    paddingLeft: 30,
+  },
+  backdrop: {
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
   container: {
     height: "100%",
-  },
-  icon: {
-    width: 30,
-    height: 30,
   },
   container_list: {
     height: 200,
   },
-  backdrop: {
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  createBtn: {
+    width: 300,
+    alignSelf: "center",
+  },
+  icon: {
+    width: 30,
+    height: 30,
   },
 });

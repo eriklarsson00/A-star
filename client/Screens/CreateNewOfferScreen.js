@@ -25,6 +25,7 @@ const CreateNewOfferScreen = ({ navigation }) => {
   const { userInfo, setUserInfo } = React.useContext(UserInfo);
 
   // STATES
+  const [deleted, setDeleted] = React.useState([]);
   const [productInfo, setProductInfo] = React.useState([]);
   const [compId, setCompId] = React.useState(0);
   const [count, setCount] = React.useState([0]);
@@ -61,6 +62,14 @@ const CreateNewOfferScreen = ({ navigation }) => {
     setCompId(compId + input);
   };
 
+  const handleDelete = (itemId) => {
+    setProductInfo(
+      productInfo.filter((item) => {
+        return item.id !== itemId;
+      })
+    );
+    setDeleted((deleted) => [...deleted, itemId]);
+  };
   // Ska skapa en ny vara/produkt i inlägget
   const newComp = () => {
     const length = count.length;
@@ -86,20 +95,27 @@ const CreateNewOfferScreen = ({ navigation }) => {
   };
 
   // Lista av enskilda varor
-  const addComp = ({ item, index }) => (
-    <Layout>
-      <InputNewOfferComponent
-        setProductInfo={infoHandler}
-        id={compId}
-        user_id={userInfo.id}
-        setId={addId}
-        setChange={updateItem}
-        func={barCodeActive}
-        product={productName}
-        pushImage={pushImage}
-      />
-    </Layout>
-  );
+  const addComp = ({ item, index }) => {
+    if (deleted.includes(item)) {
+      return;
+    } else {
+      return (
+        <Layout>
+          <InputNewOfferComponent
+            setProductInfo={infoHandler}
+            id={compId}
+            user_id={userInfo.id}
+            setId={addId}
+            setChange={updateItem}
+            func={barCodeActive}
+            product={productName}
+            pushImage={pushImage}
+            handleDel={handleDelete}
+          />
+        </Layout>
+      );
+    }
+  };
 
   // funktion som behövs för listor
   const giveKey = ({ item, index }) => reuturn(item);
@@ -130,13 +146,6 @@ const CreateNewOfferScreen = ({ navigation }) => {
     setChosenCommunity((chosenCommunity) => [...chosenCommunity, community]);
   };
 
-  const tryCreatePost = () => {
-    if (productInfo.length == 0) {
-      console.log("tooom");
-    }
-    // setCreatePost(true);
-  };
-
   // förbereder objektet för att kunna skickas till servern
   const prepareProduct = async (product, communities) => {
     let imgurl = await pushImagesToServer(
@@ -161,8 +170,14 @@ const CreateNewOfferScreen = ({ navigation }) => {
   //Skapa-inläggknappen
   const createPostButton = () => (
     <Button
-      style={{ width: 300, alignSelf: "center" }}
-      onPress={setCreateTooltipVisible}
+      style={styles.createPostBtn}
+      onPress={() => {
+        if (productInfo.length == 0) {
+          setCreateTooltipVisible(true);
+        } else {
+          setCreatePost(true);
+        }
+      }}
     >
       {" "}
       Skapa Inlägg
@@ -196,13 +211,7 @@ const CreateNewOfferScreen = ({ navigation }) => {
           key={giveKey}
         />
 
-        <Layout
-          style={{
-            alignSelf: "left",
-            paddingLeft: 30,
-            backgroundColor: "rgba(255, 250, 240, 0.08)",
-          }}
-        >
+        <Layout style={styles.addItem}>
           <Button
             appearance="ghost"
             accessoryLeft={PlusIcon}
@@ -213,21 +222,14 @@ const CreateNewOfferScreen = ({ navigation }) => {
             Lägg till en ny vara{" "}
           </Button>
         </Layout>
-        <Layout
-          style={{
-            paddingBottom: 15,
-            backgroundColor: "rgba(255, 250, 240, 0.08)",
-          }}
-        >
-          <Layout style={{ paddingTop: 10 }}>
-            <Tooltip
-              anchor={createPostButton}
-              visible={createTooltipVisible}
-              onBackdropPress={() => setCreateTooltipVisible(false)}
-            >
-              Du har inte skapat några inlägg!
-            </Tooltip>
-          </Layout>
+        <Layout style={tw`pb-4`}>
+          <Tooltip
+            anchor={createPostButton}
+            visible={createTooltipVisible}
+            onBackdropPress={() => setCreateTooltipVisible(false)}
+          >
+            Du har inte skapat några varor!
+          </Tooltip>
         </Layout>
         <Modal
           visible={createPost}
@@ -254,7 +256,7 @@ const CreateNewOfferScreen = ({ navigation }) => {
               key={giveKey}
             />
 
-            <Layout style={{ paddingTop: 10 }}>
+            <Layout style={tw`pt-4`}>
               <Tooltip
                 anchor={renderPublishButton}
                 visible={communityTooltipVisible}
@@ -275,17 +277,25 @@ const CreateNewOfferScreen = ({ navigation }) => {
 export default CreateNewOfferScreen;
 
 const styles = StyleSheet.create({
+  addItem: {
+    alignSelf: "flex-start",
+    paddingLeft: 30,
+  },
+  backdrop: {
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
   container: {
     height: "100%",
-  },
-  icon: {
-    width: 30,
-    height: 30,
   },
   container_list: {
     height: 200,
   },
-  backdrop: {
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  createPostBtn: {
+    width: 300,
+    alignSelf: "center",
+  },
+  icon: {
+    width: 30,
+    height: 30,
   },
 });
