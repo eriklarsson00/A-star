@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { StyleSheet, View, FlatList } from "react-native";
+import { StyleSheet, View, ScrollView } from "react-native";
 import {
   Text,
   List,
@@ -31,7 +31,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { MyRequestsModal } from "./Modals/MyRequestsModal";
 import { RequestTransactionInfoModal } from "./Modals/RequestTransactionModal";
 import moment from "moment";
-import "moment/locale/sv"
+import "moment/locale/sv";
 export const ItemRequestedComponent = () => {
   const { userInfo, setUserInfo } = React.useContext(UserInfo);
   const { myCommunitysInfo, setMyCommunitysInfo } =
@@ -78,8 +78,7 @@ export const ItemRequestedComponent = () => {
 
     socketRef.current.on("transaction", (transaction) => {
       updateTransactions(transaction);
-      if (transaction.request_id != null)
-        removeOffer(transaction.request_id)
+      if (transaction.request_id != null) removeRequest(transaction.request_id);
     });
 
     return () => {
@@ -99,7 +98,9 @@ export const ItemRequestedComponent = () => {
   };
 
   const removeTransaction = (id) => {
-    return setTransactions(transactions.filter((transaction) => transaction.id != id));
+    return setTransactions(
+      transactions.filter((transaction) => transaction.id != id)
+    );
   };
   const updateTransactions = (transaction) => {
     setTransactions([...transactions, transaction]);
@@ -218,9 +219,13 @@ export const ItemRequestedComponent = () => {
         <ListItem
           style={styles.container}
           accessoryRight={() => {
-            return(
-              <Text style={{ top: 25, fontSize: 10 }}> {moment(item.time_of_creation).fromNow()}</Text>
-            )}}
+            return (
+              <Text style={{ top: 25, fontSize: 10 }}>
+                {" "}
+                {moment(item.time_of_creation).fromNow()}
+              </Text>
+            );
+          }}
           title={`${item.product_text} | ${item.quantity} ${item.unit ?? ""}`}
           description={`${item.description}`}
           onPress={() => {
@@ -232,30 +237,6 @@ export const ItemRequestedComponent = () => {
     );
   };
 
-  const flatListHeader = () => {
-    return (
-      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-        Mina efterfrågningar
-      </Text>
-    );
-  };
-
-  const flatListFooter = () => {
-    return (
-      <>
-        <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-          Efterfrågade varor
-        </Text>
-        <List
-          scrollEnabled={false}
-          data={requests}
-          ItemSeparatorComponent={Divider}
-          renderItem={renderRequestedItem}
-        />
-      </>
-    );
-  };
-
   const LoadingView = () => (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Spinner size={"giant"} />
@@ -263,23 +244,29 @@ export const ItemRequestedComponent = () => {
   );
 
   const LoadedView = () => (
-    <FlatList
-      data={myRequests}
-      ItemSeparatorComponent={Divider}
-      renderItem={renderMyItems}
-      ListHeaderComponent={flatListHeader}
-      ListFooterComponent={flatListFooter}
-    >
-      {community &&
-        community.map((name) => (
-          <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-            Efterfrågas i {name}{" "}
-          </Text>
-        ))}
-    </FlatList>
+    <View>
+      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
+        Mina Efterfrågningar
+      </Text>
+      {myRequests.map((request) => {
+        return renderMyItems({ item: request });
+      })}
+      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
+        Efterfrågade Varor
+      </Text>
+      {requests.map((request) => {
+        return renderRequestedItem({ item: request });
+      })}
+    </View>
   );
 
-  return loading ? <LoadingView /> : <LoadedView />;
+  return loading ? (
+    <LoadingView />
+  ) : (
+    <ScrollView>
+      <LoadedView />
+    </ScrollView>
+  );
 };
 
 const styles = StyleSheet.create({
