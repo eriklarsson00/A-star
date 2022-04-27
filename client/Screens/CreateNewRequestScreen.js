@@ -76,7 +76,6 @@ const CreateNewRequestScreen = ({ navigation }) => {
         return;
       }
     }
-    console.log("ERROR: no item with inputId found");
   };
 
   // Lista av enskilda efterfrågande varor

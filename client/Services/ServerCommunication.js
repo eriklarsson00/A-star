@@ -37,7 +37,7 @@ const getMyOffers = async (id) => {
 const getOffers = async (id, communities) => {
   let query = "?communities=" + communities.join(",");
   let offers = await request("GET", "/offers/other/" + id + query);
-  return [...new Set(offers)];
+  return offers;
 };
 
 const getCommunities = async () => {
@@ -108,6 +108,11 @@ const responderConfirmTransaction = async (id) => {
   return await request("PUT", `/transactions/${id}/responderConfirm`);
 };
 
+const updateRating = async (user_id, rating) => {
+  let msg_body = { rating: rating };
+  return await request("PUT", `/users/${user_id}/rate`, msg_body);
+};
+
 const addToCommunity = async (profile_id, communities) => {
   // Should be refactored to only send one request with all communities
   for (const id of communities) {
@@ -122,7 +127,7 @@ const addToCommunity = async (profile_id, communities) => {
 
 const deleteProfile = async (id) => {
   return await request("DELETE", "/users/" + id).catch((err) =>
-    console.log(err)
+    console.error(err)
   );
 };
 
@@ -133,7 +138,7 @@ const removeUserFromCommunity = async (userId, communityId) => {
   };
 
   return await request("DELETE", "/users/community", obj).catch((err) =>
-    console.log(err)
+    console.error(err)
   );
 };
 
@@ -168,7 +173,7 @@ const pushImagesToServer = async (image, serverPath, userId) => {
     },
   })
     .then((data) => data.json())
-    .catch((err) => console.log(err));
+    .catch((err) => console.err(err));
 };
 
 const postOffer = async (offers, usercommunities) => {
@@ -214,6 +219,7 @@ export {
   acceptTransaction,
   ownerConfirmTransaction,
   responderConfirmTransaction,
+  updateRating,
   addTransaction,
   deleteProfile,
   deleteTransaction,

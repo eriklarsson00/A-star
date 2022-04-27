@@ -1,16 +1,15 @@
 import fetch from "node-fetch";
+import { stdErrorHandler } from "./common.js";
 
 function getProduct(req, res) {
   const gtin = req.params.gtin;
-  postData("https://productsearch.gs1.se/foodservice/tradeItem/search", {
-    query: gtin,
-  }).then((data) => {
-    res.json(data.results[0])
-    // const id = data.results[0].id;
-    // fetch(`https://productsearch.gs1.se/foodservice/tradeItem/${id}`)
-    //   .then((response) => response.json())
-    //   .then((data) => res.json(data));
-  });
+  const url = "https://productsearch.gs1.se/foodservice/tradeItem/search";
+  postData(url, { query: gtin }).then(
+    (data) => {
+      res.json(data.results[0]);
+    },
+    (err) => stdErrorHandler(err, res)
+  );
 }
 
 const postData = (url = "", data = {}) => {

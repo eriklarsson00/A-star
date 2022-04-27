@@ -91,7 +91,6 @@ const CreateNewOfferScreen = ({ navigation }) => {
         return;
       }
     }
-    console.log("ERROR: no item with inputId found");
   };
 
   // Lista av enskilda varor

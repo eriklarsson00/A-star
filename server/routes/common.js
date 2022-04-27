@@ -1,6 +1,5 @@
 const checkIntID = (id, res, msg) => {
   if (isNaN(id)) {
-    console.log;
     res.status(400).json(msg);
     return true;
   }
@@ -23,4 +22,9 @@ const checkEmptyParam = (param, res, msg) => {
   return false;
 };
 
-export { checkIntID, checkEmptyBody, checkEmptyParam };
+const stdErrorHandler = (err, res) => {
+  console.error(err);
+  return res.status(500).json(err);
+};
+
+export { checkIntID, checkEmptyBody, checkEmptyParam, stdErrorHandler };

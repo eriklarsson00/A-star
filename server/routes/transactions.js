@@ -1,5 +1,6 @@
 import { transactionChecker } from "./modelchecker.js";
 import { createRequire } from "module";
+import { stdErrorHandler } from "./common.js";
 const require = createRequire(import.meta.url);
 
 const knex = require("knex")({
@@ -16,9 +17,12 @@ const knex = require("knex")({
 function getTransactions(req, res) {
   knex("Transactions")
     .select()
-    .then((transactions) => {
-      res.json(transactions);
-    });
+    .then(
+      (transactions) => {
+        return res.json(transactions);
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function getTransaction(req, res) {
@@ -33,9 +37,12 @@ function getTransaction(req, res) {
   knex("Transactions")
     .select()
     .where("id", id)
-    .then((transactions) => {
-      res.json(transactions);
-    });
+    .then(
+      (transactions) => {
+        return res.json(transactions);
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function getResponderTransactions(req, res) {
@@ -50,9 +57,12 @@ function getResponderTransactions(req, res) {
   knex("Transactions")
     .select()
     .where("responder_id", id)
-    .then((transactions) => {
-      res.json(transactions);
-    });
+    .then(
+      (transactions) => {
+        return res.json(transactions);
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function getListerTransactions(req, res) {
@@ -72,11 +82,9 @@ function getListerTransactions(req, res) {
     .orWhere("Transactions.user_id", id)
     .then(
       (transactions) => {
-        res.json(transactions);
+        return res.json(transactions);
       },
-      (err) => {
-        return res.status(500).json(err);
-      }
+      (err) => stdErrorHandler(err, res)
     );
 }
 
@@ -91,18 +99,16 @@ function getTransactionCommunity(req, res) {
 
   knex
     .raw(
-      "SELECT C.* FROM Transactions T " +
-        "LEFT JOIN CommunityListings CL ON CL.offer_id = T.offer_id OR CL.request_id = T.request_id " +
-        "LEFT JOIN Communities C ON C.id = CL.community_id WHERE T.id = " +
-        id
+      ` SELECT C.* FROM Transactions T
+        LEFT JOIN CommunityListings CL ON CL.offer_id = T.offer_id OR CL.request_id = T.request_id
+        LEFT JOIN Communities C ON C.id = CL.community_id WHERE T.id = ${id}
+      `
     )
     .then(
       (communities) => {
-        res.json(communities[0]);
+        return res.json(communities[0]);
       },
-      (err) => {
-        return res.status(500).json(err);
-      }
+      (err) => stdErrorHandler(err, res)
     );
 }
 
@@ -117,7 +123,7 @@ function getTransactionOngoingOwner(req, res) {
 
   const sql = `
     SELECT T.*, 
-    U.firstname, U.lastname, U.number, U.email, 
+    U.firstname, U.lastname, U.number, U.email, U.rating, U.raters,
     O.product_text as offer_product, O.description as offer_description, O.imgurl, 
     R.product_text as request_product, R.description as request_description
     FROM Transactions T
@@ -132,9 +138,7 @@ function getTransactionOngoingOwner(req, res) {
     (transactions) => {
       res.json(transactions[0]);
     },
-    (err) => {
-      return res.status(500).json(err);
-    }
+    (err) => stdErrorHandler(err, res)
   );
 }
 
@@ -151,7 +155,7 @@ function getTransactionOngoingResponder(req, res) {
 
   const sql = `
     SELECT T.*, 
-    U.firstname, U.lastname, U.number, U.email, 
+    U.firstname, U.lastname, U.number, U.email, U.rating, U.raters,
     O.product_text as offer_product, O.description as offer_description, O.imgurl, 
     R.product_text as request_product, R.description as request_description
     FROM Transactions T
@@ -164,11 +168,9 @@ function getTransactionOngoingResponder(req, res) {
 
   knex.raw(sql).then(
     (transactions) => {
-      res.json(transactions[0]);
+      return res.json(transactions[0]);
     },
-    (err) => {
-      return res.status(500).json(err);
-    }
+    (err) => stdErrorHandler(err, res)
   );
 }
 
@@ -193,9 +195,7 @@ function getTransactionPendingUser(req, res) {
     (transactions) => {
       res.json(transactions[0]);
     },
-    (err) => {
-      return res.status(500).json(err);
-    }
+    (err) => stdErrorHandler(err, res)
   );
 }
 
@@ -216,16 +216,20 @@ function getTransactionUser(req, res) {
     WHERE U.id = ${id};
     `;
 
-  knex.raw(sql).then((transactions) => {
-    res.json(transactions[0]);
-  });
+  knex.raw(sql).then(
+    (transactions) => {
+      return res.json(transactions[0]);
+    },
+    (err) => stdErrorHandler(err, res)
+  );
 }
 
 function addTransaction(req, res) {
   const transaction = req.body;
 
-  if (!transactionChecker(transaction))
+  if (!transactionChecker(transaction)) {
     return res.status(400).json("Invalid transaction properties");
+  }
 
   transaction.status = "pending";
   knex("Transactions")
@@ -234,9 +238,7 @@ function addTransaction(req, res) {
       (id) => {
         return res.json("Transaction inserted with id: " + id);
       },
-      (err) => {
-        return res.status(500).json(err);
-      }
+      (err) => stdErrorHandler(err, res)
     );
 }
 
@@ -244,8 +246,9 @@ function updateTransaction(req, res) {
   const id = parseInt(req.params.id);
   const body = req.body;
 
-  if (!transactionChecker(body))
+  if (!transactionChecker(body)) {
     return res.status(400).json("Invalid transaction properties");
+  }
 
   if (isNaN(id)) {
     return res
@@ -260,9 +263,7 @@ function updateTransaction(req, res) {
       () => {
         return res.json("Transaction updated with id: " + id);
       },
-      (err) => {
-        return res.status(500).json(err);
-      }
+      (err) => stdErrorHandler(err, res)
     );
 }
 
@@ -282,9 +283,7 @@ function deleteTransaction(req, res) {
       () => {
         return res.json("Transaction has been removed");
       },
-      (err) => {
-        return res.status(500).json(err);
-      }
+      (err) => stdErrorHandler(err, res)
     );
 }
 
@@ -306,9 +305,7 @@ function acceptTransaction(req, res) {
     () => {
       return res.json("Transaction has been updated");
     },
-    (err) => {
-      return res.status(500).json(err);
-    }
+    (err) => stdErrorHandler(err, res)
   );
 }
 
@@ -353,9 +350,7 @@ function ownerConfirmTransaction(req, res) {
         }
       );
     },
-    (err) => {
-      res.status(500).json(err);
-    }
+    (err) => stdErrorHandler(err, res)
   );
 }
 
@@ -400,9 +395,7 @@ function responderConfirmTransaction(req, res) {
         }
       );
     },
-    (err) => {
-      res.status(500).json(err);
-    }
+    (err) => stdErrorHandler(err, res)
   );
 }
 
