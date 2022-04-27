@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View, FlatList, Image } from "react-native";
+import { StyleSheet, View, FlatList, Image, ScrollView } from "react-native";
 import {
   Text,
   List,
@@ -17,10 +17,12 @@ import {
 } from "../assets/AppContext";
 import {
   getOffers,
-  getMyOffers,
+  getMyActiveOffers,
   addTransaction,
   getPendingTransactions,
 } from "../Services/ServerCommunication.js";
+import moment from "moment";
+import "moment/locale/sv";
 import io from "socket.io-client";
 import ProductInfoModal from "./Modals/ProductInfoModal";
 import TakeProductModal from "./Modals/TakeProductModal";
@@ -50,7 +52,7 @@ export const ItemAvailableComponent = () => {
   //fetch items on focus
   const fetchItems = async () => {
     setLoading(true);
-    let myItems = await getMyOffers(userId);
+    let myItems = await getMyActiveOffers(userId);
     let otherItems = await getOffers(userId, communityIds);
     let transactions = await getPendingTransactions(userId);
 
@@ -86,6 +88,7 @@ export const ItemAvailableComponent = () => {
 
     socketRef.current.on("transaction", (transaction) => {
       updateTransactions(transaction);
+      if (transaction.offer_id != null) removeOffer(transaction.offer_id);
     });
 
     return () => {
@@ -116,8 +119,18 @@ export const ItemAvailableComponent = () => {
     return transactions.map(({ offer_id }) => offer_id);
   };
 
+  const removeTransaction = (id) => {
+    return setTransactions(
+      transactions.filter((transaction) => transaction.id != id)
+    );
+  };
+
   const removeOffer = (id) => {
     return setOffers(offers.filter((offer) => offer.id != id));
+  };
+
+  const removeMyOffer = (id) => {
+    return setMyOffers(myOffers.filter((offer) => offer.id != id));
   };
 
   const toggleVisible = (array, item) => {
@@ -181,11 +194,19 @@ export const ItemAvailableComponent = () => {
     let modal = !takeProduct ? infoModal : takeProductModal;
 
     return (
-      <View>
+      <View key={item.id}>
         <ListItem
           style={styles.container}
           onPress={() => {
             toggleModal(item);
+          }}
+          accessoryRight={() => {
+            return (
+              <Text style={{ top: 38, fontSize: 10 }}>
+                {" "}
+                {moment(item.time_of_creation).fromNow()}
+              </Text>
+            );
           }}
           accessoryLeft={() => {
             return (
@@ -200,8 +221,7 @@ export const ItemAvailableComponent = () => {
               />
             );
           }}
-          // accessoryLeft={"https://picsum.photos/150/150"}
-          title={`${item.product_text} | ${item.quantity} ${item.unit}`}
+          title={`${item.product_text} | ${item.quantity} ${item.unit ?? ""}`}
           description={`${item.description}`}
         />
         {modal}
@@ -212,7 +232,7 @@ export const ItemAvailableComponent = () => {
   const renderMyItems = (
     { item } //Used for rendering my items
   ) => (
-    <View>
+    <View key={item.id}>
       <ListItem
         style={styles.container}
         onPress={() => toggleModal(item)}
@@ -230,7 +250,7 @@ export const ItemAvailableComponent = () => {
           );
         }}
         accessoryRight={offerHasTransaction(item) ? TransactionIcon : null}
-        title={`${item.product_text} | ${item.quantity} ${item.unit}`}
+        title={`${item.product_text} | ${item.quantity} ${item.unit ?? ""}`}
         description={`${item.description}`}
       ></ListItem>
       <TransactionInfoModal
@@ -238,32 +258,11 @@ export const ItemAvailableComponent = () => {
         item={item}
         toggleModal={toggleModal}
         transaction={getTransaction(item)}
+        removeTransaction={removeTransaction}
+        removeMyOffer={removeMyOffer}
       />
     </View>
   );
-
-  const flatListHeader = () => {
-    return (
-      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-        Mina varor
-      </Text>
-    );
-  };
-
-  const flatListFooter = () => {
-    return (
-      <View>
-        <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-          Tillgängliga varor
-        </Text>
-        <List
-          scrollEnabled={false}
-          data={offers}
-          renderItem={renderAvailableItems}
-        />
-      </View>
-    );
-  };
 
   const LoadingView = () => (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -272,16 +271,29 @@ export const ItemAvailableComponent = () => {
   );
 
   const LoadedView = () => (
-    <FlatList
-      style={{ flex: 1 }}
-      data={myOffers}
-      renderItem={renderMyItems}
-      ListHeaderComponent={flatListHeader}
-      ListFooterComponent={flatListFooter}
-    ></FlatList>
+    <View>
+      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
+        Mina varor
+      </Text>
+      {myOffers.map((offer) => {
+        return renderMyItems({ item: offer });
+      })}
+      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
+        Tillgängliga varor
+      </Text>
+      {offers.map((offer) => {
+        return renderAvailableItems({ item: offer });
+      })}
+    </View>
   );
 
-  return loading ? <LoadingView /> : <LoadedView />;
+  return loading ? (
+    <LoadingView />
+  ) : (
+    <ScrollView>
+      <LoadedView />
+    </ScrollView>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -290,6 +302,7 @@ const styles = StyleSheet.create({
     height: 100,
     marginRight: 10,
     marginLeft: 10,
+    borderRadius: 10,
   },
   spaceBetween: {
     marginBottom: 10,

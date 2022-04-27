@@ -9,17 +9,27 @@ import {
   ShowCommunityIds,
 } from "../assets/AppContext";
 import tw from "twrnc";
-import { deleteProfile } from "../Services/ServerCommunication";
+import { useIsFocused } from "@react-navigation/native";
+import {
+  deleteProfile,
+  getUserProfileById,
+} from "../Services/ServerCommunication";
 
 export const ProfileScreen = () => {
+  // CONTEXT
   const { userInfo, setUserInfo } = React.useContext(UserInfo);
   const { setLoggedIn } = React.useContext(UserLoggedIn);
   const { setGoogleInfo } = React.useContext(GoogleInfo);
   const { setShowCommunityIds } = React.useContext(ShowCommunityIds);
-  const rating =
+
+  // STATE
+  const [rating, setRating] = React.useState(
     userInfo.raters > 0
       ? Math.round((userInfo.rating * 100) / userInfo.raters) / 100 + "/5"
-      : "Inga";
+      : "Inga"
+  );
+
+  const isFocused = useIsFocused();
 
   const logOut = async () => {
     // Clear all sorts of cache in app
@@ -30,6 +40,19 @@ export const ProfileScreen = () => {
     setLoggedIn(false);
     setShowCommunityIds([]);
   };
+
+  React.useEffect(async () => {
+    let userData = await getUserProfileById(userInfo.id);
+    setUserInfo(userData[0]);
+  }, [isFocused]);
+
+  React.useEffect(async () => {
+    setRating(
+      userInfo.raters > 0
+        ? Math.round((userInfo.rating * 100) / userInfo.raters) / 100 + "/5"
+        : "Inga"
+    );
+  }, [userInfo]);
 
   const removeAccount = async () => {
     const res = await deleteProfile(userInfo.id);

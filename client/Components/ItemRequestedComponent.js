@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { StyleSheet, View, FlatList } from "react-native";
+import { StyleSheet, View, ScrollView } from "react-native";
 import {
   Text,
   List,
@@ -20,7 +20,7 @@ import {
 import { io } from "socket.io-client";
 import {
   getRequests,
-  getMyRequests,
+  getMyActiveRequests,
   addTransaction,
   getPendingTransactions,
 } from "../Services/ServerCommunication";
@@ -30,6 +30,8 @@ import { GiveProductModal } from "./Modals/GiveProductModal";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { MyRequestsModal } from "./Modals/MyRequestsModal";
 import { RequestTransactionInfoModal } from "./Modals/RequestTransactionModal";
+import moment from "moment";
+import "moment/locale/sv";
 export const ItemRequestedComponent = () => {
   const { userInfo, setUserInfo } = React.useContext(UserInfo);
   const { myCommunitysInfo, setMyCommunitysInfo } =
@@ -76,16 +78,17 @@ export const ItemRequestedComponent = () => {
 
     socketRef.current.on("transaction", (transaction) => {
       updateTransactions(transaction);
+      if (transaction.request_id != null) removeRequest(transaction.request_id);
     });
 
     return () => {
       socketRef.current.disconnect();
     };
-  }, []);
+  }, [requests, transactions]);
 
   const fetchItems = async () => {
     setLoading(true);
-    let myItems = await getMyRequests(userId);
+    let myItems = await getMyActiveRequests(userId);
     let otherItems = await getRequests(userId, communityIds);
     setMyRequests(myItems);
     setRequests(otherItems);
@@ -94,6 +97,11 @@ export const ItemRequestedComponent = () => {
     setLoading(false);
   };
 
+  const removeTransaction = (id) => {
+    return setTransactions(
+      transactions.filter((transaction) => transaction.id != id)
+    );
+  };
   const updateTransactions = (transaction) => {
     setTransactions([...transactions, transaction]);
   };
@@ -104,6 +112,10 @@ export const ItemRequestedComponent = () => {
 
   const removeRequest = (id) => {
     return setRequests(requests.filter((request) => request.id != id));
+  };
+
+  const removeMyRequest = (id) => {
+    return setMyRequests(myRequests.filter((request) => request.id != id));
   };
 
   const getTransaction = (request) => {
@@ -154,10 +166,10 @@ export const ItemRequestedComponent = () => {
   const renderMyItems = (
     { item } //Used for rendering my items
   ) => (
-    <View>
+    <View key={item.id}>
       <ListItem
         style={styles.container}
-        title={`${item.product_text} | ${item.quantity} ${item.unit}`}
+        title={`${item.product_text} | ${item.quantity} ${item.unit ?? ""}`}
         accessoryRight={requestHasTransaction(item) ? TransactionIcon : null}
         description={`${item.description}`}
         onPress={() => {
@@ -169,6 +181,8 @@ export const ItemRequestedComponent = () => {
         text={"vill ge dig denna vara"}
         toggleModal={toggleModal}
         transaction={getTransaction(item)}
+        removeTransaction={removeTransaction}
+        removeMyRequest={removeMyRequest}
       />
     </View>
   );
@@ -202,10 +216,19 @@ export const ItemRequestedComponent = () => {
     if (takeProduct) {
     }
     return (
-      <View>
+      <View key={item.id}
+>
         <ListItem
           style={styles.container}
-          title={`${item.product_text} | ${item.quantity} ${item.unit}`}
+          accessoryRight={() => {
+            return (
+              <Text style={{ top: 25, fontSize: 10 }}>
+                {" "}
+                {moment(item.time_of_creation).fromNow()}
+              </Text>
+            );
+          }}
+          title={`${item.product_text} | ${item.quantity} ${item.unit ?? ""}`}
           description={`${item.description}`}
           onPress={() => {
             toggleModal(item);
@@ -216,30 +239,6 @@ export const ItemRequestedComponent = () => {
     );
   };
 
-  const flatListHeader = () => {
-    return (
-      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-        Mina efterfrågningar
-      </Text>
-    );
-  };
-
-  const flatListFooter = () => {
-    return (
-      <>
-        <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-          Efterfrågade varor
-        </Text>
-        <List
-          scrollEnabled={false}
-          data={requests}
-          ItemSeparatorComponent={Divider}
-          renderItem={renderRequestedItem}
-        />
-      </>
-    );
-  };
-
   const LoadingView = () => (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Spinner size={"giant"} />
@@ -247,23 +246,31 @@ export const ItemRequestedComponent = () => {
   );
 
   const LoadedView = () => (
-    <FlatList
-      data={myRequests}
-      ItemSeparatorComponent={Divider}
-      renderItem={renderMyItems}
-      ListHeaderComponent={flatListHeader}
-      ListFooterComponent={flatListFooter}
-    >
-      {community &&
-        community.map((name) => (
-          <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-            Efterfrågas i {name}{" "}
-          </Text>
-        ))}
-    </FlatList>
+    <View>
+      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
+        Mina Efterfrågningar
+      </Text>
+      {myRequests.map((request) => {
+        
+        return renderMyItems({ item: request });
+      })}
+      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
+        Efterfrågade Varor
+      </Text>
+      {requests.map((request) => {
+      
+        return renderRequestedItem({ item: request });
+      })}
+    </View>
   );
 
-  return loading ? <LoadingView /> : <LoadedView />;
+  return loading ? (
+    <LoadingView />
+  ) : (
+    <ScrollView>
+      <LoadedView />
+    </ScrollView>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -277,5 +284,6 @@ const styles = StyleSheet.create({
     height: 80,
     marginRight: 10,
     marginLeft: 10,
+    borderRadius: 10,
   },
 });

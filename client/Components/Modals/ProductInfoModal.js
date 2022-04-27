@@ -9,12 +9,16 @@ import {
   Button,
   Layout,
   Spinner,
+  Icon,
 } from "@ui-kitten/components";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import { getUserProfileById } from "../../Services/ServerCommunication";
+import moment from "moment";
+import "moment/locale/sv";
 import tw from "twrnc";
 
 export const ProductInfoModal = (props) => {
   const item = props.item;
+  const user = getUserProfileById(item.user_id);
   return (
     <Modal //Modal for additional information about a product
       visible={item.visible}
@@ -44,15 +48,23 @@ export const ProductInfoModal = (props) => {
             {item.product_text}
           </Text>
           <Text category={"s1"} style={{ marginLeft: 20 }}>
-            {item.quantity}
+            {item.quantity} {item.unit}
           </Text>
         </View>
 
         <Text style={{ marginBottom: 10 }}>
-          Utångsdag: {item.time_of_expiration}
+          Utångsdag:{" "}
+          {moment(item.time_of_expiration).format("dddd Do MMM hh:mm")}
+          {"\n"}
+          {moment(item.time_of_expiration).fromNow()}
         </Text>
         <Text style={{ marginBottom: 10 }}>
-          Bruten förpackning: {item.broken_pkg ? "Japp" : "Nepp"}{" "}
+          Bruten förpackning:{" "}
+          {item.broken_pkg ? (
+            <Icon style={styles.icon} fill="green" name="checkmark-circle" />
+          ) : (
+            <Icon style={styles.icon} fill="red" name="close-outline" />
+          )}
         </Text>
         <Text style={{ marginBottom: 10 }}>Användare som lagt upp</Text>
         <Text style={{ marginBottom: 10 }}>{item.description}</Text>
@@ -61,5 +73,37 @@ export const ProductInfoModal = (props) => {
     </Modal>
   );
 };
+
+const styles = StyleSheet.create({
+  imgContainer: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  container: {
+    paddingTop: 30,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginBottom: 20,
+  },
+  card: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    margin: 5,
+    width: "100%",
+  },
+  text: {
+    fontSize: 12,
+  },
+  icon: {
+    width: 20,
+    height: 20,
+    top: 5,
+    left: 5,
+  },
+});
 
 export default ProductInfoModal;

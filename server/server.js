@@ -126,6 +126,8 @@ app.route("communities/members/:id").get(communities.getCommunityMembers);
 
 app.route("/offers/active").get(offers.getActiveOffers);
 
+app.route("/offers/myactive/:userId").get(offers.getMyActiveOffers);
+
 app.route("/offers/active/:community").get(offers.getActiveOffersCommunity);
 
 app
@@ -152,6 +154,8 @@ app.route("/offers/other/:userId").get(offers.getOtherOffersCommunity);
 //*************************REQUESTS*************************
 
 app.route("/requests/active").get(requests.getActiveRequests);
+
+app.route("/requests/myactive/:userId").get(requests.getMyActiveRequests);
 
 app
   .route("/requests/active/:community")

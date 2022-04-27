@@ -277,4 +277,48 @@ export function requestTests(server) {
         });
     });
   });
+  describe("/requests/myactive", () => {
+    it("should get my active requests", function (done) {
+      chai
+        .request(server)
+        .get("/requests/myactive/1")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(200);
+          res.body.should.be.a("array");
+          res.body.length.should.not.be.eql(0);
+          done();
+        });
+    });
+    it("should not get my active requests", function (done) {
+      // Invalid id
+      chai
+        .request(server)
+        .get("/requests/myactive/InvalidId")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(400);
+          res.body.should.be.a("string");
+          res.body.length.should.not.be.eql(0);
+        });
+
+      // Bad id
+      chai
+        .request(server)
+        .get("/requests/myactive/-1")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(200);
+          res.body.should.be.a("array");
+          res.body.length.should.be.eql(0);
+          done();
+        });
+    });
+  });
 }

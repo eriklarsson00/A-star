@@ -30,8 +30,8 @@ const getUserProfileById = async (id) => {
   return await request("GET", "/users/" + id);
 };
 
-const getMyOffers = async (id) => {
-  return await request("GET", "/offers/user/" + id);
+const getMyActiveOffers = async (id) => {
+  return await request("GET", "/offers/myactive/" + id);
 };
 
 const getOffers = async (id, communities) => {
@@ -49,7 +49,7 @@ const getUserCommunities = async (user_id) => {
   return await request("Get", "/users/community/" + user_id);
 };
 
-const getMyRequests = async (id) => {
+const getMyActiveRequests = async (id) => {
   return await request("GET", "/requests/user/" + id);
 };
 
@@ -203,9 +203,9 @@ const addCommunity = async (community) => {
 };
 
 export {
-  getMyOffers,
+  getMyActiveOffers,
   getOffers,
-  getMyRequests,
+  getMyActiveRequests,
   getRequests,
   getUserProfileById,
   getUserProfileByEmail,

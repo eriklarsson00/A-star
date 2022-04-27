@@ -52,6 +52,32 @@ function getActiveRequests(req, res) {
     );
 }
 
+function getMyActiveRequests(req, res) {
+  const userId = parseInt(req.params.userId);
+
+  if (isNaN(userId)) {
+    return res
+      .status(400)
+      .json("Usage: /requests/myactive/:userId. userId has to be a number");
+  }
+
+  knex
+    .raw(
+      `
+    SELECT R.* FROM Requests R
+    LEFT JOIN Transactions T ON T.request_id = R.id
+    WHERE R.user_id = ${userId}
+      AND (T.status IS NULL OR T.status = 'pending');
+  `
+    )
+    .then(
+      (requests) => {
+        return res.json(requests[0]);
+      },
+      (err) => stdErrorHandler(err, res)
+    );
+}
+
 function getRequests(req, res) {
   knex("Requests")
     .select()
@@ -218,6 +244,7 @@ function getOtherRequestsCommunity(req, res) {
 export {
   getActiveRequestsCommunity,
   getActiveRequests,
+  getMyActiveRequests,
   getRequests,
   getRequest,
   addRequest,
