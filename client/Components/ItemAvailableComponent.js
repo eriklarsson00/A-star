@@ -194,7 +194,7 @@ export const ItemAvailableComponent = () => {
     let modal = !takeProduct ? infoModal : takeProductModal;
 
     return (
-      <View>
+      <View key={item.id}>
         <ListItem
           style={styles.container}
           onPress={() => {
@@ -232,7 +232,7 @@ export const ItemAvailableComponent = () => {
   const renderMyItems = (
     { item } //Used for rendering my items
   ) => (
-    <View>
+    <View key={item.id}>
       <ListItem
         style={styles.container}
         onPress={() => toggleModal(item)}
@@ -282,6 +282,7 @@ export const ItemAvailableComponent = () => {
         Tillgängliga varor
       </Text>
       {offers.map((offer) => {
+        offer.key = offer.id
         return renderAvailableItems({ item: offer });
       })}
     </View>

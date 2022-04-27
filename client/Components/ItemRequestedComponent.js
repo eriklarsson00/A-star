@@ -166,7 +166,7 @@ export const ItemRequestedComponent = () => {
   const renderMyItems = (
     { item } //Used for rendering my items
   ) => (
-    <View>
+    <View key={item.id}>
       <ListItem
         style={styles.container}
         title={`${item.product_text} | ${item.quantity} ${item.unit ?? ""}`}
@@ -215,7 +215,8 @@ export const ItemRequestedComponent = () => {
     let modal = !takeProduct ? infoModal : giveProductModal;
 
     return (
-      <View>
+      <View key={item.id}
+>
         <ListItem
           style={styles.container}
           accessoryRight={() => {
@@ -249,12 +250,14 @@ export const ItemRequestedComponent = () => {
         Mina Efterfrågningar
       </Text>
       {myRequests.map((request) => {
+        
         return renderMyItems({ item: request });
       })}
       <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
         Efterfrågade Varor
       </Text>
       {requests.map((request) => {
+      
         return renderRequestedItem({ item: request });
       })}
     </View>
