@@ -324,11 +324,12 @@ function ownerConfirmTransaction(req, res) {
   `;
 
   knex.raw(getSql).then(
-    (t) => {
+    async (result) => {
       let updateSql;
+      const t = result[0];
 
       if (!t || !t[0] || t[0].lenght == 0) {
-        res.json("no entry found");
+        return res.json("no entry found");
       } else if (t[0].status === "accepted") {
         updateSql = `
           UPDATE Transactions SET status = 'ownerConfirmed'
@@ -339,6 +340,7 @@ function ownerConfirmTransaction(req, res) {
           UPDATE Transactions SET status = 'completed'
           WHERE id = ${id};
         `;
+        await incrementUserStat(id);
       }
 
       knex.raw(updateSql).then(
@@ -369,10 +371,11 @@ function responderConfirmTransaction(req, res) {
   `;
 
   knex.raw(getSql).then(
-    (t) => {
+    async (result) => {
       let updateSql;
+      const t = result[0];
 
-      if (id == undefined || !t || !t[0] || t[0].lenght == 0) {
+      if (!t || !t[0] || t[0].lenght == 0) {
         return res.json("no entry found");
       } else if (t[0].status === "accepted") {
         updateSql = `
@@ -384,6 +387,7 @@ function responderConfirmTransaction(req, res) {
           UPDATE Transactions SET status = 'completed'
           WHERE id = ${id};
         `;
+        await incrementUserStat(id);
       }
 
       knex.raw(updateSql).then(
@@ -397,6 +401,31 @@ function responderConfirmTransaction(req, res) {
     },
     (err) => stdErrorHandler(err, res)
   );
+}
+
+async function incrementUserStat(transactionId) {
+  let owner;
+  let responder;
+  let transaction = await knex("Transactions")
+    .select()
+    .where("id", transactionId);
+
+  responder = await knex("Users")
+    .select()
+    .where("id", transaction.responder_id);
+
+  if (transaction && transaction.request_id) {
+    owner = await knex("Requests").select().where("id", transaction.request_id);
+    owner.taken += 1;
+    responder.given += 1;
+  } else {
+    owner = await knex("Offers").select().where("id", transaction.offer_id);
+    owner.given += 1;
+    responder.taken += 1;
+  }
+
+  await knex("Users").update(owner).where("id", owner.id);
+  await knex("Users").update(responder).where("id", responder.id);
 }
 
 export {

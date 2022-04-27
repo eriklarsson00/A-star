@@ -359,7 +359,7 @@ export function transactionTests(server) {
     it("should get ongoing transactions for a responder", function (done) {
       chai
         .request(server)
-        .get("/transactions/ongoing/responder/1")
+        .get("/transactions/ongoing/responder/4")
         .end((err, res) => {
           if (err) {
             console.error(err);
@@ -539,7 +539,7 @@ export function transactionTests(server) {
     it("should let owner confirm a transaction", function (done) {
       chai
         .request(server)
-        .put("/transactions/1/ownerConfirm")
+        .put("/transactions/7/ownerConfirm")
         .end((err, res) => {
           if (err) {
             console.error(err);
