@@ -45,11 +45,6 @@ io.on("connection", (socket) => {
     `Connected to WebSocket server\n ${connectedClients()}`
   );
 
-  socket.on("communities", (communities) => {
-    console.log(communities);
-    socket.join(communities.ids);
-  });
-
   socket.broadcast.emit(
     "message",
     `A new client connected to the WebSocket server\n ${connectedClients()}`
@@ -139,10 +134,7 @@ app
   .get(offers.getOffers)
   .post((req, res) => {
     offers.addOffer(req, res);
-    const communities = req.body.communities;
-    communities?.forEach((community) => {
-      io.sockets.to(community).emit("offer", req.body.offer);
-    });
+    io.sockets.emit("offer", req.body);
   });
 
 app
@@ -171,10 +163,7 @@ app
   .get(requests.getRequests)
   .post((req, res) => {
     requests.addRequest(req, res);
-    const communities = req.body.communities;
-    communities?.forEach((community) => {
-      io.sockets.to(community).emit("request", req.body.request);
-    });
+    io.sockets.emit("offer", req.body.offer);
   });
 
 app
@@ -195,7 +184,10 @@ app.route("/requests/other/:user").get(requests.getOtherRequestsCommunity);
 app
   .route("/transactions")
   .get(transactions.getTransactions)
-  .post(transactions.addTransaction);
+  .post((req, res) => {
+    transactions.addTransaction(req, res);
+    io.sockets.emit("transaction", req.body);
+  });
 
 app
   .route("/transactions/:id")
