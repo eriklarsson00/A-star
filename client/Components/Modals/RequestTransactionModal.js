@@ -35,13 +35,13 @@ export const RequestTransactionInfoModal = (props) => {
   };
 
   useEffect(() => {
-    getResponder();
+    return getResponder();
   }, []);
 
   const accept = () => {
     acceptTransaction(transaction.id);
+    props.removeMyRequest(transaction.request_id);
     props.removeTransaction(transaction.id);
-    props.removeRequest(transaction.request_id)
     props.toggleModal(item);
   };
 

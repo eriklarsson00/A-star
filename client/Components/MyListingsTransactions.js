@@ -186,6 +186,7 @@ const styles = StyleSheet.create({
     height: 100,
     marginRight: 10,
     marginLeft: 10,
+    borderRadius: 10,
   },
   spaceBetween: {
     marginBottom: 10,

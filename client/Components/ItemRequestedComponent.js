@@ -76,12 +76,14 @@ export const ItemRequestedComponent = () => {
 
     socketRef.current.on("transaction", (transaction) => {
       updateTransactions(transaction);
+      if (transaction.request_id != null)
+        removeOffer(transaction.request_id)
     });
 
     return () => {
       socketRef.current.disconnect();
     };
-  }, []);
+  }, [requests, transactions]);
 
   const fetchItems = async () => {
     setLoading(true);
@@ -107,6 +109,10 @@ export const ItemRequestedComponent = () => {
 
   const removeRequest = (id) => {
     return setRequests(requests.filter((request) => request.id != id));
+  };
+
+  const removeMyRequest = (id) => {
+    return setMyRequests(myRequests.filter((request) => request.id != id));
   };
 
   const getTransaction = (request) => {
@@ -173,7 +179,7 @@ export const ItemRequestedComponent = () => {
         toggleModal={toggleModal}
         transaction={getTransaction(item)}
         removeTransaction={removeTransaction}
-        removeRequest={removeRequest}
+        removeMyRequest={removeMyRequest}
       />
     </View>
   );
@@ -281,5 +287,6 @@ const styles = StyleSheet.create({
     height: 80,
     marginRight: 10,
     marginLeft: 10,
+    borderRadius: 10,
   },
 });

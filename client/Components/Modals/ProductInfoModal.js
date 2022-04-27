@@ -10,11 +10,13 @@ import {
   Layout,
   Spinner,
 } from "@ui-kitten/components";
+import { getUserProfileById } from "../../Services/ServerCommunication";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import tw from "twrnc";
 
 export const ProductInfoModal = (props) => {
   const item = props.item;
+  const user = getUserProfileById(item.user_id)
   return (
     <Modal //Modal for additional information about a product
       visible={item.visible}
@@ -44,7 +46,7 @@ export const ProductInfoModal = (props) => {
             {item.product_text}
           </Text>
           <Text category={"s1"} style={{ marginLeft: 20 }}>
-            {item.quantity}
+            {item.quantity}{" "}{item.unit}
           </Text>
         </View>
 

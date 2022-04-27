@@ -10,6 +10,7 @@ import {
   Layout,
   Spinner,
   Divider,
+  Icon,
 } from "@ui-kitten/components";
 import moment from "moment";
 import "moment/locale/sv";
@@ -19,6 +20,12 @@ import {
   acceptTransaction,
   deleteTransaction,
 } from "../../Services/ServerCommunication";
+
+const CheckIcon = (props) => (
+  <Icon {...props} fill="red" name="checkmark-circle" />
+);
+
+const CrossIcon = (props) => <Icon {...props} fill="red" name="close-circle" />;
 
 export const TransactionInfoModal = (props) => {
   const item = props.item;
@@ -34,21 +41,21 @@ export const TransactionInfoModal = (props) => {
     responder.raters > 0
       ? Math.round((responder.rating * 10) / responder.raters) / 10 + "/5"
       : "Inga";
-  
+
   useEffect(() => {
-    getResponder();
+   return getResponder();
   }, []);
 
   const accept = () => {
     acceptTransaction(transaction.id);
-    props.removeTransaction(transaction.id)
-    props.removeOffer(transaction.offer_id);
+    props.removeMyOffer(transaction.offer_id);
+    props.removeTransaction(transaction.id);
     props.toggleModal(item);
   };
 
   const decline = () => {
     deleteTransaction(transaction.id);
-    props.removeTransaction(transaction.id)
+    props.removeTransaction(transaction.id);
     props.toggleModal(item);
   };
 
@@ -57,41 +64,54 @@ export const TransactionInfoModal = (props) => {
       return (
         <View>
           <View style={styles.imgContainer}>
-           <Layout style={tw`py-10`}>
-        <Image
-          style={[tw`rounded-full`, {marginBottom: -40, marginTop: -10}]}
-          source={{
-            uri: responder.imgurl,
-            height: 150,
-            width: 150,
-          }}
-        />
-      </Layout>
-      <Layout style={styles.container}>
-        <Card style={styles.card}>
-          <Text style={[tw`text-center`, styles.text]}>{responder.given}</Text>
-          <Divider />
-          <Text style={[tw`text-center`, styles.text]}>Givet</Text>
-        </Card>
+            <Layout style={tw`py-10`}>
+              <Image
+                style={[
+                  tw`rounded-full`,
+                  { marginBottom: -40, marginTop: -10 },
+                ]}
+                source={{
+                  uri: responder.imgurl,
+                  height: 150,
+                  width: 150,
+                }}
+              />
+            </Layout>
+            <Layout style={styles.container}>
+              <Card style={styles.card}>
+                <Text style={[tw`text-center`, styles.text]}>
+                  {responder.given}
+                </Text>
+                <Divider />
+                <Text style={[tw`text-center`, styles.text]}>Givet</Text>
+              </Card>
 
-        <Card style={styles.card}>
-          <Text style={[tw`text-center`, styles.text]}>{responder.taken}</Text>
-          <Divider />
-          <Text style={[tw`text-center`, styles.text]}>Tagit</Text>
-        </Card>
+              <Card style={styles.card}>
+                <Text style={[tw`text-center`, styles.text]}>
+                  {responder.taken}
+                </Text>
+                <Divider />
+                <Text style={[tw`text-center`, styles.text]}>Tagit</Text>
+              </Card>
 
-        <Card style={styles.card}>
-          <Text style={[tw`text-center`, styles.text]}>{rating}</Text>
-          <Divider />
-          <Text style={[tw`text-center`, {fontSize: 10}]}>Betyg</Text>
-        </Card>
-      </Layout>
-            <Text style={{marginBottom: 5} }category={"s1"}>{responder.firstname} {props.text} </Text>
-          <Text style={{marginBottom: 5} } category={"s1"}>
-            {moment(transaction.time_of_expiration).format("dddd Do MMM hh:mm")}
-          </Text>
-            <Text  style={{marginBottom: 5} }category={"s1"}>{moment(transaction.time_of_expiration).fromNow()}</Text>
-            </View>
+              <Card style={styles.card}>
+                <Text style={[tw`text-center`, styles.text]}>{rating}</Text>
+                <Divider />
+                <Text style={[tw`text-center`, { fontSize: 10 }]}>Betyg</Text>
+              </Card>
+            </Layout>
+            <Text style={{ marginBottom: 5 }} category={"s1"}>
+              {responder.firstname} {props.text}{" "}
+            </Text>
+            <Text style={{ marginBottom: 5 }} category={"s1"}>
+              {moment(transaction.time_of_expiration).format(
+                "dddd Do MMM hh:mm"
+              )}
+            </Text>
+            <Text style={{ marginBottom: 5 }} category={"s1"}>
+              {moment(transaction.time_of_expiration).fromNow()}
+            </Text>
+          </View>
           <Layout
             style={{
               flexDirection: "row",
@@ -99,10 +119,18 @@ export const TransactionInfoModal = (props) => {
               marginTop: 10,
             }}
           >
-            <Button style={{marginLeft: 10, width: 120}} onPress={() => accept()} status={"success"}>
+            <Button
+              style={{ marginLeft: 10, width: 120 }}
+              onPress={() => accept()}
+              status={"success"}
+            >
               <Text>Acceptera</Text>
             </Button>
-            <Button style={{marginRight: 10, width: 120} }onPress={() => decline()} status={"danger"}>
+            <Button
+              style={{ marginRight: 10, width: 120 }}
+              onPress={() => decline()}
+              status={"danger"}
+            >
               <Text>Neka</Text>
             </Button>
           </Layout>
@@ -133,16 +161,29 @@ export const TransactionInfoModal = (props) => {
               {item.product_text}
             </Text>
             <Text category={"s1"} style={{ marginLeft: 20 }}>
-              {item.quantity}
+              {item.quantity} {item.unit}
             </Text>
           </View>
 
           <Text style={{ marginBottom: 10 }}>
             Utgångsdag: {moment(item.time_of_expiration).format("DD-MM-YYYY")}
           </Text>
-          <Text style={{ marginBottom: 10 }}>
-            Bruten förpackning: {item.broken_pkg ? "Japp" : "Nepp"}{" "}
-          </Text>
+          <View style={{
+                flex: 1,
+                flexDirection: "row",
+                alignItems: "center",}}>
+            <Text
+              style={{
+                marginBottom: 10 ,
+                textAlignVertical: "top",
+                textAlign: "left"
+              }}
+            >
+              Bruten förpackning{" "}
+              {item.broken_pkg ? <Icon style={styles.icon} fill="green" name="checkmark-circle" />: <Icon style={styles.icon} fill="red" name="close-outline" /> }
+            </Text>
+          </View>
+          {/* {item.broken_pkg ? <Icon style={styles.icon} fill="green" name="checkmark-circle" />: <Icon style={styles.icon} fill="red" name="close-circle" /> */}
           <Text style={{ marginBottom: 10 }}>Din vara</Text>
           <Text style={{ marginBottom: 10 }}>{item.description}</Text>
         </View>
@@ -186,8 +227,13 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 12,
-  
-  }
-})
+  },
+  icon: {
+    width: 20,
+    height: 20,
+    top: 5,
+    left: 5,
+  },
+});
 
 export default TransactionInfoModal;
