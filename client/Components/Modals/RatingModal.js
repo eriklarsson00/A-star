@@ -2,6 +2,7 @@ import { Modal, Text, Button, Card, useTheme } from "@ui-kitten/components";
 import { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import StarRating from "react-native-star-rating";
+import { updateRating } from "../../Services/ServerCommunication";
 
 export const RatingModal = (props) => {
   //STATE
@@ -11,8 +12,7 @@ export const RatingModal = (props) => {
   const theme = useTheme();
 
   const ratingComplete = async () => {
-    console.log("Rating: " + starRating);
-    // Uppdatera rating på person med user_id: id och öka deras taken med 1
+    await updateRating(item.responder_id, starRating);
     props.ratingCompleted();
   };
 

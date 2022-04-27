@@ -146,8 +146,7 @@ export const TransactionInfoModal = (props) => {
           <Text style={{ marginBottom: 10 }}>Din vara</Text>
           <Text style={{ marginBottom: 10 }}>{item.description}</Text>
         </View>
-      )
-      
+      );
     }
   };
 

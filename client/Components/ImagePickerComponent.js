@@ -50,6 +50,7 @@ export default function ImagePickerComp(props) {
         props.updateResult(image);
       }
       if (props.context == "ItemImage" || "CommunityImage") {
+        console.log(image);
         props.updateResult(image);
       }
     }

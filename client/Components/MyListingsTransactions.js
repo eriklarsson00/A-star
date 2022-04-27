@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
-import { Text, Spinner, ListItem } from "@ui-kitten/components";
+import { Text, Spinner, ListItem, Icon, Layout } from "@ui-kitten/components";
 import { UserInfo } from "../assets/AppContext";
 import {
   getOngoingTransactionsOwner,
@@ -10,6 +10,14 @@ import {
 import { OwnerContactInformationModal } from "./Modals/OwnerContactInformationModal";
 import { RatingModal } from "./Modals/RatingModal";
 import tw from "twrnc";
+
+const GiveAwayIcon = (props) => (
+  <Icon {...props} fill={"red"} name="arrow-circle-up" />
+);
+
+const ReceiveIcon = (props) => (
+  <Icon {...props} fill={"green"} name="arrow-circle-down" />
+);
 
 export const MyListingsTransactions = () => {
   // CONTEXT
@@ -68,10 +76,45 @@ export const MyListingsTransactions = () => {
     }
   };
 
+  const renderTransactionIcon = (offer) => {
+    if (offer) {
+      return GiveAwayIcon;
+    } else {
+      return ReceiveIcon;
+    }
+  };
+
+  const renderGiveOrTake = (offer_product_name, request_product_name) => {
+    if (offer_product_name) {
+      return (
+        <View style={{ flexDirection: "row", marginBottom: 5 }}>
+          <Text category={"s1"}>{offer_product_name} ska</Text>
+          <Text category={"s1"} style={{ textDecorationLine: "underline" }}>
+            {" "}
+            ges bort{" "}
+          </Text>
+          <Text category={"s1"}>till</Text>
+        </View>
+      );
+    } else {
+      return (
+        <View style={{ flexDirection: "row", marginBottom: 5 }}>
+          <Text category={"s1"}>{request_product_name} ska</Text>
+          <Text category={"s1"} style={{ textDecorationLine: "underline" }}>
+            {" "}
+            tas emot{" "}
+          </Text>
+          <Text category={"s1"}>från</Text>
+        </View>
+      );
+    }
+  };
+
   const renderAcceptedTransactions = ({ item }) => {
     let contactModal = (
       <OwnerContactInformationModal
         item={item}
+        text={renderGiveOrTake(item.offer_product, item.request_product)}
         toggleModal={toggleModal}
         toggleRating={toggleRating}
         confirmTransaction={confirmTransaction}
@@ -93,6 +136,7 @@ export const MyListingsTransactions = () => {
         <ListItem
           style={styles.container}
           onPress={() => toggleModal(item)}
+          accessoryLeft={renderTransactionIcon(item.offer_product)}
           title={whatToRender(item.offer_product, item.request_product)}
           description={whatToRender(
             item.offer_description,

@@ -37,7 +37,7 @@ const getMyOffers = async (id) => {
 const getOffers = async (id, communities) => {
   let query = "?communities=" + communities.join(",");
   let offers = await request("GET", "/offers/other/" + id + query);
-  return [...new Set(offers)];
+  return offers;
 };
 
 const getCommunities = async () => {
@@ -108,6 +108,11 @@ const responderConfirmTransaction = async (id) => {
   return await request("PUT", `/transactions/${id}/responderConfirm`);
 };
 
+const updateRating = async (user_id, rating) => {
+  let msg_body = { rating: rating };
+  return await request("PUT", `/users/${user_id}/rate`, msg_body);
+};
+
 const addToCommunity = async (profile_id, communities) => {
   // Should be refactored to only send one request with all communities
   for (const id of communities) {
@@ -122,7 +127,7 @@ const addToCommunity = async (profile_id, communities) => {
 
 const deleteProfile = async (id) => {
   return await request("DELETE", "/users/" + id).catch((err) =>
-    console.log(err)
+    console.error(err)
   );
 };
 
@@ -133,18 +138,26 @@ const removeUserFromCommunity = async (userId, communityId) => {
   };
 
   return await request("DELETE", "/users/community", obj).catch((err) =>
-    console.log(err)
+    console.error(err)
   );
 };
 
 const pushImagesToServer = async (image, serverPath, userId) => {
   const body = new FormData();
-  body.append("image", {
-    name: "photo.jpg",
-    type: image.type,
-    uri: image.uri,
-  });
-
+  if (!image) {
+    //om det inte finns någon bild ska det bli en stock photo
+    body.append("image", {
+      name: "photo.jpg",
+      type: "jpg",
+      uri: "https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg",
+    });
+  } else {
+    body.append("image", {
+      name: "photo.jpg",
+      type: image.type,
+      uri: image.uri,
+    });
+  }
   var url = "";
   if (serverPath === "Profile") {
     url = host + "/users/profile/" + userId;
@@ -160,7 +173,7 @@ const pushImagesToServer = async (image, serverPath, userId) => {
     },
   })
     .then((data) => data.json())
-    .catch((err) => console.log(err));
+    .catch((err) => console.err(err));
 };
 
 const postOffer = async (offers, usercommunities) => {
@@ -168,16 +181,21 @@ const postOffer = async (offers, usercommunities) => {
     offer: offers,
     communities: usercommunities,
   };
-
   return await request("POST", "/offers", upload_obj);
 };
 
 const postRequest = async (requests, usercommunities) => {
+  console.log("communities");
+  console.log(usercommunities);
   const upload_obj = {
     request: requests,
     communities: usercommunities,
   };
-  return await request("POST", "/requests", upload_obj);
+
+  const response = await request("POST", "/requests", upload_obj);
+  console;
+  console.log(response);
+  return response;
 };
 
 const addCommunity = async (community) => {
@@ -201,6 +219,7 @@ export {
   acceptTransaction,
   ownerConfirmTransaction,
   responderConfirmTransaction,
+  updateRating,
   addTransaction,
   deleteProfile,
   deleteTransaction,

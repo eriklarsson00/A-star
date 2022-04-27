@@ -18,7 +18,6 @@ export default function BarCodeScannerComp(props) {
   useEffect(() => {
     if (productName) {
       productAlert(productName);
-      console.log("effekt" + "" + productName);
       return;
     }
   }, [productName]);
@@ -51,7 +50,6 @@ export default function BarCodeScannerComp(props) {
       .then((response) => response.json())
       .then((product) => {
         setProductName(product.brandName + " " + product.functionalName);
-        console.log("After set" + "" + productName);
       });
   };
 

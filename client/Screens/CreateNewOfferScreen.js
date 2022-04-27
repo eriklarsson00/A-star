@@ -25,6 +25,7 @@ const CreateNewOfferScreen = ({ navigation }) => {
   const { userInfo, setUserInfo } = React.useContext(UserInfo);
 
   // STATES
+  const [deleted, setDeleted] = React.useState([]);
   const [productInfo, setProductInfo] = React.useState([]);
   const [compId, setCompId] = React.useState(0);
   const [count, setCount] = React.useState([0]);
@@ -32,7 +33,10 @@ const CreateNewOfferScreen = ({ navigation }) => {
   const [barCodeShow, setBarCodeShow] = React.useState(false);
   const [createPost, setCreatePost] = React.useState(false);
   const [chosenCommunity, setChosenCommunity] = React.useState([]);
-  const [tooltipVisible, setTooltipVisible] = React.useState(false);
+  const [communityTooltipVisible, setCommunityTooltipVisible] =
+    React.useState(false);
+  const [createTooltipVisible, setCreateTooltipVisible] = React.useState(false);
+
   const [images, setImages] = React.useState([]);
 
   //ICONS
@@ -58,6 +62,14 @@ const CreateNewOfferScreen = ({ navigation }) => {
     setCompId(compId + input);
   };
 
+  const handleDelete = (itemId) => {
+    setProductInfo(
+      productInfo.filter((item) => {
+        return item.id !== itemId;
+      })
+    );
+    setDeleted((deleted) => [...deleted, itemId]);
+  };
   // Ska skapa en ny vara/produkt i inlägget
   const newComp = () => {
     const length = count.length;
@@ -79,24 +91,30 @@ const CreateNewOfferScreen = ({ navigation }) => {
         return;
       }
     }
-    console.log("ERROR: no item with inputId found");
   };
 
   // Lista av enskilda varor
-  const addComp = ({ item, index }) => (
-    <Layout>
-      <InputNewOfferComponent
-        setProductInfo={infoHandler}
-        id={compId}
-        user_id={userInfo.id}
-        setId={addId}
-        setChange={updateItem}
-        func={barCodeActive}
-        product={productName}
-        pushImage={pushImage}
-      />
-    </Layout>
-  );
+  const addComp = ({ item, index }) => {
+    if (deleted.includes(item)) {
+      return;
+    } else {
+      return (
+        <Layout>
+          <InputNewOfferComponent
+            setProductInfo={infoHandler}
+            id={compId}
+            user_id={userInfo.id}
+            setId={addId}
+            setChange={updateItem}
+            func={barCodeActive}
+            product={productName}
+            pushImage={pushImage}
+            handleDel={handleDelete}
+          />
+        </Layout>
+      );
+    }
+  };
 
   // funktion som behövs för listor
   const giveKey = ({ item, index }) => reuturn(item);
@@ -136,25 +154,41 @@ const CreateNewOfferScreen = ({ navigation }) => {
     );
     product.id = undefined;
     product.imgurl = imgurl;
-    postOffer(product, communities);
+    await postOffer(product, communities);
   };
 
   const publishOffer = () => {
     const communityIds = chosenCommunity.map(({ id }) => id);
 
-    productInfo.forEach((product) => {
-      prepareProduct(product, communityIds);
-      console.log(communityIds);
+    productInfo.forEach(async (product) => {
+      await prepareProduct(product, communityIds);
     });
     //skickar upp varje bild till s3 när vi publicerar inlägget
   };
+
+  //Skapa-inläggknappen
+  const createPostButton = () => (
+    <Button
+      style={styles.createPostBtn}
+      onPress={() => {
+        if (productInfo.length == 0) {
+          setCreateTooltipVisible(true);
+        } else {
+          setCreatePost(true);
+        }
+      }}
+    >
+      {" "}
+      Skapa Inlägg
+    </Button>
+  );
 
   // Knapp som ska publicera inlägget
   const renderPublishButton = () => (
     <Button
       onPress={() => {
         if (chosenCommunity.length == 0) {
-          setTooltipVisible(true);
+          setCommunityTooltipVisible(true);
         } else {
           publishOffer();
           setCreatePost(false);
@@ -176,13 +210,7 @@ const CreateNewOfferScreen = ({ navigation }) => {
           key={giveKey}
         />
 
-        <Layout
-          style={{
-            alignSelf: "left",
-            paddingLeft: 30,
-            backgroundColor: "rgba(255, 250, 240, 0.08)",
-          }}
-        >
+        <Layout style={styles.addItem}>
           <Button
             appearance="ghost"
             accessoryLeft={PlusIcon}
@@ -193,21 +221,14 @@ const CreateNewOfferScreen = ({ navigation }) => {
             Lägg till en ny vara{" "}
           </Button>
         </Layout>
-        <Layout
-          style={{
-            paddingBottom: 15,
-            backgroundColor: "rgba(255, 250, 240, 0.08)",
-          }}
-        >
-          <Button
-            style={{ width: 300, alignSelf: "center" }}
-            onPress={() => {
-              setCreatePost(true);
-            }}
+        <Layout style={tw`pb-4`}>
+          <Tooltip
+            anchor={createPostButton}
+            visible={createTooltipVisible}
+            onBackdropPress={() => setCreateTooltipVisible(false)}
           >
-            {" "}
-            Skapa Inlägg
-          </Button>
+            Du har inte skapat några varor!
+          </Tooltip>
         </Layout>
         <Modal
           visible={createPost}
@@ -234,11 +255,11 @@ const CreateNewOfferScreen = ({ navigation }) => {
               key={giveKey}
             />
 
-            <Layout style={{ paddingTop: 10 }}>
+            <Layout style={tw`pt-4`}>
               <Tooltip
                 anchor={renderPublishButton}
-                visible={tooltipVisible}
-                onBackdropPress={() => setTooltipVisible(false)}
+                visible={communityTooltipVisible}
+                onBackdropPress={() => setCommunityTooltipVisible(false)}
               >
                 Du måste välja ett grannskap först!
               </Tooltip>
@@ -255,17 +276,25 @@ const CreateNewOfferScreen = ({ navigation }) => {
 export default CreateNewOfferScreen;
 
 const styles = StyleSheet.create({
+  addItem: {
+    alignSelf: "flex-start",
+    paddingLeft: 30,
+  },
+  backdrop: {
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
   container: {
     height: "100%",
-  },
-  icon: {
-    width: 30,
-    height: 30,
   },
   container_list: {
     height: 200,
   },
-  backdrop: {
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  createPostBtn: {
+    width: 300,
+    alignSelf: "center",
+  },
+  icon: {
+    width: 30,
+    height: 30,
   },
 });

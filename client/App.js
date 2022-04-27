@@ -88,14 +88,14 @@ export default () => {
           setWhichScreen(<AppNavigator />);
           await setCommunities(users[0].id);
         } else {
-          console.log("Cannot log in, unknown userId: " + userId);
+          console.error("Cannot log in, unknown userId: " + userId);
           setLoggedIn(false);
         }
       } else {
         setLoggedIn(false);
       }
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   }, [userLoggedIn]);
 
