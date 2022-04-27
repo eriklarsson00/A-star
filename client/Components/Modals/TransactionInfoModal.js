@@ -21,12 +21,6 @@ import {
   deleteTransaction,
 } from "../../Services/ServerCommunication";
 
-const CheckIcon = (props) => (
-  <Icon {...props} fill="red" name="checkmark-circle" />
-);
-
-const CrossIcon = (props) => <Icon {...props} fill="red" name="close-circle" />;
-
 export const TransactionInfoModal = (props) => {
   const item = props.item;
   const transaction = props.transaction;
@@ -43,7 +37,7 @@ export const TransactionInfoModal = (props) => {
       : "Inga";
 
   useEffect(() => {
-   return getResponder();
+    return getResponder();
   }, []);
 
   const accept = () => {
@@ -168,22 +162,33 @@ export const TransactionInfoModal = (props) => {
           <Text style={{ marginBottom: 10 }}>
             Utgångsdag: {moment(item.time_of_expiration).format("DD-MM-YYYY")}
           </Text>
-          <View style={{
-                flex: 1,
-                flexDirection: "row",
-                alignItems: "center",}}>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
             <Text
               style={{
-                marginBottom: 10 ,
+                marginBottom: 10,
                 textAlignVertical: "top",
-                textAlign: "left"
+                textAlign: "left",
               }}
             >
               Bruten förpackning{" "}
-              {item.broken_pkg ? <Icon style={styles.icon} fill="green" name="checkmark-circle" />: <Icon style={styles.icon} fill="red" name="close-outline" /> }
+              {item.broken_pkg ? (
+                <Icon
+                  style={styles.icon}
+                  fill="green"
+                  name="checkmark-circle"
+                />
+              ) : (
+                <Icon style={styles.icon} fill="red" name="close-outline" />
+              )}
             </Text>
           </View>
-          {/* {item.broken_pkg ? <Icon style={styles.icon} fill="green" name="checkmark-circle" />: <Icon style={styles.icon} fill="red" name="close-circle" /> */}
+
           <Text style={{ marginBottom: 10 }}>Din vara</Text>
           <Text style={{ marginBottom: 10 }}>{item.description}</Text>
         </View>
