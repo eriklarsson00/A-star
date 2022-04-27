@@ -1,5 +1,6 @@
 import { offerChecker } from "./modelchecker.js";
 import { createRequire } from "module";
+import { stdErrorHandler } from "./common.js";
 const require = createRequire(import.meta.url);
 
 const knex = require("knex")({
@@ -26,9 +27,12 @@ function getActiveOffersCommunity(req, res) {
     .leftJoin("CommunityListings", "CommunityListings.offer_id", "Offers.id")
     .where("Transactions.offer_id", null)
     .andWhere("CommunityListings.community_id", community)
-    .then((offers) => {
-      res.json(offers);
-    });
+    .then(
+      (offers) => {
+        return res.json(offers);
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function getActiveOffers(req, res) {
@@ -36,17 +40,23 @@ function getActiveOffers(req, res) {
     .select("Offers.*")
     .leftJoin("Transactions", "Transactions.offer_id", "Offers.id")
     .where("Transactions.offer_id", null)
-    .then((offers) => {
-      res.json(offers);
-    });
+    .then(
+      (offers) => {
+        return res.json(offers);
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function getOffers(req, res) {
   knex("Offers")
     .select()
-    .then((offers) => {
-      res.json(offers);
-    });
+    .then(
+      (offers) => {
+        return res.json(offers);
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function getOffer(req, res) {
@@ -59,39 +69,46 @@ function getOffer(req, res) {
   knex("Offers")
     .select()
     .where("id", id)
-    .then((offers) => {
-      res.json(offers);
-    });
+    .then(
+      (offers) => {
+        return res.json(offers);
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function addOffer(req, res) {
   const body = req.body;
-  const offer = body.offer;
-  const communities = body.communities;
+  const offer = body?.offer;
+  const communities = body?.communities;
 
   if (!body || !offerChecker(offer))
     return res.status(400).json("Invalid offer properties");
 
-  let offer_id = -1;
+  let offer_id;
   knex("Offers")
     .insert(offer)
-    .catch((err) => {
-      res.status(500).json(err);
-      return;
-    })
-    .then((id) => {
-      if (id !== undefined) res.json("Offer inserted with id: " + id);
-      offer_id = id;
-    })
-    .then(() => {
-      if (offer_id == -1 || !communities) return;
-      const communityOffers = communities.map((community) => {
-        return { community_id: community, offer_id: offer_id };
-      });
-      knex("CommunityListings")
-        .insert(communityOffers)
-        .catch((err) => console.log(err));
-    });
+    .then(
+      (id) => {
+        res.json("Offer inserted with id: " + id);
+        offer_id = id;
+      },
+      (err) => stdErrorHandler(err, res)
+    )
+    .then(
+      () => {
+        if (!offer_id || !communities) {
+          return;
+        }
+        const communityOffers = communities.map((community) => {
+          return { community_id: community, offer_id: offer_id };
+        });
+        knex("CommunityListings")
+          .insert(communityOffers)
+          .catch((err) => console.error(err));
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function updateOffer(req, res) {
@@ -108,13 +125,12 @@ function updateOffer(req, res) {
   knex("Offers")
     .where("id", id)
     .update(body)
-    .catch((err) => {
-      res.status(500).json(err);
-      id = undefined;
-    })
-    .then(() => {
-      if (id !== undefined) res.json("Offer updated with id: " + id);
-    });
+    .then(
+      () => {
+        return res.json("Offer updated with id: " + id);
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function deleteOffer(req, res) {
@@ -127,19 +143,18 @@ function deleteOffer(req, res) {
   knex("Offers")
     .where("id", id)
     .delete()
-    .catch((err) => {
-      res.status(500).json(err);
-      id = undefined;
-    })
-    .then(() => {
-      if (id !== undefined) res.json("Offer has been removed");
-    });
+    .then(
+      () => {
+        return res.json("Offer has been removed");
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function getUserOffers(req, res) {
-  const user = parseInt(req.params.id);
+  const user_id = parseInt(req.params.id);
 
-  if (isNaN(user)) {
+  if (isNaN(user_id)) {
     return res
       .status(400)
       .json("Usage: /offers/user/:id. id has to be a number");
@@ -147,28 +162,46 @@ function getUserOffers(req, res) {
 
   knex("Offers")
     .select()
-    .where("user_id", user)
-    .catch((err) => {
-      res.status(500).json(err);
-    })
-    .then((offers) => res.json(offers));
+    .where("user_id", user_id)
+    .then(
+      (offers) => res.json(offers),
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function getOtherOffersCommunity(req, res) {
-  let user = req.params.user;
-  let communities = req.query.communities.split(",");
+  const userId = req.params.userId;
+  const communityIdsStr = req.query.communities;
+
+  if (isNaN(userId)) {
+    return res
+      .status(400)
+      .json("Usage: /offers/other/:userId. userId has to be a number");
+  }
+
+  if (!communityIdsStr) {
+    const errMsg =
+      "Usage: /offers/other/:user?communities=:cid1,:cid2,.... " +
+      "communities has to be a comma-separated array";
+    return res.status(400).json(errMsg);
+  }
+
+  const communityIds = communityIdsStr.split(",");
 
   knex("Offers")
     .select("Offers.*")
     .leftJoin("Transactions", "Transactions.offer_id", "Offers.id")
     .leftJoin("CommunityListings", "CommunityListings.offer_id", "Offers.id")
-    .whereIn("CommunityListings.community_id", communities)
+    .whereIn("CommunityListings.community_id", communityIds)
     .whereNot("Offers.user_id", user)
     .andWhere("Transactions.offer_id", null)
     .groupBy("Offers.id")
-    .then((offers) => {
-      res.json(offers);
-    });
+    .then(
+      (offers) => {
+        return res.json(offers);
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 export {

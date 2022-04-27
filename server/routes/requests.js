@@ -1,5 +1,6 @@
 import { requestChecker } from "./modelchecker.js";
 import { createRequire } from "module";
+import { stdErrorHandler } from "./common.js";
 const require = createRequire(import.meta.url);
 
 const knex = require("knex")({
@@ -14,9 +15,9 @@ const knex = require("knex")({
 });
 
 function getActiveRequestsCommunity(req, res) {
-  const community = req.params.community;
+  const communityId = req.params.community;
 
-  if (isNaN(community)) {
+  if (isNaN(communityId)) {
     return res.status(400).json("Usage: /requests/:id. id has to be a number");
   }
 
@@ -29,10 +30,13 @@ function getActiveRequestsCommunity(req, res) {
       "Requests.id"
     )
     .where("Transactions.request_id", null)
-    .andWhere("CommunityListings.community_id", community)
-    .then((requests) => {
-      res.json(requests);
-    });
+    .andWhere("CommunityListings.community_id", communityId)
+    .then(
+      (requests) => {
+        return res.json(requests);
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function getActiveRequests(req, res) {
@@ -40,17 +44,23 @@ function getActiveRequests(req, res) {
     .select("Requests.*")
     .leftJoin("Transactions", "Transactions.request_id", "Requests.id")
     .where("Transactions.request_id", null)
-    .then((requests) => {
-      res.json(requests);
-    });
+    .then(
+      (requests) => {
+        return res.json(requests);
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function getRequests(req, res) {
   knex("Requests")
     .select()
-    .then((requests) => {
-      res.json(requests);
-    });
+    .then(
+      (requests) => {
+        return res.json(requests);
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function getRequest(req, res) {
@@ -63,39 +73,49 @@ function getRequest(req, res) {
   knex("Requests")
     .select()
     .where("id", id)
-    .then((requests) => {
-      res.json(requests);
-    });
+    .then(
+      (requests) => {
+        return res.json(requests);
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function addRequest(req, res) {
   const body = req.body;
-  const request = body ? body.request : undefined;
-  const communities = body ? body.communities : undefined;
+  const request = body?.request;
+  const communities = body?.communities;
 
-  if (!requestChecker(request))
+  if (!requestChecker(request)) {
     return res.status(400).json("Invalid request properties");
+  }
 
-  let request_id = -1;
+  let request_id;
   knex("Requests")
     .insert(request)
-    .catch((err) => {
-      res.status(500).json(err);
-      return;
-    })
-    .then((id) => {
-      if (id !== undefined) res.json("Request inserted with id: " + id);
-      request_id = id;
-    })
-    .then(() => {
-      if (request_id == -1) return;
-      const communityRequests = communities.map((community) => {
-        return { community_id: community, request_id: request_id };
-      });
-      knex("CommunityListings")
-        .insert(communityRequests)
-        .catch((err) => console.log(err));
-    });
+    .then(
+      (id) => {
+        res.json("Request inserted with id: " + id);
+        request_id = id;
+      },
+      (err) => stdErrorHandler(err, res)
+    )
+    .then(
+      () => {
+        if (!request_id) {
+          return;
+        }
+
+        const communityRequests = communities.map((community) => {
+          return { community_id: community, request_id: request_id };
+        });
+
+        knex("CommunityListings")
+          .insert(communityRequests)
+          .catch((err) => console.error(err));
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function updateRequest(req, res) {
@@ -112,13 +132,12 @@ function updateRequest(req, res) {
   knex("Requests")
     .where("id", id)
     .update(body)
-    .catch((err) => {
-      res.status(500).json(err);
-      id = undefined;
-    })
-    .then(() => {
-      if (id !== undefined) res.json("Request updated with id: " + id);
-    });
+    .then(
+      () => {
+        return res.json("Request updated with id: " + id);
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function deleteRequest(req, res) {
@@ -131,19 +150,18 @@ function deleteRequest(req, res) {
   knex("Requests")
     .where("id", id)
     .delete()
-    .catch((err) => {
-      res.status(500).json(err);
-      id = undefined;
-    })
-    .then(() => {
-      if (id !== undefined) res.json("Request has been removed");
-    });
+    .then(
+      () => {
+        res.json("Request has been removed");
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function getUserRequests(req, res) {
-  const user = parseInt(req.params.id);
+  const userId = parseInt(req.params.id);
 
-  if (isNaN(user)) {
+  if (isNaN(userId)) {
     return res
       .status(400)
       .json("Usage: /requests/user/:id. id has to be a number");
@@ -151,16 +169,29 @@ function getUserRequests(req, res) {
 
   knex("Requests")
     .select()
-    .where("user_id", user)
-    .catch((err) => {
-      res.status(500).json(err);
-    })
-    .then((requests) => res.json(requests));
+    .where("user_id", userId)
+    .then(
+      (requests) => res.json(requests),
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 function getOtherRequestsCommunity(req, res) {
-  let user = req.params.user;
-  let communities = req.query.communities.split(",");
+  const userId = req.params.userId;
+  const communityIdsStr = req.query.communities;
+
+  if (isNaN(userId)) {
+    return res
+      .status(400)
+      .json("Usage: /requests/other/:userId. userId has to be a number");
+  }
+
+  if (!communityIdsStr) {
+    const errMsg =
+      "Usage: /requests/other/:userId?communities=:cid1,:cid2,.... " +
+      "communities has to be a comma-separated array";
+    return res.status(400).json(errMsg);
+  }
 
   knex("Requests")
     .select("Requests.*")
@@ -174,9 +205,12 @@ function getOtherRequestsCommunity(req, res) {
     .whereNot("Requests.user_id", user)
     .andWhere("Transactions.request_id", null)
     .groupBy("Requests.id")
-    .then((requests) => {
-      res.json(requests);
-    });
+    .then(
+      (requests) => {
+        return res.json(requests);
+      },
+      (err) => stdErrorHandler(err, res)
+    );
 }
 
 export {
