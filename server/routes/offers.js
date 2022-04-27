@@ -48,6 +48,32 @@ function getActiveOffers(req, res) {
     );
 }
 
+function getMyActiveOffers(req, res) {
+  const userId = parseInt(req.params.userId);
+
+  if (isNaN(userId)) {
+    return res
+      .status(400)
+      .json("Usage: /offers/myactive/:userId. userId has to be a number");
+  }
+
+  knex
+    .raw(
+      `
+    SELECT O.* FROM Offers O
+    LEFT JOIN Transactions T ON t.request_id = O.id
+    WHERE O.user_id = ${userId}
+      AND (T.status IS NULL OR T.status = 'pending');
+  `
+    )
+    .then(
+      (offers) => {
+        return res.json(offers[0]);
+      },
+      (err) => stdErrorHandler(err, res)
+    );
+}
+
 function getOffers(req, res) {
   knex("Offers")
     .select()
@@ -207,6 +233,7 @@ function getOtherOffersCommunity(req, res) {
 export {
   getActiveOffersCommunity,
   getActiveOffers,
+  getMyActiveOffers,
   getOffers,
   getOffer,
   addOffer,

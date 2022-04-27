@@ -20,7 +20,7 @@ import {
 import { io } from "socket.io-client";
 import {
   getRequests,
-  getMyRequests,
+  getMyActiveRequests,
   addTransaction,
   getPendingTransactions,
 } from "../Services/ServerCommunication";
@@ -85,7 +85,7 @@ export const ItemRequestedComponent = () => {
 
   const fetchItems = async () => {
     setLoading(true);
-    let myItems = await getMyRequests(userId);
+    let myItems = await getMyActiveRequests(userId);
     let otherItems = await getRequests(userId, communityIds);
     setMyRequests(myItems);
     setRequests(otherItems);
@@ -157,7 +157,7 @@ export const ItemRequestedComponent = () => {
     <View>
       <ListItem
         style={styles.container}
-        title={`${item.product_text} | ${item.quantity} ${item.unit}`}
+        title={`${item.product_text} | ${item.quantity} ${item.unit ?? ""}`}
         accessoryRight={requestHasTransaction(item) ? TransactionIcon : null}
         description={`${item.description}`}
         onPress={() => {
@@ -204,7 +204,7 @@ export const ItemRequestedComponent = () => {
       <View>
         <ListItem
           style={styles.container}
-          title={`${item.product_text} | ${item.quantity} ${item.unit}`}
+          title={`${item.product_text} | ${item.quantity} ${item.unit ?? ""}`}
           description={`${item.description}`}
           onPress={() => {
             toggleModal(item);

@@ -17,7 +17,7 @@ import {
 } from "../assets/AppContext";
 import {
   getOffers,
-  getMyOffers,
+  getMyActiveOffers,
   addTransaction,
   getPendingTransactions,
 } from "../Services/ServerCommunication.js";
@@ -50,7 +50,7 @@ export const ItemAvailableComponent = () => {
   //fetch items on focus
   const fetchItems = async () => {
     setLoading(true);
-    let myItems = await getMyOffers(userId);
+    let myItems = await getMyActiveOffers(userId);
     let otherItems = await getOffers(userId, communityIds);
     let transactions = await getPendingTransactions(userId);
 
@@ -200,8 +200,7 @@ export const ItemAvailableComponent = () => {
               />
             );
           }}
-          // accessoryLeft={"https://picsum.photos/150/150"}
-          title={`${item.product_text} | ${item.quantity} ${item.unit}`}
+          title={`${item.product_text} | ${item.quantity} ${item.unit ?? ""}`}
           description={`${item.description}`}
         />
         {modal}
@@ -230,7 +229,7 @@ export const ItemAvailableComponent = () => {
           );
         }}
         accessoryRight={offerHasTransaction(item) ? TransactionIcon : null}
-        title={`${item.product_text} | ${item.quantity} ${item.unit}`}
+        title={`${item.product_text} | ${item.quantity} ${item.unit ?? ""}`}
         description={`${item.description}`}
       ></ListItem>
       <TransactionInfoModal

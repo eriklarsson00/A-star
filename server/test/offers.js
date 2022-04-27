@@ -284,4 +284,50 @@ export function offerTests(server) {
         });
     });
   });
+
+  describe("/offers/myactive", () => {
+    it("should get my active offers", function (done) {
+      chai
+        .request(server)
+        .get("/offers/myactive/1")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(200);
+          res.body.should.be.a("array");
+          res.body.length.should.not.be.eql(0);
+          done();
+        });
+    });
+    it("should not get my active offers", function (done) {
+      // Invalid id
+      chai
+        .request(server)
+        .get("/offers/myactive/InvalidId")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          res.should.have.status(400);
+          res.body.should.be.a("string");
+          res.body.length.should.not.be.eql(0);
+        });
+
+      // Bad id
+      chai
+        .request(server)
+        .get("/offers/myactive/-1")
+        .end((err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          console.log(res.body);
+          res.should.have.status(200);
+          res.body.should.be.a("array");
+          res.body.length.should.be.eql(0);
+          done();
+        });
+    });
+  });
 }
