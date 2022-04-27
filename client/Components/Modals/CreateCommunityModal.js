@@ -4,7 +4,6 @@ import {
   View,
   Image,
   ScrollView,
-  FlatList,
   TouchableOpacity,
 } from "react-native";
 import {
@@ -12,19 +11,17 @@ import {
   Modal,
   Card,
   Button,
-  Layout,
   Icon,
   Divider,
   Input,
   useTheme,
-  Toggle,
+  Tooltip,
   CheckBox,
 } from "@ui-kitten/components";
 import tw from "twrnc";
 import ImagePicker from "../ImagePickerComponent";
 import {
   addCommunity,
-  getCommunities,
   pushImagesToServer,
 } from "../../Services/ServerCommunication";
 
@@ -36,13 +33,13 @@ export const CreateCommunityModal = (props) => {
   const [communityDescription, setCommunityDescription] = React.useState("");
   const [communityPassword, setCommunityPassword] = React.useState(null);
   const [communityPrivate, setCommunityPrivate] = React.useState(false);
-  const [communityImageUrl, setCommunityImageUrl] = React.useState("");
-  const [image, setImage] = React.useState(
-    "https://www.uppsalahem.se/globalassets/bilder/omradesbilder/7002/Rackarberget_3.jpg?w=320"
-  );
+  const [image, setImage] = React.useState({ uri: "" });
   const [chooseImageVisible, setChooseImageVisible] = React.useState(false);
 
   const [missingInformation, setMissingInformation] = React.useState(false);
+  const [missingFields, setMissingFields] = React.useState([]);
+  const communityImageUrl =
+    "https://www.uppsalahem.se/globalassets/bilder/omradesbilder/7002/Rackarberget_3.jpg?w=320";
 
   const CrossIcon = () => (
     <Icon
@@ -58,16 +55,48 @@ export const CreateCommunityModal = (props) => {
       name="plus-circle-outline"
     />
   );
-  const CameraIcon = () => (
-    <Icon
-      style={styles.cameraStyle}
-      fill={theme["color-basic-600"]}
-      name="camera-outline"
-    />
-  );
-  const onCheckedChange = (isChecked) => {
-    setCommunityPrivate(isChecked);
+
+  function addMissingField(field, name) {
+    let object = false;
+    if (name == "Bild") {
+      if (field.uri == "") {
+        object = true;
+      }
+    }
+    if (field == "" || !field || object) {
+      if (!missingFields.includes(name)) {
+        setMissingFields((missingFields) => [...missingFields, name]);
+      }
+    } else {
+      if (missingFields.includes(name)) {
+        setMissingFields(
+          missingFields.filter((field) => {
+            return field != name;
+          })
+        );
+      }
+    }
+  }
+
+  function setMissingFieldsFunc() {
+    addMissingField(communityName, "Grannskapets namn");
+    addMissingField(communityDescription, "Beskrivning");
+    addMissingField(image, "Bild");
+    if (communityPrivate) {
+      addMissingField(communityPassword, "Lösenord");
+    }
+  }
+
+  const PrintMissingInformation = () => {
+    let row = missingFields.map((field) => {
+      return field + ", ";
+    });
+    for (var i = row.length - 1; i < row.length; i++) {
+      row[i] = row[i].replace(/,/g, ""); //tar bort sista kommatecknet
+    }
+    return row;
   };
+
   const CloseCreateCommunityIcon = () => {
     return (
       <TouchableOpacity onPress={() => props.setVisible(false)}>
@@ -75,24 +104,43 @@ export const CreateCommunityModal = (props) => {
       </TouchableOpacity>
     );
   };
-  const ChooseImageIcon = () => {
-    return (
-      <>
-        <Image
-          style={tw`rounded-full mt-2`}
-          source={{ uri: image, height: 80, width: 80 }}
-        />
-        <TouchableOpacity
-          onPress={() => {
-            setChooseImageVisible(true);
-          }}
-          style={styles.AddIconContainer}
-        >
-          <AddIcon />
-        </TouchableOpacity>
-      </>
-    );
-  };
+
+  const ChooseImageIcon = () => (
+    <>
+      <Image
+        style={[
+          tw`rounded-full mt-2`,
+          {
+            borderColor: "red",
+            borderWidth: missingFields.includes("Bild") ? 1 : 0,
+          },
+        ]}
+        source={{
+          uri: image.uri ? image.uri : communityImageUrl,
+          height: 80,
+          width: 80,
+        }}
+      />
+      <TouchableOpacity
+        onPress={() => {
+          setChooseImageVisible(true);
+        }}
+        style={styles.AddIconContainer}
+      >
+        <AddIcon />
+      </TouchableOpacity>
+    </>
+  );
+  const CreateCommunityButton = () => (
+    <Button
+      style={tw`mt-2`}
+      onPress={async () => {
+        await createCommunity();
+      }}
+    >
+      Skapa grannskap
+    </Button>
+  );
   const ChoseImageModal = () => {
     return (
       <Modal
@@ -104,9 +152,9 @@ export const CreateCommunityModal = (props) => {
       >
         <Card disabled={true}>
           <ImagePicker
-            context="CommunityImage" //TODO
+            context="CommunityImage"
             updateResult={(result) => {
-              setImage(result.uri);
+              setImage(result);
             }}
           />
           <Button
@@ -119,17 +167,32 @@ export const CreateCommunityModal = (props) => {
       </Modal>
     );
   };
+  function quitCreateCommunity() {
+    props.setVisible(false);
+    setMissingFields([]);
+    setCommunityName("");
+    setCommunityDescription("");
+    setCommunityPrivate(false);
+    setImage({ uri: "" });
+    setCommunityPassword(null);
+  }
+
+  const onCheckedChange = (isChecked) => {
+    setCommunityPrivate(isChecked);
+  };
 
   async function createCommunity() {
     setMissingInformation(false);
-    if (
-      communityName == "" ||
-      communityDescription == "" ||
-      communityImageUrl == ""
-    ) {
+    if (communityName == "" || communityDescription == "" || image == "") {
+      setMissingFieldsFunc();
       setMissingInformation(true);
     } else {
-      const newImgUrl = pushImagesToServer(image, "communityimages", null);
+      const newImgUrl = await pushImagesToServer(
+        image,
+        "communityimages",
+        null
+      );
+      console.log(newImgUrl);
       let communityData = {
         name: communityName,
         location: null,
@@ -138,23 +201,16 @@ export const CreateCommunityModal = (props) => {
         private: communityPrivate,
         password: communityPassword,
       };
-      const result = await addCommunity(communityData);
+      await addCommunity(communityData);
       props.getComm();
-      props.setVisible(false);
-      setCommunityName("");
-      setCommunityDescription("");
-      setCommunityPrivate(false);
-      setCommunityImageUrl(
-        "https://www.uppsalahem.se/globalassets/bilder/omradesbilder/7002/Rackarberget_3.jpg?w=320"
-      );
-      setCommunityPassword(null);
+      quitCreateCommunity();
     }
   }
   return (
     <Modal
       visible={props.visible}
       backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}
-      onBackdropPress={() => props.setVisible(false)}
+      onBackdropPress={quitCreateCommunity}
     >
       <Card disabled={true}>
         <ChoseImageModal />
@@ -171,12 +227,16 @@ export const CreateCommunityModal = (props) => {
               <ChooseImageIcon />
             </View>
             <Input
+              status={
+                missingFields.includes("Grannskapets namn") ? "danger" : ""
+              }
               style={{ marginTop: 10 }}
               label="Grannskapets namn"
               value={communityName}
               onChangeText={(nextValue) => setCommunityName(nextValue)}
             />
             <Input
+              status={missingFields.includes("Beskrivning") ? "danger" : ""}
               style={{ marginTop: 10 }}
               label="Beskrivning"
               multiline={true}
@@ -200,23 +260,23 @@ export const CreateCommunityModal = (props) => {
             </View>
             {communityPrivate && (
               <Input
+                status={missingFields.includes("Lösenord") ? "danger" : ""}
                 style={{ marginTop: 10 }}
                 label="Lösenord"
                 value={communityPassword}
                 onChangeText={(nextValue) => setCommunityPassword(nextValue)}
               />
             )}
-            {missingInformation && (
-              <Text style={tw`pt-3 text-base `}>Alla fält måste fyllas i</Text>
-            )}
-            <Button
-              style={tw`mt-2`}
-              onPress={async () => {
-                await createCommunity();
-              }}
-            >
-              Skapa grannskap
-            </Button>
+            <View style={{ paddingTop: 10 }}>
+              <Tooltip
+                anchor={CreateCommunityButton}
+                visible={missingInformation}
+                onBackdropPress={() => setMissingInformation(false)}
+              >
+                {""}
+                Fält som måste fyllas i: <PrintMissingInformation />
+              </Tooltip>
+            </View>
           </ScrollView>
         </View>
       </Card>
