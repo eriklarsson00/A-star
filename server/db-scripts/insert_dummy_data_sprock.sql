@@ -20,33 +20,33 @@ BEGIN
     ('Ångström', 'Här kan man plugga, man kan även hänga på takterass', NULL, 'https://matsamverkan.s3.amazonaws.com/communityImages/%C3%A5ngan.jpg', true, 'Demo');
 
 
-    INSERT INTO Users (firstname, lastname, number, email, adress, location, imgurl, rating, raters, given, taken) VALUES
-    ('Anja', 'Pärsson', '0735959908', 'anja.parsson@icloud.com', 'Råbyvägen 53 B, 75429 Uppsala', 'Gränby', 'https://matsamverkan.s3.amazonaws.com/profilePictures/anja.jpeg', 1000, 270, 23, 19),
-    ('Jesus', 'Kristus', '0737895427', 'jesus.kristus@yahoo.com', 'rackarberget 12', 'Rackarberget', NULL, DEFAULT, DEFAULT, DEFAULT, DEFAULT),
-    ('Anders', 'Bagge', '0761745770', 'ansders.bagge@telia.com', 'luthagsesplanaden 18', 'Luthagen', NULL, DEFAULT, DEFAULT, DEFAULT, DEFAULT),
-    ('Eric', 'Saade', '0731234567', 'eric.saade@outlook.com', 'kungsgatan 30', 'city', NULL, DEFAULT, DEFAULT, DEFAULT, DEFAULT),
-    ('Nils', 'Persson', '0731234567', 'nils.albin.persson@gmail.com', 'Luthagsesplanaden', 'Uppsala', NULL, 1000, 205, 27, 45),
-    ('Filip', 'Palmqvist', '0731234567', 'fille.palmqvist@icloud.com', 'Råbyvägen 53 B, 75429 Uppsala', 'Gränby', NULL, 1000, 230, 13,7),
-    ('Elis', 'Indebetou', '0731234567', 'elis.indebetou@gmail.com', 'kungsgatan 30', 'city', NULL, 1000, 245, 20, 19),
-    ('Erik', 'Larsson', '0731234567', 'larssonerik00@gmail.com', 'kungsgatan 30', 'city', NULL, 1000, 300, 43, 37),
-    ('Anna', 'Hellman', '0731234567', 'anna.hellman@gmail.com', 'kungsgatan 30', 'city', NULL, 1000, 290, 31, 20),
-    ('Filip', 'von Knorring', '0731234567', 'fille.vk@gmail.com', 'kungsgatan 30', 'city', NULL, 1000, 205, 12, 40),
-    ('Kajsa', 'Uhrenius', '0731234567', 'kajsa.uhrenius@gmail.com', 'kungsgatan 30', 'city', NULL, 1000, 200, 30, 84);
+       INSERT INTO Users (firstname, lastname, number, email, adress, location, imgurl, rating, raters, given, taken) VALUES
+    ('Anja', 'Pärsson', '0735959908', 'anja.parsson@icloud.com', 'Råbyvägen 53 B, 75429 Uppsala', 'Gränby', 'https://matsamverkan.s3.amazonaws.com/profilePictures/anja.jpeg', 9, 4, 23, 19),
+    ('Jesus', 'Kristus', '0737895427', 'jesus.kristus@yahoo.com', 'rackarberget 12', 'Rackarberget', 'https://matsamverkan.s3.amazonaws.com/dummydata/profilbilder/Obi_Wan_kenobi.jpeg', DEFAULT, DEFAULT, DEFAULT, DEFAULT),
+    ('Anders', 'Bagge', '0761745770', 'ansders.bagge@telia.com', 'luthagsesplanaden 18', 'Luthagen', 'https://matsamverkan.s3.amazonaws.com/dummydata/profilbilder/anders_bagge.jpg', DEFAULT, DEFAULT, DEFAULT, DEFAULT),
+    ('Eric', 'Saade', '0731234567', 'eric.saade@outlook.com', 'kungsgatan 30', 'city', 'https://matsamverkan.s3.amazonaws.com/dummydata/profilbilder/eric_saade.jpg', DEFAULT, DEFAULT, DEFAULT, DEFAULT),
+    ('Nils', 'Persson', '0731234568', 'nils.albin.persson@gmail.com', 'Luthagsesplanaden', 'Uppsala', 'https://matsamverkan.s3.amazonaws.com/dummydata/profilbilder/nils.jpg', 1000, 205, 27, 45),
+    ('Filip', 'Palmqvist', '0731234569', 'fille.palmqvist@icloud.com', 'Råbyvägen 53 B, 75429 Uppsala', 'Gränby', 'https://matsamverkan.s3.amazonaws.com/dummydata/profilbilder/filip1.jpg', 1000, 230, 13,7),
+    ('Elis', 'Indebetou', '0731234570', 'elis.indebetou@gmail.com', 'kungsgatan 30', 'city', 'https://matsamverkan.s3.amazonaws.com/dummydata/profilbilder/elis.jpg', 1000, 245, 20, 19),
+    ('Erik', 'Larsson', '0731234571', 'larssonerik00@gmail.com', 'kungsgatan 31', 'city', 'https://matsamverkan.s3.amazonaws.com/dummydata/profilbilder/erik.jpg', 1000, 300, 43, 37),
+    ('Anna', 'Hellman', '0731234572', 'anna.hellman@gmail.com', 'kungsgatan 32', 'city', 'https://matsamverkan.s3.amazonaws.com/dummydata/profilbilder/anna.jpg', 1000, 290, 31, 20),
+    ('Filip', 'von Knorring', '0731234573', 'fille.vk@gmail.com', 'kungsgatan 33', 'city', 'https://matsamverkan.s3.amazonaws.com/dummydata/profilbilder/filip2.jpg', 1000, 205, 12, 40),
+    ('Kajsa', 'Uhrenius', '0731234574', 'kajsa.uhrenius@gmail.com', 'kungsgatan 33', 'city', 'https://matsamverkan.s3.amazonaws.com/dummydata/profilbilder/kajsa.jpg', 1000, 200, 30, 84);
 
 
     INSERT INTO Offers (user_id, product_id, product_text, description, quantity, unit, time_of_purchase, time_of_expiration, imgurl, broken_pkg) VALUES
     (1, 1, 'Banan', 'Ska bort i helgen och behöver bli av med mina bananer.', 4, 'st', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'https://upload.wikimedia.org/wikipedia/commons/d/de/Bananavarieties.jpg', true),
-    (1, 1, 'Äpple', 'Köpte för många och kommer inte hinna äta alla själv.', 7, 'st', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL, false),
-    (1, 1, 'Marsipan', 'Använde till bakning men kommer inte behöva resten.', 100, 'g', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL, true),
-    (2, 1, 'Kyckling', 'Blev över från matlagningen.', 200, 'g', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL, false),
-    (2, 1, 'Biff', 'Kommer hinna gå ut innan jag kan äta det själv.', 500, 'g', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL, false),
-    (2, 1, 'Mjölk', 'Åker hem över påsk så kommer inte hinna dricka den själv', 1, 'l', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL, false),
-    (2, 1, 'Kvarg', 'Blåbärssmak! Köpte flera under erbjudande men tyckte inte om smaken', 2, 'dl', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL, false),
-    (3, 1, 'Matolja', 'Råkade köpa dubbelt, så lägger ut den oöppnade här :)', 1, 'l', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL, false),
-    (4, 1, 'Citron', 'When life gives you lemons... You put them on MatSam <3', 20, 'st', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL, false),
-    (5, 1, 'Redbull', 'Mina barn har lyckats få tag på denna hemska vara. Snälla ta dom fort!!', 5, 'st', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL, false),
-    (6, 1, 'Aubergine', 'Trodde jag köpte en jättepaprika... Vill ej ha denna', 1, 'st', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL, true),
-    (7, 1, 'Strösocker', 'Om någon vill ha lite strösocker så har jag över :)', 20, 'kg', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), NULL, false);
+    (1, 1, 'Äpple', 'Köpte för många och kommer inte hinna äta alla själv.', 7, 'st', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'https://matsamverkan.s3.amazonaws.com/dummydata/items/apple.jpg', false),
+    (1, 1, 'Marsipan', 'Använde till bakning men kommer inte behöva resten.', 100, 'g', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'https://matsamverkan.s3.amazonaws.com/dummydata/items/marspian.jpg', true),
+    (2, 1, 'Kyckling', 'Blev över från matlagningen.', 200, 'g', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'https://matsamverkan.s3.amazonaws.com/dummydata/items/kyckling.jpg', false),
+    (2, 1, 'Biff', 'Kommer hinna gå ut innan jag kan äta det själv.', 500, 'g', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'https://matsamverkan.s3.amazonaws.com/dummydata/items/biff.jpeg', false),
+    (2, 1, 'Mjölk', 'Åker hem över påsk så kommer inte hinna dricka den själv', 1, 'l', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'https://matsamverkan.s3.amazonaws.com/dummydata/items/mjolk.jpg', false),
+    (2, 1, 'Kvarg', 'Blåbärssmak! Köpte flera under erbjudande men tyckte inte om smaken', 2, 'dl', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'https://matsamverkan.s3.amazonaws.com/dummydata/items/lindahls-kaffe-kvarg.jpg', false),
+    (3, 1, 'Matolja', 'Råkade köpa dubbelt, så lägger ut den oöppnade här :)', 1, 'l', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'https://matsamverkan.s3.amazonaws.com/dummydata/items/matolja.jpeg', false),
+    (4, 1, 'Citron', 'When life gives you lemons... You put them on MatSam <3', 20, 'st', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'https://matsamverkan.s3.amazonaws.com/dummydata/items/citron.png', false),
+    (5, 1, 'Redbull', 'Mina barn har lyckats få tag på denna hemska vara. Snälla ta dom fort!!', 5, 'st', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'https://matsamverkan.s3.amazonaws.com/dummydata/items/redbull.jpg', false),
+    (6, 1, 'Aubergine', 'Trodde jag köpte en jättepaprika... Vill ej ha denna', 1, 'st', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'https://matsamverkan.s3.amazonaws.com/dummydata/items/aubergine.webp', true),
+    (7, 1, 'Strösocker', 'Om någon vill ha lite strösocker så har jag över :)', 20, 'kg', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'https://matsamverkan.s3.amazonaws.com/dummydata/items/socker_ny.jpg', false);
 
     INSERT INTO Requests (user_id, product_text, description, quantity, unit, time_of_expiration) VALUES
     (1, 'Majs', 'Ska laga tacos och insåg att jag saknade majsen', 1, 'st', CURRENT_TIMESTAMP()),
