@@ -282,7 +282,6 @@ export const ItemAvailableComponent = () => {
         Tillgängliga varor
       </Text>
       {offers.map((offer) => {
-        offer.key = offer.id
         return renderAvailableItems({ item: offer });
       })}
     </View>
