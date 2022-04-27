@@ -47,10 +47,6 @@ export const OwnerContactInformationModal = (props) => {
     );
   };
 
-  /*<Text category={"s1"} style={{ marginBottom: 55 }}>
-          {props.text}
-        </Text>*/
-
   return (
     <Modal //Modal for additional information about a product
       visible={item.visible}
