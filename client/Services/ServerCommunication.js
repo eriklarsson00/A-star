@@ -144,12 +144,20 @@ const removeUserFromCommunity = async (userId, communityId) => {
 
 const pushImagesToServer = async (image, serverPath, userId) => {
   const body = new FormData();
-  body.append("image", {
-    name: "photo.jpg",
-    type: image.type,
-    uri: image.uri,
-  });
-
+  if (!image) {
+    //om det inte finns någon bild ska det bli en stock photo
+    body.append("image", {
+      name: "photo.jpg",
+      type: "jpg",
+      uri: "https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg",
+    });
+  } else {
+    body.append("image", {
+      name: "photo.jpg",
+      type: image.type,
+      uri: image.uri,
+    });
+  }
   var url = "";
   if (serverPath === "Profile") {
     url = host + "/users/profile/" + userId;
@@ -173,16 +181,21 @@ const postOffer = async (offers, usercommunities) => {
     offer: offers,
     communities: usercommunities,
   };
-
   return await request("POST", "/offers", upload_obj);
 };
 
 const postRequest = async (requests, usercommunities) => {
+  console.log("communities");
+  console.log(usercommunities);
   const upload_obj = {
     request: requests,
     communities: usercommunities,
   };
-  return await request("POST", "/requests", upload_obj);
+
+  const response = await request("POST", "/requests", upload_obj);
+  console;
+  console.log(response);
+  return response;
 };
 
 const addCommunity = async (community) => {

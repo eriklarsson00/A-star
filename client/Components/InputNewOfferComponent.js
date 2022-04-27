@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, TouchableOpacity, Image, View } from "react-native";
 import {
   Button,
@@ -12,11 +12,11 @@ import {
   Text,
   Select,
   SelectItem,
+  Tooltip,
 } from "@ui-kitten/components";
 import tw from "twrnc";
-import ImagePicker from "./ImagePickerComponent";
+import ImagePickerComp from "./ImagePickerComponent";
 import BarCodeScannerComp from "./BarCodeScannerComponent";
-import { ProfileImagePath, ItemImagePath } from "../assets/AppContext";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 //TODO: Inte kunna "skapa" en vara utan att ha skrivit ett namn eller påbörjat att skapa den
@@ -31,6 +31,7 @@ export const InputNewOfferComponent = (props) => {
     quantity: "",
     unit: "",
     time_of_purchase: new Date(),
+    time_of_expiration: new Date(),
     imgurl: "",
     broken_pkg: false,
   });
@@ -43,12 +44,13 @@ export const InputNewOfferComponent = (props) => {
   const [datePurchase, setDatePurchase] = React.useState(new Date());
   const [dateExp, setDateExp] = React.useState();
   const [visible, setVisible] = React.useState(false);
+  const [toolTipVisible, setToolTipVisible] = React.useState(false);
 
   const [selectedUnitIndex, setSelectedUnitIndex] = React.useState();
 
   const newDate = new Date();
   const theme = useTheme();
-  const units = ["ml", "dl", "l", "g", "kg", "st"];
+  const units = ["dl", "l", "g", "kg", "st"];
 
   const CollapseIcon = () => (
     <Icon style={styles.iconCollapse} fill="grey" name="collapse-outline" />
@@ -56,6 +58,16 @@ export const InputNewOfferComponent = (props) => {
 
   // Tar hand om all info om när användaren tryckt på skapa vara knappen
   const handleInfo = () => {
+    if (
+      productInfo.product_text === "" ||
+      productInfo.quantity === "" ||
+      productInfo.unit === "" ||
+      productInfo.time_of_purchase === null ||
+      productInfo.time_of_expiration === null
+    ) {
+      setToolTipVisible(true);
+      return;
+    }
     if (!created) {
       props.setId(1); // ger ett lokalt id (bara för screenen)
       setCreated(true); // "Skapar" varan, så att det inte blir dubbletter
@@ -81,7 +93,7 @@ export const InputNewOfferComponent = (props) => {
         }}
       >
         <Card disabled={true}>
-          <ImagePicker
+          <ImagePickerComp
             context="ItemImage"
             updateResult={(result) => {
               setImage(result);
@@ -142,6 +154,19 @@ export const InputNewOfferComponent = (props) => {
   //printar ut units i drop down menu
   const printUnits = (title) => <SelectItem key={title} title={title} />;
 
+  // ska skapa varan
+  const publishButton = () => (
+    <Button
+      style={{ width: 120 }}
+      id="createItem"
+      onPress={() => {
+        handleInfo();
+      }}
+    >
+      Skapa vara
+    </Button>
+  );
+
   if (barCodeShow === false) {
     return (
       <Layout style={{ backgroundColor: theme["color-basic-300"] }}>
@@ -194,7 +219,7 @@ export const InputNewOfferComponent = (props) => {
             </Layout>
             <Input
               style={tw`pb-2 pl-5 pr-5`}
-              placeholder="Typ av vara"
+              placeholder="Typ av vara *"
               value={productInfo.product_text}
               onChangeText={(value) =>
                 setProductInfo({
@@ -216,7 +241,7 @@ export const InputNewOfferComponent = (props) => {
             <View style={{ flexDirection: "row" }}>
               <Input
                 style={[tw`pb-2 pl-5 pr-5`, { width: 150 }]}
-                placeholder="Antal"
+                placeholder="Antal *"
                 value={productInfo.quantity}
                 onChangeText={(value) =>
                   setProductInfo({ ...productInfo, quantity: value })
@@ -232,8 +257,8 @@ export const InputNewOfferComponent = (props) => {
                     unit: units[index - 1],
                   });
                 }}
-                placeholder="enhet"
-                style={{ width: 115 }}
+                placeholder="enhet *"
+                style={{ width: 125 }}
               >
                 {units.map(printUnits)}
               </Select>
@@ -271,10 +296,17 @@ export const InputNewOfferComponent = (props) => {
                 </Text>
               )}
             </CheckBox>
-            <Layout style={{ paddingLeft: 228 }}>
-              {created && (
+
+            {created && (
+              <Layout
+                style={{
+                  flexDirection: "row",
+                  paddingLeft: 20,
+                  paddingTop: 15,
+                }}
+              >
                 <Button
-                  style={{ width: 120 }}
+                  style={{ width: 140 }}
                   id="createItem"
                   onPress={() => {
                     handleChange();
@@ -282,19 +314,33 @@ export const InputNewOfferComponent = (props) => {
                 >
                   Ändra vara
                 </Button>
-              )}
-              {!created && (
                 <Button
-                  style={{ width: 120 }}
-                  id="createItem"
+                  style={{
+                    width: 140,
+                    marginLeft: 40,
+                    backgroundColor: theme["color-danger-500"],
+                    borderColor: theme["color-danger-500"],
+                  }}
+                  id="deleteItem"
                   onPress={() => {
-                    handleInfo();
+                    props.handleDel(productInfo.id);
                   }}
                 >
-                  Skapa vara
+                  Ta bort vara
                 </Button>
-              )}
-            </Layout>
+              </Layout>
+            )}
+            {!created && (
+              <Layout style={{ paddingTop: 10, paddingLeft: 20 }}>
+                <Tooltip
+                  anchor={publishButton}
+                  visible={toolTipVisible}
+                  onBackdropPress={() => setToolTipVisible(false)}
+                >
+                  Du måste fylla alla obligatoriska fält!
+                </Tooltip>
+              </Layout>
+            )}
           </Layout>
         )}
         {!productVisible && (
@@ -317,7 +363,7 @@ export const InputNewOfferComponent = (props) => {
             >
               <Text style={{ fontSize: 20 }}>{productInfo.product_text}</Text>
               <Text>
-                {"\n"}Antal: {productInfo.quantity}
+                {"\n"}Antal: {productInfo.quantity} {productInfo.unit}
               </Text>
             </Button>
           </Layout>
@@ -348,7 +394,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   checkbox: {
-    paddingTop: 10,
+    paddingTop: 15,
     paddingLeft: 20,
   },
   compactProductContainer: {
