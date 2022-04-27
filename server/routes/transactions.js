@@ -123,7 +123,7 @@ function getTransactionOngoingOwner(req, res) {
 
   const sql = `
     SELECT T.*, 
-    U.firstname, U.lastname, U.number, U.email, 
+    U.firstname, U.lastname, U.number, U.email, U.rating, U.raters,
     O.product_text as offer_product, O.description as offer_description, O.imgurl, 
     R.product_text as request_product, R.description as request_description
     FROM Transactions T
@@ -155,7 +155,7 @@ function getTransactionOngoingResponder(req, res) {
 
   const sql = `
     SELECT T.*, 
-    U.firstname, U.lastname, U.number, U.email, 
+    U.firstname, U.lastname, U.number, U.email, U.rating, U.raters,
     O.product_text as offer_product, O.description as offer_description, O.imgurl, 
     R.product_text as request_product, R.description as request_description
     FROM Transactions T
