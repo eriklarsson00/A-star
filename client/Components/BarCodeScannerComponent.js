@@ -33,7 +33,6 @@ export default function BarCodeScannerComp(props) {
     Alert.alert("Vara", productName, [
       {
         text: "Avbryt",
-        onPress: () => console.log("Cancel Pressed"),
         style: "cancel",
       },
       {
