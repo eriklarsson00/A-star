@@ -70,7 +70,6 @@ io.on("connection", (socket) => {
 */
 
 import * as users from "./routes/users.js";
-import * as login from "./routes/login.js";
 import * as communities from "./routes/communities.js";
 import * as offers from "./routes/offers.js";
 import * as requests from "./routes/requests.js";
@@ -113,10 +112,6 @@ app
   .get(users.getUser)
   .put(users.updateUser)
   .delete(users.deleteUser);
-
-//*************************LOGIN*************************
-
-app.route("/login").post(login.userExists);
 
 //*************************COMMUNITIES*************************
 

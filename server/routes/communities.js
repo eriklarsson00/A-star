@@ -1,5 +1,6 @@
 import { communityChecker } from "./modelchecker.js";
 import { createRequire } from "module";
+import { stdErrorHandler } from "./common.js";
 const require = createRequire(import.meta.url);
 
 const knex = require("knex")({
@@ -21,8 +22,8 @@ function getCommunities(req, res) {
         "GROUP BY C.id, CU.community_id"
     )
     .then((communities) => {
-      res.json(communities[0]);
-    });
+      return res.json(communities[0]);
+    }, stdErrorHandler);
 }
 
 function getCommunity(req, res) {
@@ -34,34 +35,34 @@ function getCommunity(req, res) {
       .json("Usage: /communities/:id. id has to be a number");
   }
 
-  knex
-    .raw(
-      "SELECT C.*, COUNT(CU.id) as members FROM Communities C " +
-        "LEFT JOIN CommunityUser CU ON CU.community_id = C.id " +
-        "WHERE C.id =" +
-        id +
-        " GROUP BY CU.community_id"
-    )
-    .then((communities) => {
-      res.json(communities[0]);
-    });
+  const sql = `
+    SELECT C.*, COUNT(CU.id) as members 
+    FROM Communities C 
+    LEFT JOIN CommunityUser CU ON CU.community_id = C.id
+    WHERE C.id = ${id}
+    GROUP BY CU.community_id
+  `;
+
+  knex.raw(sql).then((communities) => {
+    return res.json(communities[0]);
+  }, stdErrorHandler);
 }
 
 function addCommunity(req, res) {
   const body = req.body;
 
-  if (!communityChecker(body))
+  if (!communityChecker(body)) {
     return res.status(400).json("Invalid community properties");
+  }
 
   knex("Communities")
     .insert(body === {} ? null : body)
     .catch((err) => {
       res.status(500).json(err);
-      id = undefined;
     })
     .then((id) => {
-      if (id !== undefined) res.json("Community inserted with id: " + id);
-    });
+      return res.json("Community inserted with id: " + id);
+    }, stdErrorHandler);
 }
 
 function updateCommunity(req, res) {
@@ -74,19 +75,16 @@ function updateCommunity(req, res) {
       .json("Usage: /communities/:id. id has to be a number");
   }
 
-  if (!communityChecker(body))
+  if (!communityChecker(body)) {
     return res.status(400).json("Invalid community properties");
+  }
 
   knex("Communities")
     .where("id", id)
     .update(body)
-    .catch((err) => {
-      res.status(500).json(err);
-      id = undefined;
-    })
     .then(() => {
-      if (id !== undefined) res.json("Community updated with id: " + id);
-    });
+      return res.json("Community updated with id: " + id);
+    }, stdErrorHandler);
 }
 
 function deleteCommunity(req, res) {
@@ -101,18 +99,13 @@ function deleteCommunity(req, res) {
   knex("Communities")
     .where("id", id)
     .del()
-    .catch((err) => {
-      res.status(500).json(err);
-      id = undefined;
-    })
     .then(() => {
-      res.json("Community deleted with id: " + id);
-    });
+      return res.json("Community deleted with id: " + id);
+    }, stdErrorHandler);
 }
 
 function getCommunityMembers(req, res) {
   const id = parseInt(req.params.id);
-  const body = req.body;
 
   if (isNaN(id)) {
     return res
@@ -123,8 +116,8 @@ function getCommunityMembers(req, res) {
   knex
     .raw("SELECT COUNT(id) FROM CommunityUser WHERE community_id = " + id)
     .then((amount) => {
-      res.json(amount[0]);
-    });
+      return res.json(amount[0]);
+    }, stdErrorHandler);
 }
 
 export {

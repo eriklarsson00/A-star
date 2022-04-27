@@ -23,4 +23,9 @@ const checkEmptyParam = (param, res, msg) => {
   return false;
 };
 
-export { checkIntID, checkEmptyBody, checkEmptyParam };
+const stdErrorHandler = (err) => {
+  console.error(err);
+  res.status(500).json(err);
+};
+
+export { checkIntID, checkEmptyBody, checkEmptyParam, stdErrorHandler };

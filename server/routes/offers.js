@@ -1,5 +1,6 @@
 import { offerChecker } from "./modelchecker.js";
 import { createRequire } from "module";
+import { stdErrorHandler } from "./common.js";
 const require = createRequire(import.meta.url);
 
 const knex = require("knex")({
@@ -27,8 +28,8 @@ function getActiveOffersCommunity(req, res) {
     .where("Transactions.offer_id", null)
     .andWhere("CommunityListings.community_id", community)
     .then((offers) => {
-      res.json(offers);
-    });
+      return res.json(offers);
+    }, stdErrorHandler);
 }
 
 function getActiveOffers(req, res) {
@@ -37,16 +38,16 @@ function getActiveOffers(req, res) {
     .leftJoin("Transactions", "Transactions.offer_id", "Offers.id")
     .where("Transactions.offer_id", null)
     .then((offers) => {
-      res.json(offers);
-    });
+      return res.json(offers);
+    }, stdErrorHandler);
 }
 
 function getOffers(req, res) {
   knex("Offers")
     .select()
     .then((offers) => {
-      res.json(offers);
-    });
+      return res.json(offers);
+    }, stdErrorHandler);
 }
 
 function getOffer(req, res) {
@@ -60,8 +61,8 @@ function getOffer(req, res) {
     .select()
     .where("id", id)
     .then((offers) => {
-      res.json(offers);
-    });
+      return res.json(offers);
+    }, stdErrorHandler);
 }
 
 function addOffer(req, res) {
