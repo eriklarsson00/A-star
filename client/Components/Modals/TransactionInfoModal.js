@@ -20,8 +20,7 @@ import {
 } from "../../Services/ServerCommunication";
 
 export const TransactionInfoModal = (props) => {
-  const available = props.available
-  console.log(available);
+  const available = props.available;
   const item = props.item;
   const transaction = props.transaction;
   const [responder, setResponder] = useState({});
@@ -32,7 +31,6 @@ export const TransactionInfoModal = (props) => {
     setResponder(responder[0]);
   };
 
-  
   useEffect(() => {
     return getResponder();
   }, []);
@@ -51,7 +49,9 @@ export const TransactionInfoModal = (props) => {
     if (transaction) {
       return (
         <View>
-          <Text>{responder.firstname} {props.text} </Text>
+          <Text>
+            {responder.firstname} {props.text}{" "}
+          </Text>
           <Text>
             {moment(transaction.time_of_expiration).format("dddd Do MMM hh:mm")}
           </Text>
@@ -110,8 +110,7 @@ export const TransactionInfoModal = (props) => {
           <Text style={{ marginBottom: 10 }}>Din vara</Text>
           <Text style={{ marginBottom: 10 }}>{item.description}</Text>
         </View>
-      )
-      
+      );
     }
   };
 

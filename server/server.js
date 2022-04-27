@@ -39,7 +39,6 @@ io.on("connection", (socket) => {
   const connectedClients = () => {
     return `${io.of("/").sockets.size} clients connected`;
   };
-  console.log(socket.id, "has connected");
   socket.emit(
     "message",
     `Connected to WebSocket server\n ${connectedClients()}`
@@ -65,7 +64,6 @@ io.on("connection", (socket) => {
 */
 
 import * as users from "./routes/users.js";
-import * as login from "./routes/login.js";
 import * as communities from "./routes/communities.js";
 import * as offers from "./routes/offers.js";
 import * as requests from "./routes/requests.js";
@@ -101,15 +99,13 @@ app.post(
   users.updateProfilePicture
 );
 
+app.route("/users/:id/rate").put(users.rateUser);
+
 app
   .route("/users/:id")
   .get(users.getUser)
   .put(users.updateUser)
   .delete(users.deleteUser);
-
-//*************************LOGIN*************************
-
-app.route("/login").post(login.userExists);
 
 //*************************COMMUNITIES*************************
 
@@ -151,7 +147,7 @@ app
 
 app.route("/offers/user/:id").get(offers.getUserOffers);
 
-app.route("/offers/other/:user").get(offers.getOtherOffersCommunity);
+app.route("/offers/other/:userId").get(offers.getOtherOffersCommunity);
 
 //*************************REQUESTS*************************
 
@@ -166,7 +162,7 @@ app
   .get(requests.getRequests)
   .post((req, res) => {
     requests.addRequest(req, res);
-    io.sockets.emit("offer", req.body.offer);
+    io.sockets.emit("request", req.body);
   });
 
 app
@@ -180,7 +176,7 @@ app
 
 app.route("/requests/user/:id").get(requests.getUserRequests);
 
-app.route("/requests/other/:user").get(requests.getOtherRequestsCommunity);
+app.route("/requests/other/:userId").get(requests.getOtherRequestsCommunity);
 
 //*************************TRANSACTIONS*************************
 

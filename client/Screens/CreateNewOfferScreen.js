@@ -79,7 +79,6 @@ const CreateNewOfferScreen = ({ navigation }) => {
         return;
       }
     }
-    console.log("ERROR: no item with inputId found");
   };
 
   // Lista av enskilda varor
@@ -144,7 +143,6 @@ const CreateNewOfferScreen = ({ navigation }) => {
 
     productInfo.forEach((product) => {
       prepareProduct(product, communityIds);
-      console.log(communityIds);
     });
     //skickar upp varje bild till s3 när vi publicerar inlägget
   };

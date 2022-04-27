@@ -32,7 +32,7 @@ export const StartScreen = ({ navigation }) => {
           setLoggedIn(true);
         } catch (e) {
           // saving error
-          console.log(e);
+          console.error(e);
         }
       } else {
         navigation.navigate("CreateUserScreen");
@@ -71,7 +71,7 @@ export const StartScreen = ({ navigation }) => {
         setLoggedIn(true);
       } catch (e) {
         // saving error
-        console.log(e);
+        console.error(e);
       }
     }
   };

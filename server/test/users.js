@@ -285,4 +285,88 @@ export function userTests(server) {
         });
     });
   });
+
+  // ACTIONS
+  describe("/users/:id/rate", () => {
+    it("should rate a user", (done) => {
+      chai
+        .request(server)
+        .put("/users/1/rate")
+        .send({ rating: 5 })
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.text.length.should.not.be.eql(0);
+          res.body.should.be.a("string");
+          done();
+        });
+    });
+    it("should rate a user twice", (done) => {
+      chai
+        .request(server)
+        .put("/users/1/rate")
+        .send({ rating: 5 })
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.text.length.should.not.be.eql(0);
+          res.body.should.be.a("string");
+        });
+
+      chai
+        .request(server)
+        .put("/users/1/rate")
+        .send({ rating: 4 })
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.text.length.should.not.be.eql(0);
+          res.body.should.be.a("string");
+          done();
+        });
+    });
+    it("should not rate a user", (done) => {
+      // Invalid user id
+      chai
+        .request(server)
+        .put("/users/InvalidId/rate")
+        .send({ rating: 5 })
+        .end((err, res) => {
+          res.should.have.status(400);
+          res.text.length.should.not.be.eql(0);
+          res.body.should.be.a("string");
+        });
+
+      // Bad user id
+      chai
+        .request(server)
+        .put("/users/-1/rate")
+        .send({ rating: 5 })
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.text.length.should.not.be.eql(0);
+          res.body.should.be.a("string");
+        });
+
+      // Invalid rating
+      chai
+        .request(server)
+        .put("/users/1/rate")
+        .send({ rating: "invalid rating" })
+        .end((err, res) => {
+          res.should.have.status(400);
+          res.text.length.should.not.be.eql(0);
+          res.body.should.be.a("string");
+        });
+
+      // Bad rating
+      chai
+        .request(server)
+        .put("/users/1/rate")
+        .send({ rating: -1 })
+        .end((err, res) => {
+          res.should.have.status(400);
+          res.text.length.should.not.be.eql(0);
+          res.body.should.be.a("string");
+          done();
+        });
+    });
+  });
 }

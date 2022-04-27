@@ -75,7 +75,7 @@ export const ItemAvailableComponent = () => {
       const communities = offerobj.communities;
       if (
         offer.user_id != userId &&
-        communities.map((i) => communityIds.includes(i)).includes(true)
+        communities?.map((i) => communityIds?.includes(i)).includes(true)
       )
         addOffer(offer);
     });
@@ -85,7 +85,6 @@ export const ItemAvailableComponent = () => {
     });
 
     socketRef.current.on("transaction", (transaction) => {
-      console.log(transaction);
       updateTransactions(transaction);
     });
 
@@ -155,8 +154,6 @@ export const ItemAvailableComponent = () => {
       time_of_expiration: date,
     };
 
-    console.log(transaction);
-
     await addTransaction(transaction);
     fetchItems();
     toggleModal(item);
@@ -204,7 +201,7 @@ export const ItemAvailableComponent = () => {
             );
           }}
           // accessoryLeft={"https://picsum.photos/150/150"}
-          title={`${item.product_text} ${item.quantity}`}
+          title={`${item.product_text} | ${item.quantity} ${item.unit}`}
           description={`${item.description}`}
         />
         {modal}
@@ -233,7 +230,7 @@ export const ItemAvailableComponent = () => {
           );
         }}
         accessoryRight={offerHasTransaction(item) ? TransactionIcon : null}
-        title={`${item.product_text} ${item.quantity}`}
+        title={`${item.product_text} | ${item.quantity} ${item.unit}`}
         description={`${item.description}`}
       ></ListItem>
       <TransactionInfoModal
