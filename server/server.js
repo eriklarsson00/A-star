@@ -163,7 +163,7 @@ app
   .get(requests.getRequests)
   .post((req, res) => {
     requests.addRequest(req, res);
-    io.sockets.emit("offer", req.body.offer);
+    io.sockets.emit("request", req.body.request);
   });
 
 app
