@@ -21,6 +21,8 @@ import {
   addTransaction,
   getPendingTransactions,
 } from "../Services/ServerCommunication.js";
+import moment from "moment";
+import "moment/locale/sv"
 import io from "socket.io-client";
 import ProductInfoModal from "./Modals/ProductInfoModal";
 import TakeProductModal from "./Modals/TakeProductModal";
@@ -197,6 +199,10 @@ export const ItemAvailableComponent = () => {
           onPress={() => {
             toggleModal(item);
           }}
+          accessoryRight={() => {
+            return(
+              <Text style={{ top: 38, fontSize: 10 }}> {moment(item.time_of_creation).fromNow()}</Text>
+            )}}
           accessoryLeft={() => {
             return (
               <Image
