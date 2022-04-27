@@ -33,13 +33,13 @@ export default function BarCodeScannerComp(props) {
     Alert.alert("Vara", productName, [
       {
         text: "Avbryt",
-        onPress: () => console.log("Cancel Pressed"),
         style: "cancel",
       },
       {
         text: "Lägg till",
         onPress: () => {
           props.productInfo(productName);
+          props.func(false);
         },
       },
     ]);

@@ -1,15 +1,15 @@
 import React, { useState, useContext } from "react";
-import { View, Text, StyleSheet, Image, Button } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { ProfileImagePath, UserInfo } from "../assets/AppContext";
 import { pushToServer } from "../Services/ServerCommunication";
 import * as ImageManipulator from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";
+import { Button, Divider } from "@ui-kitten/components";
 
 export default function ImagePickerComp(props) {
   // The path of the picked image
 
   const [pickedImagePath, setPickedImagePath] = useState(null);
-  const { userInfo, setUserInfo } = React.useContext(UserInfo);
 
   const resizeImage = async (result, resize = 0.05) => {
     const manipResult = await ImageManipulator.manipulateAsync(
@@ -50,7 +50,6 @@ export default function ImagePickerComp(props) {
         props.updateResult(image);
       }
       if (props.context == "ItemImage" || "CommunityImage") {
-        console.log(image);
         props.updateResult(image);
       }
     }
@@ -66,13 +65,14 @@ export default function ImagePickerComp(props) {
       return;
     }
 
+    props.hideTakePicture();
     const result = await ImagePicker.launchCameraAsync();
     const image = await resizeImage(result, props.resize);
     if (!result.cancelled) {
       setPickedImagePath(image.uri);
       if (props.context == "Profile") {
         props.updateResult(image);
-        setProfileImagePath(image.uri);
+        setPickedImagePath(image.uri);
       }
       if (props.context == "ItemImage" || "CommunityImage") {
         props.updateResult(image);
@@ -81,17 +81,14 @@ export default function ImagePickerComp(props) {
   };
 
   return (
-    <View style={styles.screen}>
-      <View style={styles.buttonContainer}>
-        <Button onPress={showImagePicker} title="Select an image" />
-        <Button onPress={openCamera} title="Open camera" />
-      </View>
-
-      <View style={styles.imageContainer}>
-        {pickedImagePath !== "" && (
-          <Image source={{ uri: pickedImagePath }} style={styles.image} />
-        )}
-      </View>
+    <View style={styles.buttonContainer}>
+      <Button onPress={showImagePicker} appearance="ghost">
+        Välj bild från album
+      </Button>
+      <Divider />
+      <Button onPress={openCamera} appearance="ghost">
+        Öppna kamera
+      </Button>
     </View>
   );
 }
@@ -103,8 +100,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   buttonContainer: {
-    width: 400,
-    flexDirection: "row",
+    width: 200,
+    flexDirection: "column",
     justifyContent: "space-around",
   },
   imageContainer: {
