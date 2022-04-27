@@ -60,25 +60,22 @@ export const ItemRequestedComponent = () => {
   React.useEffect(() => {
     socketRef.current = io(host);
 
-    socketRef.current.emit("communities", {
-      ids: communityIds.map((id) => id.toString()),
-    });
-
-    socketRef.current.on("request", (request) => {
-      request.visible = false;
-      if (request.user_id == userId) {
-        setMyRequests([...myRequests, request]);
-      } else {
-        setRequests([...requests, request]);
-      }
+    socketRef.current.on("request", (requestobj) => {
+      const request = requestobj.request;
+      const communities = requestobj.communities;
+      if (
+        request.user_id != userId &&
+        communities?.map((i) => communityIds?.includes(i)).includes(true)
+      )
+        addRequest(request);
     });
 
     socketRef.current.on("deleteRequest", (id) => {
-      console.log(id);
-      removeRequest(myRequests, id);
-      removeRequest(requests, id);
-      setRequests([...requests]);
-      setMyRequests([...myRequests]);
+      removeRequest(id);
+    });
+
+    socketRef.current.on("transaction", (transaction) => {
+      updateTransactions(transaction);
     });
 
     return () => {
@@ -97,15 +94,23 @@ export const ItemRequestedComponent = () => {
     setLoading(false);
   };
 
+  const updateTransactions = (transaction) => {
+    setTransactions([...transactions, transaction]);
+  };
+
+  const addRequest = (request) => {
+    setRequests([...requests, request]);
+  };
+
+  const removeRequest = (id) => {
+    return setRequests(requests.filter((request) => request.id != id));
+  };
+
   const getTransaction = (request) => {
     if (!requestHasTransaction(request)) {
       return null;
     }
     return transactions.find(({ request_id }) => request_id == request.id);
-  };
-
-  const removeRequest = (array, id) => {
-    return array.filter((request) => request.id != id);
   };
 
   const requestHasTransaction = (request) => {

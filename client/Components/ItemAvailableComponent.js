@@ -75,7 +75,7 @@ export const ItemAvailableComponent = () => {
       const communities = offerobj.communities;
       if (
         offer.user_id != userId &&
-        communities.map((i) => communityIds.includes(i)).includes(true)
+        communities?.map((i) => communityIds?.includes(i)).includes(true)
       )
         addOffer(offer);
     });
@@ -85,7 +85,6 @@ export const ItemAvailableComponent = () => {
     });
 
     socketRef.current.on("transaction", (transaction) => {
-      console.log(transaction);
       updateTransactions(transaction);
     });
 
