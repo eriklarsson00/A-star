@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View, FlatList, Image } from "react-native";
+import { StyleSheet, View, FlatList, Image, ScrollView } from "react-native";
 import {
   Text,
   List,
@@ -22,7 +22,7 @@ import {
   getPendingTransactions,
 } from "../Services/ServerCommunication.js";
 import moment from "moment";
-import "moment/locale/sv"
+import "moment/locale/sv";
 import io from "socket.io-client";
 import ProductInfoModal from "./Modals/ProductInfoModal";
 import TakeProductModal from "./Modals/TakeProductModal";
@@ -88,8 +88,7 @@ export const ItemAvailableComponent = () => {
 
     socketRef.current.on("transaction", (transaction) => {
       updateTransactions(transaction);
-      if (transaction.offer_id != null)
-        removeOffer(transaction.offer_id)
+      if (transaction.offer_id != null) removeOffer(transaction.offer_id);
     });
 
     return () => {
@@ -121,7 +120,9 @@ export const ItemAvailableComponent = () => {
   };
 
   const removeTransaction = (id) => {
-    return setTransactions(transactions.filter((transaction) => transaction.id != id));
+    return setTransactions(
+      transactions.filter((transaction) => transaction.id != id)
+    );
   };
 
   const removeOffer = (id) => {
@@ -200,9 +201,13 @@ export const ItemAvailableComponent = () => {
             toggleModal(item);
           }}
           accessoryRight={() => {
-            return(
-              <Text style={{ top: 38, fontSize: 10 }}> {moment(item.time_of_creation).fromNow()}</Text>
-            )}}
+            return (
+              <Text style={{ top: 38, fontSize: 10 }}>
+                {" "}
+                {moment(item.time_of_creation).fromNow()}
+              </Text>
+            );
+          }}
           accessoryLeft={() => {
             return (
               <Image
@@ -259,29 +264,6 @@ export const ItemAvailableComponent = () => {
     </View>
   );
 
-  const flatListHeader = () => {
-    return (
-      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-        Mina varor
-      </Text>
-    );
-  };
-
-  const flatListFooter = () => {
-    return (
-      <View>
-        <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-          Tillgängliga varor
-        </Text>
-        <List
-          scrollEnabled={false}
-          data={offers}
-          renderItem={renderAvailableItems}
-        />
-      </View>
-    );
-  };
-
   const LoadingView = () => (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Spinner size={"giant"} />
@@ -289,16 +271,29 @@ export const ItemAvailableComponent = () => {
   );
 
   const LoadedView = () => (
-    <FlatList
-      style={{ flex: 1}}
-      data={myOffers}
-      renderItem={renderMyItems}
-      ListHeaderComponent={flatListHeader}
-      ListFooterComponent={flatListFooter}
-    ></FlatList>
+    <View>
+      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
+        Mina varor
+      </Text>
+      {myOffers.map((offer) => {
+        return renderMyItems({ item: offer });
+      })}
+      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
+        Tillgängliga varor
+      </Text>
+      {offers.map((offer) => {
+        return renderAvailableItems({ item: offer });
+      })}
+    </View>
   );
 
-  return loading ? <LoadingView /> : <LoadedView />;
+  return loading ? (
+    <LoadingView />
+  ) : (
+    <ScrollView>
+      <LoadedView />
+    </ScrollView>
+  );
 };
 
 const styles = StyleSheet.create({
