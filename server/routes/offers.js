@@ -193,7 +193,7 @@ function getOtherOffersCommunity(req, res) {
     .leftJoin("Transactions", "Transactions.offer_id", "Offers.id")
     .leftJoin("CommunityListings", "CommunityListings.offer_id", "Offers.id")
     .whereIn("CommunityListings.community_id", communityIds)
-    .whereNot("Offers.user_id", user)
+    .whereNot("Offers.user_id", userId)
     .andWhere("Transactions.offer_id", null)
     .groupBy("Offers.id")
     .then(

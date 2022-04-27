@@ -193,6 +193,8 @@ function getOtherRequestsCommunity(req, res) {
     return res.status(400).json(errMsg);
   }
 
+  const communityIds = communityIdsStr.split(",");
+
   knex("Requests")
     .select("Requests.*")
     .leftJoin("Transactions", "Transactions.request_id", "Requests.id")
@@ -201,8 +203,8 @@ function getOtherRequestsCommunity(req, res) {
       "CommunityListings.request_id",
       "Requests.id"
     )
-    .whereIn("CommunityListings.community_id", communities)
-    .whereNot("Requests.user_id", user)
+    .whereIn("CommunityListings.community_id", communityIds)
+    .whereNot("Requests.user_id", userId)
     .andWhere("Transactions.request_id", null)
     .groupBy("Requests.id")
     .then(
