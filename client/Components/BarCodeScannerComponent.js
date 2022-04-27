@@ -40,6 +40,7 @@ export default function BarCodeScannerComp(props) {
         text: "Lägg till",
         onPress: () => {
           props.productInfo(productName);
+          props.func(false);
         },
       },
     ]);

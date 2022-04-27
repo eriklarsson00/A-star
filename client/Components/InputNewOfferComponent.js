@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { StyleSheet, TouchableOpacity, Image, View } from "react-native";
+import { StyleSheet, TouchableOpacity, Image, View, Alert } from "react-native";
 import {
   Button,
   useTheme,
@@ -82,7 +82,6 @@ export const InputNewOfferComponent = (props) => {
     setProductVisible(false);
   };
 
-  // Tar hand om när användaren ska ta en bild på sin vara
   const ChoseImageModal = () => {
     return (
       <Modal
@@ -99,10 +98,10 @@ export const InputNewOfferComponent = (props) => {
               setImage(result);
               props.pushImage(result);
             }}
+            hideTakePicture={() => {
+              setVisible(false);
+            }}
           />
-          <Button style={tw`mt-2 w-50`} onPress={() => setVisible(false)}>
-            Klar
-          </Button>
         </Card>
       </Modal>
     );
@@ -113,7 +112,12 @@ export const InputNewOfferComponent = (props) => {
     if (dateExp) {
       return (
         <>
-          <Text style={tw`pl-5 pt-1 text-base`}> Utgångsdatum på varan: </Text>
+          <TouchableOpacity onPress={() => setDateExp(null)}>
+            <Text style={tw`pl-5 pt-1 text-base`}>
+              {" "}
+              Utgångsdatum på varan:{" "}
+            </Text>
+          </TouchableOpacity>
           <DateTimePicker
             style={{ width: 140 }}
             value={dateExp}
@@ -128,7 +132,11 @@ export const InputNewOfferComponent = (props) => {
     } else {
       return (
         <Button
-          style={{ marginLeft: 20.5 }}
+          appearance="ghost"
+          style={{
+            marginLeft: 20,
+            borderColor: theme["color-primary-500"],
+          }}
           onPress={() => {
             updateDateExp(new Date());
           }}
@@ -157,7 +165,7 @@ export const InputNewOfferComponent = (props) => {
   // ska skapa varan
   const publishButton = () => (
     <Button
-      style={{ width: 120 }}
+      style={{ width: 140 }}
       id="createItem"
       onPress={() => {
         handleInfo();
@@ -174,9 +182,7 @@ export const InputNewOfferComponent = (props) => {
           <Layout style={styles.itemContainer}>
             <Layout style={{ flexDirection: "row" }}>
               <TouchableOpacity
-                onPress={() => {
-                  setVisible(true);
-                }}
+                onPress={setVisible}
                 style={styles.AddIconContainer}
               >
                 <Image
@@ -190,6 +196,7 @@ export const InputNewOfferComponent = (props) => {
                     width: 150,
                   }}
                 />
+
                 <ChoseImageModal />
               </TouchableOpacity>
               <TouchableOpacity
@@ -240,7 +247,7 @@ export const InputNewOfferComponent = (props) => {
             />
             <View style={{ flexDirection: "row" }}>
               <Input
-                style={[tw`pb-2 pl-5 pr-5`, { width: 150 }]}
+                style={[tw`pb-2 pl-5 pr-2`, { width: 140 }]}
                 placeholder="Antal *"
                 value={productInfo.quantity}
                 onChangeText={(value) =>
@@ -331,7 +338,7 @@ export const InputNewOfferComponent = (props) => {
               </Layout>
             )}
             {!created && (
-              <Layout style={{ paddingTop: 10, paddingLeft: 20 }}>
+              <Layout style={{ paddingTop: 15, paddingLeft: 20 }}>
                 <Tooltip
                   anchor={publishButton}
                   visible={toolTipVisible}
@@ -347,24 +354,50 @@ export const InputNewOfferComponent = (props) => {
           <Layout
             style={[
               styles.compactProductContainer,
-              { backgroundColor: theme["color-basic-300"] },
+              {
+                backgroundColor: theme["color-basic-300"],
+                flexDirection: "row",
+              },
             ]}
           >
-            <Button
-              style={{
-                borderColor: theme["color-primary-300"],
-                backgroundColor: theme["color-primary-300"],
-                height: 70,
-                justifyContent: "flex-start",
+            <Image
+              style={[
+                styles.CreatedItemImage,
+                { borderColor: theme["color-primary-300"] },
+              ]}
+              source={{
+                uri:
+                  image === null
+                    ? "https://www.mcicon.com/wp-content/uploads/2021/02/Technology_Camera_1-copy-22.jpg"
+                    : image.uri,
+                height: 150,
+                width: 150,
               }}
+            />
+            <Button
+              style={[
+                styles.createdItem,
+                {
+                  borderColor: theme["color-primary-300"],
+                  backgroundColor: theme["color-primary-300"],
+                },
+              ]}
               onPress={() => {
                 setProductVisible(true);
               }}
             >
-              <Text style={{ fontSize: 20 }}>{productInfo.product_text}</Text>
-              <Text>
-                {"\n"}Antal: {productInfo.quantity} {productInfo.unit}
-              </Text>
+              {created && (
+                <Text style={{ fontSize: 20 }}>{productInfo.product_text}</Text>
+              )}
+              {created && (
+                <Text>
+                  {"\n"}
+                  {productInfo.quantity} {productInfo.unit}
+                </Text>
+              )}
+              {!created && (
+                <Text style={{ fontSize: 20 }}> *Varan är inte skapad*</Text>
+              )}
             </Button>
           </Layout>
         )}
@@ -386,6 +419,18 @@ const styles = StyleSheet.create({
   backdrop: {
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
+  createdItem: {
+    height: 70,
+    justifyContent: "flex-start",
+    borderRadius: 1,
+    width: 300,
+  },
+  CreatedItemImage: {
+    width: 70,
+    height: 70,
+    borderWidth: 2,
+  },
+  doneImagePicker: {},
   featureImage: {
     width: 70,
     height: 70,
@@ -395,7 +440,7 @@ const styles = StyleSheet.create({
   },
   checkbox: {
     paddingTop: 15,
-    paddingLeft: 20,
+    paddingLeft: 25,
   },
   compactProductContainer: {
     width: 370,
