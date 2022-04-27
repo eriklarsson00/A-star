@@ -138,8 +138,6 @@ export const ItemRequestedComponent = () => {
       time_of_expiration: date,
     };
 
-    console.log(transaction);
-
     await addTransaction(transaction);
     fetchItems();
     toggleModal(item);
@@ -159,7 +157,7 @@ export const ItemRequestedComponent = () => {
     <View>
       <ListItem
         style={styles.container}
-        title={`${item.product_text}`}
+        title={`${item.product_text} | ${item.quantity} ${item.unit}`}
         accessoryRight={requestHasTransaction(item) ? TransactionIcon : null}
         description={`${item.description}`}
         onPress={() => {
@@ -206,7 +204,7 @@ export const ItemRequestedComponent = () => {
       <View>
         <ListItem
           style={styles.container}
-          title={`${item.product_text}`}
+          title={`${item.product_text} | ${item.quantity} ${item.unit}`}
           description={`${item.description}`}
           onPress={() => {
             toggleModal(item);

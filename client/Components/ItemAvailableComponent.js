@@ -154,8 +154,6 @@ export const ItemAvailableComponent = () => {
       time_of_expiration: date,
     };
 
-    console.log(transaction);
-
     await addTransaction(transaction);
     fetchItems();
     toggleModal(item);
@@ -203,7 +201,7 @@ export const ItemAvailableComponent = () => {
             );
           }}
           // accessoryLeft={"https://picsum.photos/150/150"}
-          title={`${item.product_text} ${item.quantity}`}
+          title={`${item.product_text} | ${item.quantity} ${item.unit}`}
           description={`${item.description}`}
         />
         {modal}
@@ -232,7 +230,7 @@ export const ItemAvailableComponent = () => {
           );
         }}
         accessoryRight={offerHasTransaction(item) ? TransactionIcon : null}
-        title={`${item.product_text} ${item.quantity}`}
+        title={`${item.product_text} | ${item.quantity} ${item.unit}`}
         description={`${item.description}`}
       ></ListItem>
       <TransactionInfoModal

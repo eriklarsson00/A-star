@@ -39,7 +39,6 @@ io.on("connection", (socket) => {
   const connectedClients = () => {
     return `${io.of("/").sockets.size} clients connected`;
   };
-  console.log(socket.id, "has connected");
   socket.emit(
     "message",
     `Connected to WebSocket server\n ${connectedClients()}`

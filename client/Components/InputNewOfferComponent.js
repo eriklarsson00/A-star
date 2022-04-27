@@ -84,7 +84,6 @@ export const InputNewOfferComponent = (props) => {
           <ImagePicker
             context="ItemImage"
             updateResult={(result) => {
-              console.log("New picked image path: " + result.uri);
               setImage(result);
               props.pushImage(result);
             }}
