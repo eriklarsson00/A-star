@@ -37,7 +37,7 @@ const getMyOffers = async (id) => {
 const getOffers = async (id, communities) => {
   let query = "?communities=" + communities.join(",");
   let offers = await request("GET", "/offers/other/" + id + query);
-  return [...new Set(offers)];
+  return offers;
 };
 
 const getCommunities = async () => {
@@ -122,7 +122,7 @@ const addToCommunity = async (profile_id, communities) => {
 
 const deleteProfile = async (id) => {
   return await request("DELETE", "/users/" + id).catch((err) =>
-    console.log(err)
+    console.error(err)
   );
 };
 
@@ -133,7 +133,7 @@ const removeUserFromCommunity = async (userId, communityId) => {
   };
 
   return await request("DELETE", "/users/community", obj).catch((err) =>
-    console.log(err)
+    console.error(err)
   );
 };
 
@@ -160,7 +160,7 @@ const pushImagesToServer = async (image, serverPath, userId) => {
     },
   })
     .then((data) => data.json())
-    .catch((err) => console.log(err));
+    .catch((err) => console.err(err));
 };
 
 const postOffer = async (offers, usercommunities) => {
