@@ -50,7 +50,7 @@ const getUserCommunities = async (user_id) => {
 };
 
 const getMyActiveRequests = async (id) => {
-  return await request("GET", "/requests/user/" + id);
+  return await request("GET", "/requests/myactive/" + id);
 };
 
 const getRequests = async (id, communities) => {
