@@ -25,7 +25,7 @@ export const InputNewOfferComponent = (props) => {
   // Objectet för hur en offer ska se ut
   const [productInfo, setProductInfo] = React.useState({
     id: 0,
-    user_id: 0,
+    user_id: props.user_id ?? 0,
     product_text: props.product,
     description: "",
     quantity: "",

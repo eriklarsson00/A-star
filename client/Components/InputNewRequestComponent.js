@@ -17,7 +17,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 export const InputNewRequestComponent = (props) => {
   const [productInfo, setProductInfo] = React.useState({
     id: 0,
-    user_id: 0,
+    user_id: props.user_id ?? 0,
     product_text: "",
     description: "",
     quantity: "",
