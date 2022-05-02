@@ -134,8 +134,10 @@ app
   .route("/offers")
   .get(offers.getOffers)
   .post((req, res) => {
-    offers.addOffer(req, res);
-    io.sockets.emit("offer", req.body);
+    offers.addOffer(req, res).then((id) => {
+      req.body.id = id;
+      io.sockets.emit("offer", req.body);
+    });
   });
 
 app
@@ -165,8 +167,10 @@ app
   .route("/requests")
   .get(requests.getRequests)
   .post((req, res) => {
-    requests.addRequest(req, res);
-    io.sockets.emit("request", req.body);
+    requests.addRequest(req, res).then((id) => {
+      req.body.id = id;
+      io.sockets.emit("request", req.body);
+    });
   });
 
 app
