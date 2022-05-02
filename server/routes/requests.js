@@ -117,7 +117,7 @@ function addRequest(req, res) {
   }
 
   let request_id;
-  knex("Requests")
+  return knex("Requests")
     .insert(request)
     .then(
       (id) => {
@@ -129,7 +129,7 @@ function addRequest(req, res) {
     .then(
       () => {
         if (!request_id) {
-          return;
+          return -1;
         }
 
         const communityRequests = communities.map((community) => {
@@ -139,6 +139,8 @@ function addRequest(req, res) {
         knex("CommunityListings")
           .insert(communityRequests)
           .catch((err) => console.error(err));
+
+        return request_id;
       },
       (err) => stdErrorHandler(err, res)
     );

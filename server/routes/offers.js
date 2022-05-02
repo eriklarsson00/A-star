@@ -112,7 +112,7 @@ function addOffer(req, res) {
     return res.status(400).json("Invalid offer properties");
 
   let offer_id;
-  knex("Offers")
+  return knex("Offers")
     .insert(offer)
     .then(
       (id) => {
@@ -124,7 +124,7 @@ function addOffer(req, res) {
     .then(
       () => {
         if (!offer_id || !communities) {
-          return;
+          return -1;
         }
         const communityOffers = communities.map((community) => {
           return { community_id: community, offer_id: offer_id };
@@ -132,6 +132,7 @@ function addOffer(req, res) {
         knex("CommunityListings")
           .insert(communityOffers)
           .catch((err) => console.error(err));
+        return offer_id;
       },
       (err) => stdErrorHandler(err, res)
     );
