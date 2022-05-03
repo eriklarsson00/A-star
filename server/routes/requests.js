@@ -107,7 +107,7 @@ function getRequest(req, res) {
     );
 }
 
-function addRequest(req, res) {
+function addRequest(req, res, io) {
   const body = req.body;
   const request = body?.request;
   const communities = body?.communities;
@@ -122,7 +122,8 @@ function addRequest(req, res) {
     .then(
       (id) => {
         res.json("Request inserted with id: " + id);
-        request_id = id;
+        req.body.request.id = id;
+        io.sockets.emit("request", req.body);
       },
       (err) => stdErrorHandler(err, res)
     )
@@ -139,8 +140,6 @@ function addRequest(req, res) {
         knex("CommunityListings")
           .insert(communityRequests)
           .catch((err) => console.error(err));
-
-        return request_id;
       },
       (err) => stdErrorHandler(err, res)
     );
