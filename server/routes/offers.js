@@ -118,7 +118,7 @@ function addOffer(req, res) {
       (id) => {
         res.json("Offer inserted with id: " + id);
         req.body.offer.id = id;
-        io.sockets.emit("offer", req.body);
+        io?.sockets.emit("offer", req.body);
       },
       (err) => stdErrorHandler(err, res)
     )

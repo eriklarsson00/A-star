@@ -238,7 +238,7 @@ function addTransaction(req, res, io) {
       (id) => {
         res.json("Transaction inserted with id: " + id);
         req.body.transaction.id = id;
-        io.sockets.emit("transaction", req.body);
+        io?.sockets.emit("transaction", req.body);
       },
       (err) => stdErrorHandler(err, res)
     );
