@@ -151,10 +151,10 @@ export const TransactionInfoModal = (props) => {
                 }}
               />
             </Layout>
-            <Text category={"s1"} style={{ marginLeft: 20 }}>
+            <Text category={"s1"} style={{ marginLeft: 20, width: 100 }}>
               {item.product_text}
             </Text>
-            <Text category={"s1"} style={{ marginLeft: 20 }}>
+            <Text category={"s1"}>
               {item.quantity} {item.unit}
             </Text>
           </View>
