@@ -103,7 +103,7 @@ function getOffer(req, res) {
     );
 }
 
-function addOffer(req, res) {
+function addOffer(req, res, io) {
   const body = req.body;
   const offer = body?.offer;
   const communities = body?.communities;
