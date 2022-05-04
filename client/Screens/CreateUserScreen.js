@@ -13,7 +13,7 @@ import {
   SelectItem,
 } from "@ui-kitten/components";
 import tw from "twrnc";
-import ImagePicker from "../Components/ImagePickerComponent";
+import ImagePickerComp from "../Components/ImagePickerComponent";
 import {
   ShowCommunityIds,
   MyCommunitysInfo,
@@ -126,13 +126,21 @@ export const CreateUserScreen = () => {
       <Modal
         visible={visible}
         backdropStyle={styles.backdrop}
-        onBackdropPress={() => setVisible(false)}
+        onBackdropPress={() => {
+          setVisible(false);
+        }}
       >
         <Card disabled={true}>
-          <ImagePicker context="Profile" updateResult={setProfileImage} />
-          <Button style={tw`mt-2 w-50`} onPress={() => setVisible(false)}>
-            Klar
-          </Button>
+          <ImagePickerComp
+            context="ItemImage"
+            updateResult={(result) => {
+              setImage(result);
+              props.pushImage(result);
+            }}
+            hideTakePicture={() => {
+              setVisible(false);
+            }}
+          />
         </Card>
       </Modal>
     );
