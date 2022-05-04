@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Image, ScrollView, FlatList } from "react-native";
+import { StyleSheet, View, Image } from "react-native";
 import {
   Text,
-  List,
-  ListItem,
   Modal,
   Card,
   Button,
   Layout,
-  Spinner,
   Divider,
 } from "@ui-kitten/components";
 import moment from "moment";
@@ -47,50 +44,63 @@ export const RequestTransactionInfoModal = (props) => {
 
   const decline = () => {
     deleteTransaction(transaction.id);
-    props.removeTransaction(transaction.id)
+    props.removeTransaction(transaction.id);
     props.toggleModal(item);
   };
 
   const Info = () => {
     if (transaction) {
       return (
-       <View>
+        <View>
           <View style={styles.imgContainer}>
-           <Layout style={tw`py-10`}>
-        <Image
-          style={[tw`rounded-full`, {marginBottom: -40, marginTop: -10}]}
-          source={{
-            uri: responder.imgurl,
-            height: 150,
-            width: 150,
-          }}
-        />
-      </Layout>
-      <Layout style={styles.container}>
-        <Card style={styles.card}>
-          <Text style={[tw`text-center`, styles.text]}>{responder.given}</Text>
-          <Divider />
-          <Text style={[tw`text-center`, styles.text]}>Givet</Text>
-        </Card>
+            <Layout style={tw`py-10`}>
+              <Image
+                style={[
+                  tw`rounded-full`,
+                  { marginBottom: -40, marginTop: -10 },
+                ]}
+                source={{
+                  uri: responder.imgurl,
+                  height: 150,
+                  width: 150,
+                }}
+              />
+            </Layout>
+            <Layout style={styles.container}>
+              <Card style={styles.card}>
+                <Text style={[tw`text-center`, styles.text]}>
+                  {responder.given}
+                </Text>
+                <Divider />
+                <Text style={[tw`text-center`, styles.text]}>Givet</Text>
+              </Card>
 
-        <Card style={styles.card}>
-          <Text style={[tw`text-center`, styles.text]}>{responder.taken}</Text>
-          <Divider />
-          <Text style={[tw`text-center`, styles.text]}>Tagit</Text>
-        </Card>
+              <Card style={styles.card}>
+                <Text style={[tw`text-center`, styles.text]}>
+                  {responder.taken}
+                </Text>
+                <Divider />
+                <Text style={[tw`text-center`, styles.text]}>Tagit</Text>
+              </Card>
 
-        <Card style={styles.card}>
-          <Text style={[tw`text-center`, styles.text]}>{rating}</Text>
-          <Divider />
-          <Text style={[tw`text-center`, {fontSize: 10}]}>Betyg</Text>
-        </Card>
-      </Layout>
-            <Text style={{marginBottom: 5} }category={"s1"}>{responder.firstname} {props.text} </Text>
-          <Text style={{marginBottom: 5} } category={"s1"}>
-            {moment(transaction.time_of_expiration).format("dddd Do MMM hh:mm")}
-          </Text>
-            <Text  style={{marginBottom: 5} }category={"s1"}>{moment(transaction.time_of_expiration).fromNow()}</Text>
-            </View>
+              <Card style={styles.card}>
+                <Text style={[tw`text-center`, styles.text]}>{rating}</Text>
+                <Divider />
+                <Text style={[tw`text-center`, { fontSize: 10 }]}>Betyg</Text>
+              </Card>
+            </Layout>
+            <Text style={{ marginBottom: 5 }} category={"s1"}>
+              {responder.firstname} {props.text}{" "}
+            </Text>
+            <Text style={{ marginBottom: 5 }} category={"s1"}>
+              {moment(transaction.time_of_expiration).format(
+                "dddd Do MMM hh:mm"
+              )}
+            </Text>
+            <Text style={{ marginBottom: 5 }} category={"s1"}>
+              {moment(transaction.time_of_expiration).fromNow()}
+            </Text>
+          </View>
           <Layout
             style={{
               flexDirection: "row",
@@ -98,10 +108,18 @@ export const RequestTransactionInfoModal = (props) => {
               marginTop: 10,
             }}
           >
-            <Button style={{marginLeft: 10, width: 120}} onPress={() => accept()} status={"success"}>
+            <Button
+              style={{ marginLeft: 10, width: 120 }}
+              onPress={() => accept()}
+              status={"success"}
+            >
               <Text>Acceptera</Text>
             </Button>
-            <Button style={{marginRight: 10, width: 120} }onPress={() => decline()} status={"danger"}>
+            <Button
+              style={{ marginRight: 10, width: 120 }}
+              onPress={() => decline()}
+              status={"danger"}
+            >
               <Text>Neka</Text>
             </Button>
           </Layout>
@@ -111,30 +129,23 @@ export const RequestTransactionInfoModal = (props) => {
       return (
         <View>
           <View
-          style={{
-            flexDirection: "column",
-            flex: 1,
-            justifyContent: "space-between",
-            alignItems: "left",
-          }}
+            style={{
+              flexDirection: "column",
+            }}
           >
-          <Text category={"h6"} style={{ marginLeft: 20}}>Vara</Text>
-          <Text category={"s1"} style={{ marginLeft: 20, borderBottomWidth: 1, }}>
-            {item.product_text}
+            <Text style={tw`text-base font-bold mt-2`}>Efterfrågas av mig</Text>
+            <Divider style={tw`mt-2`} />
+            <Text style={tw`text-lg mt-3`}>
+              {item.product_text}, {item.quantity} {item.unit}
             </Text>
-          <Text category={"h6"} style={{ marginLeft: 20, marginTop: 10 }}>Antal</Text>
-          <Text category={"s1"} style={{ marginLeft: 20 }}>
-            {item.quantity}
-            </Text>
-            <Text category={"h5"} style={{ marginLeft: 20, marginTop: 10 }}>Senast Inom</Text>
-          <Text category={"s1"} style={{ marginLeft: 20 }}>
-            {item.time_of_expiration}
-            </Text>
-        </View>
-        
-          <Text category={"h5"} style={{ marginBottom: 10, marginLeft: 20, marginTop: 10 }}>Beskrivning</Text>
-          <Text category={"s1"} style={{ marginBottom: 10 }}>{item.description}</Text>
-          
+            <Text style={tw`text-base mt-2`}>{item.description}</Text>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Text style={tw`text-base mt-2 mr-2`}>
+                Behövs senast:{" "}
+                {moment(item.time_of_expiration).format("Do MMM YYYY")}
+              </Text>
+            </View>
+          </View>
         </View>
       );
     }
@@ -176,6 +187,5 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 12,
-  
-  }
-})
+  },
+});

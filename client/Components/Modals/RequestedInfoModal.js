@@ -1,20 +1,20 @@
-import React from "react";
-import { StyleSheet, View, Image, ScrollView, FlatList } from "react-native";
-import {
-  Text,
-  List,
-  ListItem,
-  Modal,
-  Card,
-  Button,
-  Layout,
-  Spinner,
-} from "@ui-kitten/components";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import React, { useEffect } from "react";
+import { View, Image } from "react-native";
+import { Text, Modal, Card, Button, Divider } from "@ui-kitten/components";
 import tw from "twrnc";
+import { getUserProfileById } from "../../Services/ServerCommunication";
+import moment from "moment";
+import "moment/locale/sv";
 
 export const RequestedInfoModal = (props) => {
   const item = props.item;
+  const [user, setUser] = React.useState("");
+
+  useEffect(async () => {
+    let user = await getUserProfileById(item.user_id);
+    return setUser(user[0]);
+  }, [user]);
+
   return (
     <Modal
       visible={item.visible}
@@ -25,31 +25,39 @@ export const RequestedInfoModal = (props) => {
         <View
           style={{
             flexDirection: "column",
-            flex: 1,
-            justifyContent: "space-between",
-            alignItems: "left",
           }}
         >
-          <Text category={"h6"} style={{ marginLeft: 20 }}>Vara</Text>
-          <Text category={"s1"} style={{ marginLeft: 20, borderBottomWidth: 1, }}>
-            {item.product_text}
+          <Image
+            style={[tw`rounded-full`]}
+            source={{
+              uri: user.imgurl,
+              height: 100,
+              width: 100,
+            }}
+          />
+          <Text style={tw`text-base mt-2`}>
+            Efterfrågas av {user.firstname}
           </Text>
-          <Text category={"h6"} style={{ marginLeft: 20, marginTop: 10 }}>Antal</Text>
-          <Text category={"s1"} style={{ marginLeft: 20 }}>
-            {item.quantity}
+          <Divider style={tw`mt-2`} />
+          <Text style={tw`text-lg mt-3`}>
+            {item.product_text}, {item.quantity} {item.unit}
           </Text>
-          <Text category={"h5"} style={{ marginLeft: 20, marginTop: 10 }}>Senast Inom</Text>
-          <Text category={"s1"} style={{ marginLeft: 20 }}>
-            {item.time_of_expiration}
-          </Text>
+          <Text style={tw`text-base mt-2`}>{item.description}</Text>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Text style={tw`text-base mt-2 mr-2`}>
+              Behövs senast:{" "}
+              {moment(item.time_of_expiration).format("Do MMM YYYY")}
+            </Text>
+          </View>
         </View>
-        
-        <Text category={"h5"} style={{ marginBottom: 10, marginLeft: 20, marginTop: 10 }}>Beskrivning</Text>
-        <Text category={"s1"} style={{ marginBottom: 10 }}>{item.description}</Text>
-        <Button title="ta vara" style={{ marginTop: 10, marginBottom: 5 }} onPress={() => props.toggleTake()}>Ge vara</Button>
+        <Button
+          title="ta vara"
+          style={{ marginTop: 10, marginBottom: 5 }}
+          onPress={() => props.toggleTake()}
+        >
+          Ge vara
+        </Button>
       </Card>
     </Modal>
   );
 };
-
-
