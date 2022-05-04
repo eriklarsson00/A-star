@@ -29,6 +29,7 @@ export const TransactionInfoModal = (props) => {
   const getResponder = async () => {
     if (!transaction) return;
     let responder = await getUserProfileById(transaction.responder_id);
+    console.log(responder);
     setResponder(responder[0]);
   };
   const rating =
@@ -37,8 +38,9 @@ export const TransactionInfoModal = (props) => {
       : "Inga";
 
   useEffect(() => {
-    return getResponder();
-  }, []);
+    if (item.visible) return getResponder();
+  }, [item.visible]);
+
 
   const accept = () => {
     acceptTransaction(transaction.id);
