@@ -24,6 +24,7 @@ import {
   addCommunity,
   pushImagesToServer,
 } from "../../Services/ServerCommunication";
+import { defaultCommunityImage } from "../../assets/Images";
 
 export const CreateCommunityModal = (props) => {
   const theme = useTheme();
@@ -38,9 +39,6 @@ export const CreateCommunityModal = (props) => {
 
   const [missingInformation, setMissingInformation] = React.useState(false);
   const [missingFields, setMissingFields] = React.useState([]);
-  const communityImageUrl =
-    "https://www.uppsalahem.se/globalassets/bilder/omradesbilder/7002/Rackarberget_3.jpg?w=320";
-
   const CrossIcon = () => (
     <Icon
       style={styles.crossStyle}
@@ -116,7 +114,7 @@ export const CreateCommunityModal = (props) => {
           },
         ]}
         source={{
-          uri: image.uri ? image.uri : communityImageUrl,
+          uri: image.uri ? image.uri : defaultCommunityImage,
           height: 80,
           width: 80,
         }}

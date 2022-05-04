@@ -21,6 +21,7 @@ import {
   GoogleInfo,
   UserLoggedIn,
 } from "../assets/AppContext";
+import { defaultProfileImage } from "../assets/Images";
 import {
   addProfile,
   editProfile,
@@ -54,7 +55,7 @@ export const CreateUserScreen = () => {
   );
   const [lastName, setLastName] = React.useState(googleInfo?.family_name ?? "");
   const [ProfileImage, setProfileImage] = React.useState({
-    uri: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+    uri: defaultProfileImage,
   });
 
   React.useEffect(() => {
