@@ -103,7 +103,7 @@ function getOffer(req, res) {
     );
 }
 
-function addOffer(req, res) {
+function addOffer(req, res, io) {
   const body = req.body;
   const offer = body?.offer;
   const communities = body?.communities;
@@ -117,7 +117,8 @@ function addOffer(req, res) {
     .then(
       (id) => {
         res.json("Offer inserted with id: " + id);
-        offer_id = id;
+        req.body.offer.id = id;
+        io?.sockets.emit("offer", req.body);
       },
       (err) => stdErrorHandler(err, res)
     )
@@ -132,7 +133,6 @@ function addOffer(req, res) {
         knex("CommunityListings")
           .insert(communityOffers)
           .catch((err) => console.error(err));
-        return offer_id;
       },
       (err) => stdErrorHandler(err, res)
     );

@@ -224,7 +224,7 @@ function getTransactionUser(req, res) {
   );
 }
 
-function addTransaction(req, res) {
+function addTransaction(req, res, io) {
   const transaction = req.body;
 
   if (!transactionChecker(transaction)) {
@@ -236,7 +236,9 @@ function addTransaction(req, res) {
     .insert(transaction)
     .then(
       (id) => {
-        return res.json("Transaction inserted with id: " + id);
+        res.json("Transaction inserted with id: " + id);
+        req.body.transaction.id = id;
+        io?.sockets.emit("transaction", req.body);
       },
       (err) => stdErrorHandler(err, res)
     );
