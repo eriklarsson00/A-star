@@ -15,7 +15,7 @@ import {
   getUserProfileById,
 } from "../Services/ServerCommunication";
 
-export const ProfileScreen = () => {
+export const ProfileScreen = ({ navigation }) => {
   // CONTEXT
   const { userInfo, setUserInfo } = React.useContext(UserInfo);
   const { setLoggedIn } = React.useContext(UserLoggedIn);
@@ -118,16 +118,20 @@ export const ProfileScreen = () => {
           <Text style={tw`text-center`}>Betyg</Text>
         </Card>
       </Layout>
-      <ScrollView style={[{ width: "100%" }]}>
-        <Button style={styles.btn} appearance="ghost">
-          {" "}
-          Mina produkter
-        </Button>
-        <Button style={styles.btn} appearance="ghost">
+      <ScrollView style={[{ width: "100%", paddingTop: 35 }]}>
+        <Button
+          style={styles.btn}
+          appearance="ghost"
+          onPress={() => navigation.navigate("HistoryScreen")}
+        >
           {" "}
           Historik{" "}
         </Button>
-        <Button style={styles.btn} appearance="ghost">
+        <Button
+          style={styles.btn}
+          appearance="ghost"
+          onPress={() => navigation.navigate("ChangeAccountInfoScreen")}
+        >
           {" "}
           Kontoinställningar
         </Button>

@@ -14,6 +14,7 @@ import { ProfileScreen } from "../Screens/ProfileScreen";
 import { AddNewItemScreen } from "../Screens/AddNewItemScreen";
 import { CreateUserScreen } from "../Screens/CreateUserScreen";
 import { NewItemNavigation } from "./NewItemNavigation";
+import { ProfileNavigation } from "./ProfileNavigation";
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
@@ -49,7 +50,7 @@ const TabNavigator = () => (
     <Screen name="CommunityScreen" component={CommunityScreen} />
     <Screen name="AddNewItemScreen" component={NewItemNavigation} />
     <Screen name="OngoingScreen" component={OngoingScreen} />
-    <Screen name="ProfileScreen" component={ProfileScreen} />
+    <Screen name="ProfileNavigation" component={ProfileNavigation} />
   </Navigator>
 );
 
