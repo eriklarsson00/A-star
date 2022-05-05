@@ -1,122 +1,106 @@
 import React from "react";
-import { StyleSheet, View, Image, ScrollView, FlatList } from "react-native";
+import { StyleSheet, View, Image } from "react-native";
 import {
   Text,
-  List,
-  ListItem,
   Modal,
   Card,
   Button,
   Layout,
-  Spinner,
   Divider,
   TabView,
-  Tab
+  Tab,
 } from "@ui-kitten/components";
 import { getUserProfileById } from "../../Services/ServerCommunication";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import tw from "twrnc";
+import moment from "moment";
+import "moment/locale/sv";
 
 export const RequestedInfoModal = (props) => {
-  
   const item = props.item;
   const [responder, setResponder] = React.useState({});
   const [selectedIndex, setSelectedIndex] = React.useState(0);
-  
+
   const rating =
     responder.raters > 0
       ? Math.round((responder.rating * 10) / responder.raters) / 10 + "/5"
       : "Inga";
-  
+
   const getResponder = async () => {
     let responder = await getUserProfileById(item.user_id);
     setResponder(responder[0]);
   };
-  
+
   React.useEffect(() => {
-   if(item.visible) return getResponder();
+    if (item.visible) return getResponder();
   }, [item.visible]);
 
-const RenderProfileInfo = () => {
-      return (
-        <View>
-          <View style={styles.imgContainer}>
-            <Layout style={tw`py-10`}>
-              <Image
-                style={[
-                  tw`rounded-full`,
-                  { marginBottom: -40, marginTop: -10 },
-                ]}
-                source={{
-                  uri: responder.imgurl,
-                  height: 90,
-                  width: 90,
-                }}
-              />
-            </Layout>
-            <Text style={{ marginTop: 15} }category={"h3"}>{ responder.firstname} {responder.lastname }</Text>
-            <Layout style={styles.container}>
-              <Card style={styles.card}>
-                <Text style={[tw`text-center`, styles.text]}>
-                  {responder.given}
-                </Text>
-                <Divider />
-                <Text style={[tw`text-center`, styles.text]}>Givet</Text>
-              </Card>
+  const RenderProfileInfo = () => {
+    return (
+      <View>
+        <View style={styles.imgContainer}>
+          <Layout style={tw`py-10`}>
+            <Image
+              style={[tw`rounded-full`, { marginBottom: -40, marginTop: -10 }]}
+              source={{
+                uri: responder.imgurl,
+                height: 90,
+                width: 90,
+              }}
+            />
+          </Layout>
+          <Text style={{ marginTop: 15 }} category={"h3"}>
+            {responder.firstname} {responder.lastname}
+          </Text>
+          <Layout style={styles.container}>
+            <Card style={styles.card}>
+              <Text style={[tw`text-center`, styles.text]}>
+                {responder.given}
+              </Text>
+              <Divider />
+              <Text style={[tw`text-center`, styles.text]}>Givet</Text>
+            </Card>
 
-              <Card style={styles.card}>
-                <Text style={[tw`text-center`, styles.text]}>
-                  {responder.taken}
-                </Text>
-                <Divider />
-                <Text style={[tw`text-center`, styles.text]}>Tagit</Text>
-              </Card>
+            <Card style={styles.card}>
+              <Text style={[tw`text-center`, styles.text]}>
+                {responder.taken}
+              </Text>
+              <Divider />
+              <Text style={[tw`text-center`, styles.text]}>Tagit</Text>
+            </Card>
 
-              <Card style={styles.card}>
-                <Text style={[tw`text-center`, styles.text]}>{rating}</Text>
-                <Divider />
-                <Text style={[tw`text-center`, { fontSize: 10 }]}>Betyg</Text>
-              </Card>
-            </Layout>
-          </View>
+            <Card style={styles.card}>
+              <Text style={[tw`text-center`, styles.text]}>{rating}</Text>
+              <Divider />
+              <Text style={[tw`text-center`, { fontSize: 10 }]}>Betyg</Text>
+            </Card>
+          </Layout>
         </View>
-      )
-}
-  
+      </View>
+    );
+  };
+
   const RenderProductInfo = () => {
     return (
       <View>
-       <View
-          style={{
-            flexDirection: "column",
-            flex: 1,
-            justifyContent: "space-between",
-            alignItems: "left",
-          }}
-        >
-          <Text category={"h6"} style={{ marginLeft: 20 }}>Vara</Text>
-          <Text category={"s1"} style={{ marginLeft: 20, borderBottomWidth: 1, }}>
-            {item.product_text}
-          </Text>
-          <Text category={"h6"} style={{ marginLeft: 20, marginTop: 10 }}>Antal</Text>
-          <Text category={"s1"} style={{ marginLeft: 20 }}>
-            {item.quantity}
-          </Text>
-          <Text category={"h5"} style={{ marginLeft: 20, marginTop: 10 }}>Senast Inom</Text>
-          <Text category={"s1"} style={{ marginLeft: 20 }}>
-            {item.time_of_expiration}
+        <Text style={tw`mt-2 text-base font-bold`}>
+          Efterfrågas av:<Text style={tw``}> {responder.firstname}</Text>
+        </Text>
+        <Text style={tw`text-lg mt-5 mb-2`}>
+          {item.product_text}, {item.quantity} {item.unit}
+        </Text>
+        <Divider style={styles.divider} />
+        <Text style={tw`text-base mt-2 mb-2`}>{item.description}</Text>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <Text style={tw`font-bold`}>
+            Behövs senast:{" "}
+            <Text style={tw`text-base mt-2 mr-2`}>
+              {moment(item.time_of_expiration).format("Do MMM YYYY")}
+            </Text>
           </Text>
         </View>
-        
-        <Text category={"h5"} style={{ marginBottom: 10, marginLeft: 20, marginTop: 10 }}>Beskrivning</Text>
-        <Text category={"s1"} style={{ marginBottom: 10 }}>{item.description}</Text>
-        </View>
-    )
-  }
-  
-
-
-
+      </View>
+    );
+  };
 
   return (
     <Modal
@@ -125,31 +109,37 @@ const RenderProfileInfo = () => {
       onBackdropPress={() => props.toggleModal(item)}
     >
       <Card disabled={true} style={{ width: 320, flex: 1 }}>
-      <View style={styles.units}>
-        <Text category={"h3"}>
-            {item.product_text}  {item.quantity} {item.unit}
+        <View style={styles.units}>
+          <Text category={"h3"}>
+            {item.product_text} {item.quantity} {item.unit}
           </Text>
         </View>
-      <TabView
-      selectedIndex={selectedIndex}
-      onSelect={index => setSelectedIndex(index)}>
-      <Tab title='ProduktInfo'>
-        <Layout style={styles.tabContainer}>
-          <RenderProductInfo/>
-        </Layout>
-      </Tab>
-      <Tab title='AnvändarInfo'>
-        <Layout style={styles.tabContainer}>
-          <RenderProfileInfo/>
-        </Layout>
-      </Tab>
-    </TabView>
-        <Button title="ta vara" style={{ marginTop: 10, marginBottom: 5 }} onPress={() => props.toggleTake()}>Ge vara</Button>
+        <TabView
+          selectedIndex={selectedIndex}
+          onSelect={(index) => setSelectedIndex(index)}
+        >
+          <Tab title="ProduktInfo">
+            <Layout style={styles.tabContainer}>
+              <RenderProductInfo />
+            </Layout>
+          </Tab>
+          <Tab title="AnvändarInfo">
+            <Layout style={styles.tabContainer}>
+              <RenderProfileInfo />
+            </Layout>
+          </Tab>
+        </TabView>
+        <Button
+          title="ta vara"
+          style={{ marginTop: 10, marginBottom: 5 }}
+          onPress={() => props.toggleTake()}
+        >
+          Ge vara
+        </Button>
       </Card>
     </Modal>
   );
 };
-
 
 const styles = StyleSheet.create({
   imgContainer: {
@@ -172,6 +162,9 @@ const styles = StyleSheet.create({
     margin: 5,
     width: "100%",
   },
+  divider: {
+    borderBottomWidth: 0.8,
+  },
   text: {
     fontSize: 12,
   },
@@ -184,11 +177,11 @@ const styles = StyleSheet.create({
   units: {
     flex: 1,
     flexDirection: "row",
-    padding: 30
+    padding: 30,
   },
   image: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center"
-  }
+    justifyContent: "center",
+  },
 });
