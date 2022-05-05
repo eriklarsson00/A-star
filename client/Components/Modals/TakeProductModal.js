@@ -52,11 +52,14 @@ const TakeProductModal = (props) => {
               }}
             />
           </Layout>
-          <Text category={"s1"} style={{ marginLeft: 20 }}>
-            {item.product_text}
-          </Text>
-          <Text category={"s1"} style={{ marginLeft: 20 }}>
-            {item.quantity}
+          <Text style={{ width: "60%" }}>
+            <Text category={"s1"} style={{ marginLeft: 20 }}>
+              {item.product_text}
+              {", "}
+            </Text>
+            <Text category={"s1"} style={{ marginLeft: 20 }}>
+              {item.quantity} {item.unit}
+            </Text>
           </Text>
         </View>
         <Text style={{ marginBottom: 10 }}>Välj tid för upphämtning</Text>
@@ -68,7 +71,12 @@ const TakeProductModal = (props) => {
           onChange={(event, date) => props.updateDate(date)}
           display={"inline"}
         />
-        <Button onPress={() => props.makeTransaction(item)}>Ta vara</Button>
+        <Button
+          style={{ marginTop: -50 }}
+          onPress={() => props.makeTransaction(item)}
+        >
+          Ta vara
+        </Button>
       </Card>
     </Modal>
   );
