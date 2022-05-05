@@ -120,7 +120,7 @@ export const ProfileScreen = ({ navigation }) => {
       </Layout>
       <ScrollView style={[{ width: "100%", paddingTop: 35 }]}>
         <Button
-          style={styles.btn}
+          style={[styles.btn, { paddingTop: 40 }]}
           appearance="ghost"
           onPress={() => navigation.navigate("HistoryScreen")}
         >

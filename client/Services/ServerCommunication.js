@@ -1,5 +1,4 @@
 import { host } from "./ServerHost";
-import { UserInfo } from "../assets/AppContext";
 
 const request = async (type, route, body) => {
   try {
@@ -86,6 +85,18 @@ const getPendingTransactions = async (user_id) => {
     "/transactions/pending/user/" + user_id
   );
   return transactions;
+};
+
+const getCompletedTransactions = async (user_id) => {
+  let completedResponder = await request(
+    "GET",
+    "/transactions/completed/responder/" + user_id
+  );
+  let completedLister = await request(
+    "GET",
+    "/transactions/completed/owner/" + user_id
+  );
+  return completedLister.concat(completedResponder);
 };
 
 const addTransaction = async (transaction) => {
@@ -211,6 +222,7 @@ export {
   getUserProfileByEmail,
   addProfile,
   getPendingTransactions,
+  getCompletedTransactions,
   getCommunities,
   getUserCommunities,
   getOngoingTransactionsOwner,
