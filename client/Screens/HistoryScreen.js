@@ -32,11 +32,11 @@ export const HistoryScreen = () => {
 
   const fetchHistoryTransactions = async () => {
     setLoading(true);
-    let test_1 = await getOngoingTransactionsOwner(uid);
-    let test_2 = await getOngoingTransactionsResponder(uid);
-    let test_3 = test_1.concat(test_2);
+    let test_1 = await getOngoingTransactionsOwner(uid);     // TODO: Hämta korrekt data
+    let test_2 = await getOngoingTransactionsResponder(uid); //  ^^
+    let test_3 = test_1.concat(test_2);                      //  ^^
+    setHistoryTransactions(test_3);                          //  ^^
 
-    setHistoryTransactions(test_3);
     setLoading(false);
   };
 

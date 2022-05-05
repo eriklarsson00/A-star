@@ -43,7 +43,7 @@ export const HistoryInfoModal = (props) => {
   };
 
   return (
-    <Modal //Modal for additional information about a product
+    <Modal
       visible={item.visible}
       backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.2)" }}
       onBackdropPress={() => props.toggleModal(item)}
