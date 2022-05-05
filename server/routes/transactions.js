@@ -449,6 +449,68 @@ async function incrementUserStat(transactionId) {
   await knex("Users").where("id", responder.id).update(responder);
 }
 
+function getTransactionCompletedResponder(req, res) {
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res
+      .status(400)
+      .json(
+        "Usage: /transactions/:id/complete/responder. id has to be a number"
+      );
+  }
+
+  const sql = `
+    SELECT T.*, 
+    U.firstname, U.lastname,
+    O.product_text as offer_product, O.description as offer_description, O.imgurl, 
+    R.product_text as request_product, R.description as request_description
+    FROM Transactions T
+    LEFT JOIN Offers O    ON T.offer_id = O.id
+    LEFT JOIN Requests R  ON T.request_id = R.id
+    LEFT JOIN Users U     ON R.user_id = U.id OR O.user_id = U.id
+    WHERE status = 'completed'
+      AND T.responder_id = ${id};
+    `;
+
+  knex.raw(sql).then(
+    (transactions) => {
+      res.json(transactions[0]);
+    },
+    (err) => stdErrorHandler(err, res)
+  );
+}
+
+function getTransactionCompletedOwner(req, res) {
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res
+      .status(400)
+      .json("Usage: /transactions/:id/complete/owner. id has to be a number");
+  }
+
+  const sql = `
+    SELECT T.*, 
+    U.firstname, U.lastname,
+    O.product_text as offer_product, O.description as offer_description, O.imgurl, 
+    R.product_text as request_product, R.description as request_description
+    FROM Transactions T
+    LEFT JOIN Offers O    ON T.offer_id = O.id
+    LEFT JOIN Requests R  ON T.request_id = R.id
+    LEFT JOIN Users U     ON T.responder_id = U.id
+    WHERE status = 'completed'
+      AND (R.user_id = ${id} OR O.user_id = ${id});
+    `;
+
+  knex.raw(sql).then(
+    (transactions) => {
+      res.json(transactions[0]);
+    },
+    (err) => stdErrorHandler(err, res)
+  );
+}
+
 export {
   // CRUD
   getTransactions,
@@ -458,6 +520,8 @@ export {
   getTransactionCommunity,
   getTransactionOngoingOwner,
   getTransactionOngoingResponder,
+  getTransactionCompletedOwner,
+  getTransactionCompletedResponder,
   getTransactionPendingUser,
   getTransactionUser,
   addTransaction,

@@ -221,6 +221,14 @@ app
   .route("/transactions/pending/user/:id")
   .get(transactions.getTransactionPendingUser);
 
+app
+  .route("/transactions/completed/responder/:id")
+  .get(transactions.getTransactionCompletedResponder);
+
+app
+  .route("/transactions/completed/owner/:id")
+  .get(transactions.getTransactionCompletedOwner);
+
 app.route("/transactions/user/:id").get(transactions.getTransactionUser);
 
 app
