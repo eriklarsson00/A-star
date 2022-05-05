@@ -41,16 +41,14 @@ export const ChangeAccountInfoScreen = ({ navigation }) => {
     <Icon style={styles.lockStyle} fill="#8F9BB3" name="plus-circle-outline" />
   );
   const StarIcon = (url) => (
-    <>
-      <Image
-        style={tw`rounded-full`}
-        source={{
-          uri: url,
-          height: 40,
-          width: 40,
-        }}
-      />
-    </>
+    <Image
+      style={tw`rounded-full`}
+      source={{
+        uri: url,
+        height: 40,
+        width: 40,
+      }}
+    />
   );
 
   const ChoseImageModal = () => {
