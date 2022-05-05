@@ -42,9 +42,8 @@ export default function ImagePickerComp(props) {
       quality: 0,
     });
 
-    const image = await resizeImage(result, props.resize);
-
-    if (!image.cancelled) {
+    if (!result.cancelled) {
+      const image = await resizeImage(result, props.resize);
       setPickedImagePath(image.uri);
       if (props.context == "Profile") {
         props.updateResult(image);
@@ -67,8 +66,9 @@ export default function ImagePickerComp(props) {
 
     props.hideTakePicture();
     const result = await ImagePicker.launchCameraAsync();
-    const image = await resizeImage(result, props.resize);
+
     if (!result.cancelled) {
+      const image = await resizeImage(result, props.resize);
       setPickedImagePath(image.uri);
       if (props.context == "Profile") {
         props.updateResult(image);
@@ -77,6 +77,8 @@ export default function ImagePickerComp(props) {
       if (props.context == "ItemImage" || "CommunityImage") {
         props.updateResult(image);
       }
+    } else {
+      return;
     }
   };
 
