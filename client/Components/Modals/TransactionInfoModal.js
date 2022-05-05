@@ -137,7 +137,6 @@ export const TransactionInfoModal = (props) => {
             style={{
               flexDirection: "row",
               flex: 1,
-              //  justifyContent: "space-between",
               alignItems: "center",
             }}
           >
