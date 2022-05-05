@@ -58,7 +58,7 @@ export const AnsweredListingsTransactions = () => {
   };
 
   const getTransaction = (id) => {
-    return pendingTransactions.find((transaction) => (transaction.id = id));
+    return pendingTransactions.find((transaction) => (transaction.id == id));
   };
 
   const fetchTransactions = async () => {
