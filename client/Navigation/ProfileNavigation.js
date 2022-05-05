@@ -1,14 +1,21 @@
 import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { StyleSheet } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { ProfileScreen } from "../Screens/ProfileScreen";
 import { HistoryScreen } from "../Screens/HistoryScreen";
 import { ChangeAccountInfoScreen } from "../Screens/ChangeAccountInfoScreen";
+import { useIsFocused } from "@react-navigation/native";
 
 const Stack = createStackNavigator();
 
-function ProfileNavigation() {
+function ProfileNavigation({ navigation }) {
+  const isFocused = useIsFocused();
+
+  React.useEffect(() => {
+    if (isFocused) {
+      navigation.navigate("ProfileScreen");
+    }
+  }, [isFocused]);
+
   return (
     <Stack.Navigator screenOptions={{ headerTintColor: "#FEA655" }}>
       <Stack.Screen

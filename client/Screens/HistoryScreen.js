@@ -1,14 +1,10 @@
 import { useState, useEffect, useContext } from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
-import { Text, Spinner, ListItem, Icon, Layout } from "@ui-kitten/components";
+import { Text, Spinner, ListItem, Icon } from "@ui-kitten/components";
 import { UserInfo } from "../assets/AppContext";
 import { HistoryInfoModal } from "../Components/Modals/HistoryInfoModal";
-import {
-  getOngoingTransactionsOwner,
-  getOngoingTransactionsResponder,
-  getCompletedTransactions,
-} from "../Services/ServerCommunication";
+import { getCompletedTransactions } from "../Services/ServerCommunication";
 import moment from "moment";
 import tw from "twrnc";
 
@@ -33,12 +29,13 @@ export const HistoryScreen = () => {
 
   const fetchHistoryTransactions = async () => {
     setLoading(true);
-    let test_1 = await getOngoingTransactionsOwner(uid); // TODO: Hämta korrekt data
-    let test_2 = await getOngoingTransactionsResponder(uid); //  ^^
-    let test_3 = test_1.concat(test_2); //  ^^
-    setHistoryTransactions(test_3); //  ^^
-    // let completedTransactions = await getCompletedTransaction(uid);
-    //setHistoryTransactions(completedTransactions)
+    let completedTransactions = await getCompletedTransactions(uid);
+    completedTransactions.sort(
+      ({ time_of_update: a }, { time_of_update: b }) => {
+        return a > b ? -1 : a < b ? 1 : 0;
+      }
+    );
+    setHistoryTransactions(completedTransactions);
     setLoading(false);
   };
 
@@ -120,7 +117,7 @@ export const HistoryScreen = () => {
             return (
               <Text style={{ top: 38, fontSize: 10 }}>
                 {" "}
-                {moment(item.time_of_creation).fromNow()}
+                {moment(item.time_of_update).fromNow()}
               </Text>
             );
           }}
