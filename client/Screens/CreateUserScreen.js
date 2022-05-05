@@ -134,8 +134,7 @@ export const CreateUserScreen = () => {
           <ImagePickerComp
             context="ItemImage"
             updateResult={(result) => {
-              setImage(result);
-              props.pushImage(result);
+              setProfileImage(result);
             }}
             hideTakePicture={() => {
               setVisible(false);
@@ -148,7 +147,7 @@ export const CreateUserScreen = () => {
 
   const SelectCommunity = () => {
     return (
-      <Layout style={{ height: 128, width: "100%" }} level="1">
+      <Layout style={{ height: 128, width: 350 }} level="1">
         <Select
           value={groupDisplayValues.join(", ")}
           multiSelect={true}
@@ -175,9 +174,6 @@ export const CreateUserScreen = () => {
 
   return (
     <Layout style={styles.container}>
-      <Layout style={tw`pt-5 pb-2`}>
-        <Text style={tw`text-lg text-center`}>Slutför registrering</Text>
-      </Layout>
       <Layout style={styles.createUserContainer} level="1">
         <Image
           style={tw`rounded-full`}
@@ -195,25 +191,25 @@ export const CreateUserScreen = () => {
         <Input
           label="Förnamn"
           value={firstName}
-          style={{ marginTop: 40, marginBottom: 8 }}
+          style={[styles.input, { paddingTop: 20 }]}
           onChangeText={(nextValue) => setFirstName(nextValue)}
         />
         <Input
           label="Efternamn"
           value={lastName}
-          style={{ marginBottom: 8 }}
+          style={styles.input}
           onChangeText={(nextValue) => setLastName(nextValue)}
         />
         <Input
           label="Telefonnummer"
           value={phoneNumber}
-          style={{ marginBottom: 8 }}
+          style={styles.input}
           onChangeText={(nextValue) => setPhoneNumber(nextValue)}
         />
         <Input
           label="Adress"
           value={adress}
-          style={{ marginBottom: 8 }}
+          style={styles.input}
           onChangeText={(nextValue) => setAdress(nextValue)}
         />
         <SelectCommunity />
@@ -227,13 +223,12 @@ export const CreateUserScreen = () => {
             adress === ""
           }
           style={{
-            marginTop: 30,
             backgroundColor:
               firstName === "" ||
               lastName === "" ||
               phoneNumber === "" ||
               adress === ""
-                ? "grey"
+                ? theme["color-primary-300"]
                 : theme["color-primary-500"],
           }}
         >
@@ -259,8 +254,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   lockStyle: {
-    width: 65,
-    height: 65,
+    width: 50,
+    height: 50,
   },
   AddIconContainer: {
     position: "absolute",
@@ -270,5 +265,9 @@ const styles = StyleSheet.create({
   },
   backdrop: {
     backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  input: {
+    marginBottom: 8,
+    width: 350,
   },
 });

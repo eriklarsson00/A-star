@@ -1,7 +1,6 @@
 import React from "react";
 import { StyleSheet, Image, TouchableOpacity } from "react-native";
 import {
-  Text,
   Layout,
   Button,
   Input,
@@ -9,8 +8,6 @@ import {
   useTheme,
   Modal,
   Card,
-  Select,
-  SelectItem,
 } from "@ui-kitten/components";
 import tw from "twrnc";
 import ImagePickerComp from "../Components/ImagePickerComponent";
@@ -20,7 +17,7 @@ import {
   pushImagesToServer,
 } from "../Services/ServerCommunication";
 
-export const ChangeAccountInfoScreen = (props) => {
+export const ChangeAccountInfoScreen = ({ navigation }) => {
   // CONTEXT
   const { googleInfo, setGoogleInfo } = React.useContext(GoogleInfo);
   const { userInfo, setUserInfo } = React.useContext(UserInfo);
@@ -30,10 +27,13 @@ export const ChangeAccountInfoScreen = (props) => {
   const [adress, setAdress] = React.useState(userInfo.adress);
   const [firstName, setFirstName] = React.useState(userInfo.firstname);
   const [lastName, setLastName] = React.useState(userInfo.lastname);
-  const [profileImage, setProfileImage] = React.useState(userInfo.imgurl);
+  const [profileImage, setProfileImage] = React.useState({
+    uri: userInfo.imgurl,
+  });
   const [visible, setVisible] = React.useState(false);
   const [updated, setUpdated] = React.useState(false);
-  const [updatedProfile, setupdatedProfile] = React.useState();
+  const [updatedProfile, setUpdatedProfile] = React.useState();
+  const [updatedPro, setUpdatedPro] = React.useState({ test: "hEJ" });
 
   const theme = useTheme();
 
@@ -54,7 +54,6 @@ export const ChangeAccountInfoScreen = (props) => {
   );
 
   const ChoseImageModal = () => {
-    // TODO!!! ÄNDRA BILD NOT WORKING!!!
     return (
       <Modal
         visible={visible}
@@ -68,7 +67,7 @@ export const ChangeAccountInfoScreen = (props) => {
             context="ItemImage"
             updateResult={(result) => {
               setProfileImage(result);
-              props.pushImage(result);
+              setUpdated(true);
             }}
             hideTakePicture={() => {
               setVisible(false);
@@ -80,16 +79,16 @@ export const ChangeAccountInfoScreen = (props) => {
   };
 
   async function updateProfile() {
-    console.log(updatedProfile);
-    // let bucketImage = await pushImagesToServer(
-    //   { uri: profileImage },
-    //   "Profile",
-    //   updatedProfile[0].id
-    // );
-    // newProfile[0].imgurl = bucketImage;
+    if (profileImage.uri !== userInfo.imgurl) {
+      let bucketImage = await pushImagesToServer(
+        profileImage,
+        "Profile",
+        userInfo.id
+      );
+      setUpdatedProfile({ ...updatedProfile, imgurl: bucketImage });
+    }
 
-    // await editProfile(updatedProfile, userInfo.id);
-    // setUserInfo(updatedProfile);
+    await editProfile(updatedProfile, userInfo.id);
   }
 
   return (
@@ -97,7 +96,7 @@ export const ChangeAccountInfoScreen = (props) => {
       <Layout style={styles.createUserContainer} level="1">
         <Image
           style={tw`rounded-full`}
-          source={{ uri: profileImage, height: 150, width: 150 }}
+          source={{ uri: profileImage.uri, height: 150, width: 150 }}
         />
         <TouchableOpacity
           onPress={() => {
@@ -116,7 +115,7 @@ export const ChangeAccountInfoScreen = (props) => {
           onChangeText={(nextValue) => {
             setFirstName(nextValue);
             setUpdated(true);
-            setupdatedProfile({
+            setUpdatedProfile({
               ...updatedProfile,
               firstname: nextValue,
             });
@@ -129,7 +128,7 @@ export const ChangeAccountInfoScreen = (props) => {
           onChangeText={(nextValue) => {
             setLastName(nextValue);
             setUpdated(true);
-            setupdatedProfile({
+            setUpdatedProfile({
               ...updatedProfile,
               lastname: nextValue,
             });
@@ -142,7 +141,7 @@ export const ChangeAccountInfoScreen = (props) => {
           onChangeText={(nextValue) => {
             setPhoneNumber(nextValue);
             setUpdated(true);
-            setupdatedProfile({
+            setUpdatedProfile({
               ...updatedProfile,
               number: nextValue,
             });
@@ -155,7 +154,7 @@ export const ChangeAccountInfoScreen = (props) => {
           onChangeText={(nextValue) => {
             setAdress(nextValue);
             setUpdated(true);
-            setupdatedProfile({
+            setUpdatedProfile({
               ...updatedProfile,
               adress: nextValue,
             });
@@ -164,11 +163,16 @@ export const ChangeAccountInfoScreen = (props) => {
 
         <Button
           id="createProfile"
-          onPress={() => updateProfile()}
-          disabled={!updated}
+          onPress={() => {
+            updateProfile();
+            navigation.navigate("ProfileScreen");
+          }}
+          // disabled={!updated}
           style={{
             marginTop: 30,
-            backgroundColor: updated ? theme["color-primary-500"] : "grey",
+            backgroundColor: updated
+              ? theme["color-primary-500"]
+              : theme["color-primary-300"],
           }}
         >
           Ändra Konto
