@@ -179,6 +179,15 @@ export const CreateCommunityModal = (props) => {
 
   const onCheckedChange = (isChecked) => {
     setCommunityPrivate(isChecked);
+    {
+      if (missingFields.includes("Lösenord")) {
+        setMissingFields(
+          missingFields.filter((field) => {
+            return field != "Lösenord";
+          })
+        );
+      }
+    }
   };
 
   async function createCommunity() {
@@ -192,7 +201,6 @@ export const CreateCommunityModal = (props) => {
         "communityimages",
         null
       );
-      console.log(newImgUrl);
       let communityData = {
         name: communityName,
         location: null,
@@ -233,13 +241,17 @@ export const CreateCommunityModal = (props) => {
               style={{ marginTop: 10 }}
               label="Grannskapets namn"
               value={communityName}
+              returnKeyType="done"
               onChangeText={(nextValue) => setCommunityName(nextValue)}
             />
             <Input
               status={missingFields.includes("Beskrivning") ? "danger" : ""}
               style={{ marginTop: 10 }}
               label="Beskrivning"
+              textAlignVertical={"top"}
+              blurOnSubmit={true}
               multiline={true}
+              returnKeyType="done"
               textStyle={{ minHeight: 64 }}
               value={communityDescription}
               onChangeText={(nextValue) => setCommunityDescription(nextValue)}
@@ -263,6 +275,7 @@ export const CreateCommunityModal = (props) => {
                 status={missingFields.includes("Lösenord") ? "danger" : ""}
                 style={{ marginTop: 10 }}
                 label="Lösenord"
+                returnKeyType="done"
                 value={communityPassword}
                 onChangeText={(nextValue) => setCommunityPassword(nextValue)}
               />
