@@ -37,8 +37,9 @@ export const TransactionInfoModal = (props) => {
       : "Inga";
 
   useEffect(() => {
-    return getResponder();
-  }, []);
+    if (item.visible) return getResponder();
+  }, [item.visible]);
+
 
   const accept = () => {
     acceptTransaction(transaction.id);

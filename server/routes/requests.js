@@ -122,6 +122,7 @@ function addRequest(req, res, io) {
     .then(
       (id) => {
         res.json("Request inserted with id: " + id);
+        request_id = id;
         req.body.request.id = id;
         io?.sockets.emit("request", req.body);
       },
