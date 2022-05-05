@@ -18,6 +18,7 @@ import tw from "twrnc";
 import ImagePickerComp from "./ImagePickerComponent";
 import BarCodeScannerComp from "./BarCodeScannerComponent";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { cameraIcon, barCodeIcon } from "../assets/Images";
 
 //TODO: Inte kunna "skapa" en vara utan att ha skrivit ett namn eller påbörjat att skapa den
 
@@ -188,10 +189,7 @@ export const InputNewOfferComponent = (props) => {
                 <Image
                   style={styles.featureImage}
                   source={{
-                    uri:
-                      image === null
-                        ? "https://www.mcicon.com/wp-content/uploads/2021/02/Technology_Camera_1-copy-22.jpg"
-                        : image.uri,
+                    uri: image === null ? cameraIcon : image.uri,
                     height: 150,
                     width: 150,
                   }}
@@ -208,7 +206,7 @@ export const InputNewOfferComponent = (props) => {
                 <Image
                   style={styles.featureImage}
                   source={{
-                    uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKFtLJb-9ebWHz70NK37A_9_bXjULFjI4M7Q&usqp=CAU",
+                    uri: barCodeIcon,
                     height: 150,
                     width: 150,
                   }}
@@ -366,10 +364,7 @@ export const InputNewOfferComponent = (props) => {
                 { borderColor: theme["color-primary-300"] },
               ]}
               source={{
-                uri:
-                  image === null
-                    ? "https://www.mcicon.com/wp-content/uploads/2021/02/Technology_Camera_1-copy-22.jpg"
-                    : image.uri,
+                uri: image === null ? cameraIcon : image.uri,
                 height: 150,
                 width: 150,
               }}

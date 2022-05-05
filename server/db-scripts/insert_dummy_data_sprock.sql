@@ -77,19 +77,19 @@ BEGIN
     (1, NULL, 9), (1, NULL, 10), (1, NULL, 11), (1, NULL, 12), (3, NULL, 1), (3, NULL, 2),
     (3, NULL, 3), (3, NULL, 4), (3, NULL, 5);
 
-    INSERT INTO Transactions (offer_id, request_id, status, responder_id, time_of_expiration) VALUES
-    (1, NULL, 'accepted', 2, CURRENT_TIMESTAMP()),
-    (2, NULL, 'accepted', 3, CURRENT_TIMESTAMP()),
-    (3, NULL, 'pending', 1, CURRENT_TIMESTAMP()),
-    (4, NULL, 'pending', 1, CURRENT_TIMESTAMP()),
-    (5, NULL, 'completed', 1, CURRENT_TIMESTAMP()),
-    (6, NULL, 'completed', 1, CURRENT_TIMESTAMP()),
-    (NULL, 1, 'accepted', 4, CURRENT_TIMESTAMP()),
-    (NULL, 2, 'accepted', 4, CURRENT_TIMESTAMP()),
-    (NULL, 3, 'pending', 1, CURRENT_TIMESTAMP()),
-    (NULL, 4, 'pending', 1, CURRENT_TIMESTAMP()),
-    (NULL, 5, 'completed', 1, CURRENT_TIMESTAMP()),
-    (NULL, 6, 'completed', 1, CURRENT_TIMESTAMP());
+    INSERT INTO Transactions (offer_id, request_id, status, responder_id, time_of_update, time_of_expiration) VALUES
+    (1, NULL, 'accepted', 2, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
+    (2, NULL, 'accepted', 3, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
+    (3, NULL, 'pending', 1, NULL, CURRENT_TIMESTAMP()),
+    (4, NULL, 'pending', 1, NULL, CURRENT_TIMESTAMP()),
+    (5, NULL, 'completed', 1, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
+    (6, NULL, 'completed', 1, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
+    (NULL, 1, 'accepted', 4, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
+    (NULL, 2, 'accepted', 4, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
+    (NULL, 3, 'pending', 1, NULL, CURRENT_TIMESTAMP()),
+    (NULL, 4, 'pending', 1, NULL, CURRENT_TIMESTAMP()),
+    (NULL, 5, 'completed', 1, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
+    (NULL, 6, 'completed', 1, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
 
     SET FOREIGN_KEY_CHECKS=1;  
     

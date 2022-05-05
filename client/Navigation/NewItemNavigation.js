@@ -14,17 +14,17 @@ const NewItemNavigation = () => {
       <Stack.Screen
         name="AddItemScreen"
         component={AddNewItemScreen}
-        options={{ title: "" }}
+        options={{ title: "", headerShown: false }}
       />
       <Stack.Screen
         name="CreateNewOfferScreen"
         component={CreateNewOfferScreen}
-        options={{ title: "Skapa din vara" }}
+        options={{ title: "Skapa din vara", headerBackTitle: "Tillbaka" }}
       />
       <Stack.Screen
         name="CreateNewRequestScreen"
         component={CreateNewRequestScreen}
-        options={{ title: "Skapa din förfrågan" }}
+        options={{ title: "Skapa din förfrågan", headerBackTitle: "Tillbaka" }}
       />
     </Stack.Navigator>
   );

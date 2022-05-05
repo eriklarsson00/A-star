@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import { Text, Spinner, ListItem, List, Icon } from "@ui-kitten/components";
@@ -10,6 +10,8 @@ import {
 import { OwnerContactInformationModal } from "./Modals/OwnerContactInformationModal";
 import { AwaitingConfirmationModal } from "./Modals/AwaitingConfirmationModal";
 import { RatingModal } from "./Modals/RatingModal";
+import { host } from "../Services/ServerHost";
+import io from "socket.io-client";
 import tw from "twrnc";
 
 const GiveAwayIcon = (props) => (
@@ -29,6 +31,35 @@ export const AnsweredListingsTransactions = () => {
 
   const isFocused = useIsFocused();
   const uid = userInfo.id;
+
+  const socketRef = useRef();
+
+  useEffect(() => {
+    socketRef.current = io(host);
+
+    socketRef.current.on("acceptedTransaction", (id) => {
+      moveToResponder(id);
+    });
+
+    return () => {
+      socketRef.current.disconnect();
+    };
+  }, [responderTransactions, pendingTransactions]);
+
+  const moveToResponder = (id) => {
+    const transaction = getTransaction(id);
+    if (transaction != undefined) {
+      transaction.status = "accepted";
+      setPendingTransactions(
+        pendingTransactions.filter((transaction) => transaction.id != id)
+      );
+      setResponderTransactions([...responderTransactions, transaction]);
+    }
+  };
+
+  const getTransaction = (id) => {
+    return pendingTransactions.find((transaction) => (transaction.id == id));
+  };
 
   const fetchTransactions = async () => {
     setLoading(true);

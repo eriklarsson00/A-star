@@ -123,8 +123,8 @@ function getTransactionOngoingOwner(req, res) {
 
   const sql = `
     SELECT T.*, 
-    U.firstname, U.lastname, U.number, U.email, U.rating, U.raters,
-    O.product_text as offer_product, O.description as offer_description, O.imgurl, 
+    U.firstname, U.lastname, U.number, U.email, U.rating, U.raters, U.imgurl,
+    O.product_text as offer_product, O.description as offer_description,
     R.product_text as request_product, R.description as request_description
     FROM Transactions T
     LEFT JOIN Offers O    ON T.offer_id = O.id
@@ -155,8 +155,8 @@ function getTransactionOngoingResponder(req, res) {
 
   const sql = `
     SELECT T.*, 
-    U.firstname, U.lastname, U.number, U.email, U.rating, U.raters,
-    O.product_text as offer_product, O.description as offer_description, O.imgurl, 
+    U.firstname, U.lastname, U.number, U.email, U.rating, U.raters, U.imgurl,
+    O.product_text as offer_product, O.description as offer_description,
     R.product_text as request_product, R.description as request_description
     FROM Transactions T
     LEFT JOIN Offers O    ON T.offer_id = O.id
@@ -299,7 +299,7 @@ function acceptTransaction(req, res) {
   }
 
   const sql = `
-    UPDATE Transactions SET status = 'accepted'
+    UPDATE Transactions SET status = 'accepted', time_of_update = CURRENT_TIMESTAMP()
     WHERE id = ${id};
   `;
 
@@ -334,12 +334,12 @@ function ownerConfirmTransaction(req, res) {
         return res.json("no entry found");
       } else if (t[0].status === "accepted") {
         updateSql = `
-          UPDATE Transactions SET status = 'ownerConfirmed'
+          UPDATE Transactions SET status = 'ownerConfirmed', time_of_update = CURRENT_TIMESTAMP()
           WHERE id = ${id};
         `;
       } else {
         updateSql = `
-          UPDATE Transactions SET status = 'completed'
+          UPDATE Transactions SET status = 'completed', time_of_update = CURRENT_TIMESTAMP()
           WHERE id = ${id};
         `;
         await incrementUserStat(id);
@@ -381,12 +381,12 @@ function responderConfirmTransaction(req, res) {
         return res.json("no entry found");
       } else if (t[0].status === "accepted") {
         updateSql = `
-          UPDATE Transactions SET status = 'responderConfirmed'
+          UPDATE Transactions SET status = 'responderConfirmed', time_of_update = CURRENT_TIMESTAMP()
           WHERE id = ${id};
         `;
       } else {
         updateSql = `
-          UPDATE Transactions SET status = 'completed'
+          UPDATE Transactions SET status = 'completed', time_of_update = CURRENT_TIMESTAMP()
           WHERE id = ${id};
         `;
         await incrementUserStat(id);
