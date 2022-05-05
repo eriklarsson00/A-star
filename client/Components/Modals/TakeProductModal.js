@@ -58,7 +58,7 @@ const TakeProductModal = (props) => {
               {", "}
             </Text>
             <Text category={"s1"} style={{ marginLeft: 20 }}>
-              {item.quantity}
+              {item.quantity} {item.unit}
             </Text>
           </Text>
         </View>
