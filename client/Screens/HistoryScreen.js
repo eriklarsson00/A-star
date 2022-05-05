@@ -7,8 +7,9 @@ import { HistoryInfoModal } from "../Components/Modals/HistoryInfoModal";
 import {
   getOngoingTransactionsOwner,
   getOngoingTransactionsResponder,
+  getCompletedTransactions,
 } from "../Services/ServerCommunication";
-
+import moment from "moment";
 import tw from "twrnc";
 
 const GiveAwayIcon = (props) => (
@@ -32,11 +33,12 @@ export const HistoryScreen = () => {
 
   const fetchHistoryTransactions = async () => {
     setLoading(true);
-    let test_1 = await getOngoingTransactionsOwner(uid);     // TODO: Hämta korrekt data
+    let test_1 = await getOngoingTransactionsOwner(uid); // TODO: Hämta korrekt data
     let test_2 = await getOngoingTransactionsResponder(uid); //  ^^
-    let test_3 = test_1.concat(test_2);                      //  ^^
-    setHistoryTransactions(test_3);                          //  ^^
-
+    let test_3 = test_1.concat(test_2); //  ^^
+    setHistoryTransactions(test_3); //  ^^
+    // let completedTransactions = await getCompletedTransaction(uid);
+    //setHistoryTransactions(completedTransactions)
     setLoading(false);
   };
 
@@ -114,6 +116,14 @@ export const HistoryScreen = () => {
           style={styles.container}
           onPress={() => toggleModal(item)}
           accessoryLeft={renderTransactionIcon(item.offer_product)}
+          accessoryRight={() => {
+            return (
+              <Text style={{ top: 38, fontSize: 10 }}>
+                {" "}
+                {moment(item.time_of_creation).fromNow()}
+              </Text>
+            );
+          }}
           title={whatToRender(item.offer_product, item.request_product)}
           description={whatToRender(
             item.offer_description,

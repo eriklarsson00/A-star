@@ -88,6 +88,12 @@ const getPendingTransactions = async (user_id) => {
   return transactions;
 };
 
+const getCompletedTransactions = async (user_id) => {
+  //let transaction = await request("Get", "/transactions/completed/user/" +user_id);
+  //return transaction;
+  return null;
+};
+
 const addTransaction = async (transaction) => {
   return await request("POST", "/transactions", transaction);
 };
@@ -211,6 +217,7 @@ export {
   getUserProfileByEmail,
   addProfile,
   getPendingTransactions,
+  getCompletedTransactions,
   getCommunities,
   getUserCommunities,
   getOngoingTransactionsOwner,
