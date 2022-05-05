@@ -98,24 +98,31 @@ export const AnsweredListingsTransactions = () => {
   const renderGiveOrTake = (offer_product_name, request_product_name) => {
     if (!offer_product_name) {
       return (
-        <View style={{ flexDirection: "row", marginBottom: 5 }}>
-          <Text category={"s1"}>{request_product_name} ska</Text>
-          <Text category={"s1"} style={{ textDecorationLine: "underline" }}>
-            {" "}
-            ges bort{" "}
+        <View style={{ flexDirection: "row", marginBottom: 5, width: "100%" }}>
+          <Text>
+            <Text category={"s1"}>{request_product_name} ska </Text>
+            <Text category={"s1"} style={{ textDecorationLine: "underline" }}>
+              ges bort
+            </Text>
+            <Text category={"s1"}> till</Text>
           </Text>
-          <Text category={"s1"}>till</Text>
         </View>
       );
     } else {
       return (
-        <View style={{ flexDirection: "row", marginBottom: 5 }}>
-          <Text category={"s1"}>{offer_product_name} ska</Text>
-          <Text category={"s1"} style={{ textDecorationLine: "underline" }}>
-            {" "}
-            tas emot{" "}
+        <View
+          style={{
+            marginBottom: 5,
+            width: "100%",
+          }}
+        >
+          <Text>
+            <Text category={"s1"}>{offer_product_name} ska </Text>
+            <Text category={"s1"} style={{ textDecorationLine: "underline" }}>
+              tas emot
+            </Text>
+            <Text category={"s1"}> från</Text>
           </Text>
-          <Text category={"s1"}>från</Text>
         </View>
       );
     }

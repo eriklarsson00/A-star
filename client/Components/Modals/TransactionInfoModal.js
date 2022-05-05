@@ -40,7 +40,6 @@ export const TransactionInfoModal = (props) => {
     if (item.visible) return getResponder();
   }, [item.visible]);
 
-
   const accept = () => {
     acceptTransaction(transaction.id);
     props.removeMyOffer(transaction.offer_id);
@@ -138,7 +137,7 @@ export const TransactionInfoModal = (props) => {
             style={{
               flexDirection: "row",
               flex: 1,
-              justifyContent: "space-between",
+              //  justifyContent: "space-between",
               alignItems: "center",
             }}
           >
@@ -152,11 +151,14 @@ export const TransactionInfoModal = (props) => {
                 }}
               />
             </Layout>
-            <Text category={"s1"} style={{ marginLeft: 20, width: 100 }}>
-              {item.product_text}
-            </Text>
-            <Text category={"s1"}>
-              {item.quantity} {item.unit}
+            <Text style={{ width: 160, marginLeft: 15 }}>
+              <Text category={"s1"} style={{ marginLeft: 20 }}>
+                {item.product_text}
+                {", "}
+              </Text>
+              <Text category={"s1"}>
+                {item.quantity} {item.unit}
+              </Text>
             </Text>
           </View>
 

@@ -12,7 +12,7 @@ import {
   Tab,
   Icon,
   Divider,
-  TabView
+  TabView,
 } from "@ui-kitten/components";
 import { getUserProfileById } from "../../Services/ServerCommunication";
 import moment from "moment";
@@ -27,75 +27,72 @@ export const ProductInfoModal = (props) => {
     responder.raters > 0
       ? Math.round((responder.rating * 10) / responder.raters) / 10 + "/5"
       : "Inga";
-  
-  
 
   const RenderProfileInfo = () => {
-      return (
-        <View>
-          <View style={styles.imgContainer}>
-            <Layout style={tw`py-10`}>
-              <Image
-                style={[
-                  tw`rounded-full`,
-                  { marginBottom: -40, marginTop: -10 },
-                ]}
-                source={{
-                  uri: responder.imgurl,
-                  height: 90,
-                  width: 90,
-                }}
-              />
-            </Layout>
-            <Text style={{ marginTop: 15} }category={"h3"}>{ responder.firstname} {responder.lastname }</Text>
-            <Layout style={styles.container}>
-              <Card style={styles.card}>
-                <Text style={[tw`text-center`, styles.text]}>
-                  {responder.given}
-                </Text>
-                <Divider />
-                <Text style={[tw`text-center`, styles.text]}>Givet</Text>
-              </Card>
+    return (
+      <View>
+        <View style={styles.imgContainer}>
+          <Layout style={tw`py-10`}>
+            <Image
+              style={[tw`rounded-full`, { marginBottom: -40, marginTop: -10 }]}
+              source={{
+                uri: responder.imgurl,
+                height: 90,
+                width: 90,
+              }}
+            />
+          </Layout>
+          <Text style={{ marginTop: 15 }} category={"h3"}>
+            {responder.firstname} {responder.lastname}
+          </Text>
+          <Layout style={styles.container}>
+            <Card style={styles.card}>
+              <Text style={[tw`text-center`, styles.text]}>
+                {responder.given}
+              </Text>
+              <Divider />
+              <Text style={[tw`text-center`, styles.text]}>Givet</Text>
+            </Card>
 
-              <Card style={styles.card}>
-                <Text style={[tw`text-center`, styles.text]}>
-                  {responder.taken}
-                </Text>
-                <Divider />
-                <Text style={[tw`text-center`, styles.text]}>Tagit</Text>
-              </Card>
+            <Card style={styles.card}>
+              <Text style={[tw`text-center`, styles.text]}>
+                {responder.taken}
+              </Text>
+              <Divider />
+              <Text style={[tw`text-center`, styles.text]}>Tagit</Text>
+            </Card>
 
-              <Card style={styles.card}>
-                <Text style={[tw`text-center`, styles.text]}>{rating}</Text>
-                <Divider />
-                <Text style={[tw`text-center`, { fontSize: 10 }]}>Betyg</Text>
-              </Card>
-            </Layout>
-          </View>
+            <Card style={styles.card}>
+              <Text style={[tw`text-center`, styles.text]}>{rating}</Text>
+              <Divider />
+              <Text style={[tw`text-center`, { fontSize: 10 }]}>Betyg</Text>
+            </Card>
+          </Layout>
         </View>
-      )
-  }
+      </View>
+    );
+  };
 
   const getResponder = async () => {
     let responder = await getUserProfileById(item.user_id);
-   
+
     setResponder(responder[0]);
   };
-  
+
   React.useEffect(() => {
-   if(item.visible) return getResponder();
+    if (item.visible) return getResponder();
   }, [item.visible]);
-  
 
   const RenderProductInfo = () => {
     return (
       <View>
         <View style={styles.units}>
-        <Text category={"s1"}>
-            {item.product_text}  {item.quantity} {item.unit}
+          <Text category={"s1"}>
+            {item.product_text}
+            {","} {item.quantity} {item.unit}
           </Text>
         </View>
-      <Text style={{ marginBottom: 10 }}>
+        <Text style={{ marginBottom: 10 }}>
           Utångsdag:{" "}
           {moment(item.time_of_expiration).format("dddd Do MMM hh:mm")}
           {"\n"}
@@ -110,13 +107,13 @@ export const ProductInfoModal = (props) => {
           )}
         </Text>
         <Text style={{ marginBottom: 10 }}>{item.description}</Text>
-        </View>
+      </View>
     );
-  }
+  };
 
   return (
-      <Modal
-       //Modal for additional information about a product
+    <Modal
+      //Modal for additional information about a product
       visible={item.visible}
       backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}
       onBackdropPress={() => props.toggleModal(item)}
@@ -134,25 +131,26 @@ export const ProductInfoModal = (props) => {
             />
           </Layout>
         </View>
-        
+
         <TabView
-      selectedIndex={selectedIndex}
-      onSelect={index => setSelectedIndex(index)}>
-      <Tab title='ProduktInfo'>
-        <Layout style={styles.tabContainer}>
-          <RenderProductInfo/>
-        </Layout>
-      </Tab>
-      <Tab title='AnvändarInfo'>
-        <Layout style={styles.tabContainer}>
-          <RenderProfileInfo/>
-        </Layout>
-      </Tab>
-    </TabView>
-        
+          selectedIndex={selectedIndex}
+          onSelect={(index) => setSelectedIndex(index)}
+        >
+          <Tab title="ProduktInfo">
+            <Layout style={styles.tabContainer}>
+              <RenderProductInfo />
+            </Layout>
+          </Tab>
+          <Tab title="AnvändarInfo">
+            <Layout style={styles.tabContainer}>
+              <RenderProfileInfo />
+            </Layout>
+          </Tab>
+        </TabView>
+
         <Button onPress={() => props.toggleTake()}>Ta vara</Button>
       </Card>
-      </Modal>
+    </Modal>
   );
 };
 
@@ -194,10 +192,8 @@ const styles = StyleSheet.create({
   image: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center"
-  }
+    justifyContent: "center",
+  },
 });
-
-
 
 export default ProductInfoModal;
