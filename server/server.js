@@ -18,14 +18,14 @@ app.use(express.json());
 
 let sslKey;
 let sslCert;
-let sserver;
+let server;
 if (process.env.NODE_ENV === "prod") {
   sslKey = fs.readFileSync("ca.key", "utf8");
   sslCert = fs.readFileSync("ca.crt", "utf8");
-  sserver = https.createServer({ key: sslKey, cert: sslCert }, app);
+  server = https.createServer({ key: sslKey, cert: sslCert }, app);
+} else {
+  server = http.createServer(app);
 }
-
-const server = http.createServer(app);
 
 /*
 *************************
@@ -268,12 +268,17 @@ app.post("/communityimages", upload.single("image"), (req, res) => {
 
 //*************************SERVER*************************
 
-if (sserver) {
-  const httpsMsg = `Listening to port ${process.env.SERVER_PORT_HTTPS} with auto reload!`;
-  sserver.listen(process.env.SERVER_PORT_HTTPS, () => console.log(httpsMsg));
+let msg;
+let port;
+
+if (process.env.NODE_ENV === "prod") {
+  msg = `Listening to port ${process.env.SERVER_PORT_HTTPS} with auto reload!`;
+  port = process.env.SERVER_PORT_HTTPS;
+} else {
+  msg = `Listening to port ${process.env.SERVER_PORT_HTTP} with auto reload!`;
+  port = process.env.SERVER_PORT_HTTP;
 }
 
-const httpMsg = `Listening to port ${process.env.SERVER_PORT_HTTP} with auto reload!`;
-server.listen(process.env.SERVER_PORT_HTTP, () => console.log(httpMsg));
+server.listen(port, () => console.log(msg));
 
 export { server }; // Needed for testing purposes

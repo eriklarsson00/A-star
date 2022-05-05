@@ -1,1 +1,1 @@
-export const host = "http://ec2-3-215-18-23.compute-1.amazonaws.com"
+export const host = "https://dsp.fpalmqvist.com";
