@@ -195,7 +195,10 @@ app
   .get(transactions.getTransaction)
   .delete(transactions.deleteTransaction);
 
-app.route("/transactions/:id/accept").put(transactions.acceptTransaction);
+app.route("/transactions/:id/accept").put((req, res) => {
+  transactions.acceptTransaction(req, res);
+  io.sockets.emit("acceptTransaction", req.params.id);
+});
 
 app
   .route("/transactions/:id/ownerConfirm")
