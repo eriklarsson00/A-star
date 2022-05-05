@@ -33,7 +33,6 @@ export const ChangeAccountInfoScreen = ({ navigation }) => {
   const [visible, setVisible] = React.useState(false);
   const [updated, setUpdated] = React.useState(false);
   const [updatedProfile, setUpdatedProfile] = React.useState();
-  const [updatedPro, setUpdatedPro] = React.useState({ test: "hEJ" });
 
   const theme = useTheme();
 
