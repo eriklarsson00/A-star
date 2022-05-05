@@ -29,7 +29,6 @@ export const TransactionInfoModal = (props) => {
   const getResponder = async () => {
     if (!transaction) return;
     let responder = await getUserProfileById(transaction.responder_id);
-    console.log(responder);
     setResponder(responder[0]);
   };
   const rating =

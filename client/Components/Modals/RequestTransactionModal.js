@@ -31,7 +31,7 @@ export const RequestTransactionInfoModal = (props) => {
   const getResponder = async () => {
     if (!transaction) return;
     let responder = await getUserProfileById(transaction.responder_id);
-    console.log(responder);
+    
     setResponder(responder[0]);
   };
 

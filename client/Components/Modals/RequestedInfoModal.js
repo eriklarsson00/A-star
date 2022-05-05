@@ -30,7 +30,6 @@ export const RequestedInfoModal = (props) => {
   
   const getResponder = async () => {
     let responder = await getUserProfileById(item.user_id);
-    console.log(responder);
     setResponder(responder[0]);
   };
   
