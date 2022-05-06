@@ -186,7 +186,6 @@ const styles = StyleSheet.create({
   },
   divider: {
     borderBottomWidth: 0.8,
-    //  marginBottom: 10,
   },
   icon: {
     width: 20,
