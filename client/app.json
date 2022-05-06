@@ -1,18 +1,17 @@
 {
   "expo": {
     "plugins": [
-
-    [
-      "expo-image-picker",
-      {
-        "photosPermission": "The app accesses your photos to let you upload images of your food."
-      }
-     ]
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you upload images of your food."
+        }
+      ]
     ],
     "name": "client",
     "slug": "client",
     "version": "1.0.0",
-    "scheme" : "matsam",
+    "scheme": "matsam",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -39,6 +38,7 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "description": ""
   }
 }

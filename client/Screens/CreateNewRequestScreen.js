@@ -1,27 +1,26 @@
-import React from "react";
-import { Text, StyleSheet } from "react-native";
 import {
   Button,
-  useTheme,
-  Layout,
-  Icon,
-  List,
-  Modal,
   Card,
   Divider,
+  Icon,
+  Layout,
+  List,
+  Modal,
   Tooltip,
 } from "@ui-kitten/components";
-import tw from "twrnc";
-import { InputNewRequestComponent } from "../Components/InputNewRequestComponent";
 import { MyCommunitysInfo, UserInfo } from "../assets/AppContext";
+import { StyleSheet, Text } from "react-native";
+
+import { InputNewRequestComponent } from "../Components/InputNewRequestComponent";
 import { NewItemCommunityComponent } from "../Components/NewItemCommunityComponent";
+import React from "react";
 import { postRequest } from "../Services/ServerCommunication";
+import tw from "twrnc";
 
 const CreateNewRequestScreen = ({ navigation }) => {
   //CONTEXT
-  const { myCommunitysInfo, setMyCommunitysInfo } =
-    React.useContext(MyCommunitysInfo);
-  const { userInfo, setUserInfo } = React.useContext(UserInfo);
+  const { myCommunitysInfo } = React.useContext(MyCommunitysInfo);
+  const { userInfo } = React.useContext(UserInfo);
 
   // STATES
   const [productInfo, setProductInfo] = React.useState([]);
@@ -32,8 +31,6 @@ const CreateNewRequestScreen = ({ navigation }) => {
   const [chosenCommunity, setChosenCommunity] = React.useState([]);
   const [tooltipVisible, setTooltipVisible] = React.useState(false);
   const [createTooltipVisible, setCreateTooltipVisible] = React.useState(false);
-
-  const theme = useTheme();
 
   //ICONS
   const PlusIcon = () => (
@@ -79,7 +76,7 @@ const CreateNewRequestScreen = ({ navigation }) => {
   };
 
   // Lista av enskilda efterfrågande varor
-  const addComp = ({ item, index }) => {
+  const addComp = ({ item }) => {
     if (deleted.includes(item)) {
       return;
     } else {
@@ -99,10 +96,10 @@ const CreateNewRequestScreen = ({ navigation }) => {
   };
 
   // funktion som behövs för listor
-  const giveKey = ({ item, index }) => reuturn(item);
+  const giveKey = ({ item }) => reuturn(item);
 
   // Lista av "mina" communities (den inloggade användaren)
-  const printMyCommunities = ({ item, index }) => (
+  const printMyCommunities = ({ item }) => (
     <Layout>
       <NewItemCommunityComponent community={item} addCommunity={addCommunity} />
     </Layout>

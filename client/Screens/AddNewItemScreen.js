@@ -1,24 +1,27 @@
+import { Button, Layout } from "@ui-kitten/components";
+
 import React from "react";
-import { StyleSheet } from "react-native";
-import { Button, useTheme, Layout } from "@ui-kitten/components";
-import tw from "twrnc";
+import { StyleSheet, View } from "react-native";
+import { Button, Layout } from "@ui-kitten/components";
 
 const AddNewItemScreen = ({ navigation }) => {
-  const theme = useTheme();
   return (
     <Layout style={styles.container}>
-      <Button
-        style={styles.btn}
-        onPress={() => navigation.navigate("CreateNewRequestScreen")}
-      >
-        Sökes
-      </Button>
-      <Button
-        style={styles.btn}
-        onPress={() => navigation.navigate("CreateNewOfferScreen")}
-      >
-        Gives{" "}
-      </Button>
+      <View style={styles.boxBlue} />
+      <View style={{ marginTop: 110 }}>
+        <Button
+          style={styles.btn}
+          onPress={() => navigation.navigate("CreateNewRequestScreen")}
+        >
+          Jag söker en vara
+        </Button>
+        <Button
+          style={styles.btn}
+          onPress={() => navigation.navigate("CreateNewOfferScreen")}
+        >
+          Jag vill ge bort en vara
+        </Button>
+      </View>
     </Layout>
   );
 };
@@ -33,10 +36,20 @@ const styles = StyleSheet.create({
   },
   btn: {
     borderRadius: 15,
-    width: 150,
+    width: 210,
     height: 70,
     margin: 50,
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.4,
+    zIndex: 20,
     shadowOffset: { width: 1, height: 5 },
+  },
+  boxBlue: {
+    zIndex: -1,
+    width: "300%",
+    height: 390,
+    position: "absolute",
+    top: 270,
+    backgroundColor: "#FEE6BB",
+    transform: [{ rotateZ: "-15deg" }],
   },
 });

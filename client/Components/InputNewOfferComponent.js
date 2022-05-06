@@ -1,24 +1,25 @@
-import React, { useEffect } from "react";
-import { StyleSheet, TouchableOpacity, Image, View, Alert } from "react-native";
 import {
   Button,
-  useTheme,
-  Input,
-  CheckBox,
-  Layout,
-  Icon,
-  Modal,
   Card,
-  Text,
+  CheckBox,
+  Icon,
+  Input,
+  Layout,
+  Modal,
   Select,
   SelectItem,
+  Text,
   Tooltip,
+  useTheme,
 } from "@ui-kitten/components";
-import tw from "twrnc";
-import ImagePickerComp from "./ImagePickerComponent";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import { barCodeIcon, cameraIcon } from "../assets/Images";
+
 import BarCodeScannerComp from "./BarCodeScannerComponent";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { cameraIcon, barCodeIcon } from "../assets/Images";
+import ImagePickerComp from "./ImagePickerComponent";
+import React from "react";
+import tw from "twrnc";
 
 //TODO: Inte kunna "skapa" en vara utan att ha skrivit ett namn eller påbörjat att skapa den
 
@@ -40,7 +41,7 @@ export const InputNewOfferComponent = (props) => {
   // STATES
   const [productVisible, setProductVisible] = React.useState(true);
   const [created, setCreated] = React.useState(false);
-  const [barCodeShow, setBarCodeShow] = React.useState(false);
+  const [barCodeShow] = React.useState(false);
   const [image, setImage] = React.useState(null);
   const [datePurchase, setDatePurchase] = React.useState(new Date());
   const [dateExp, setDateExp] = React.useState();
@@ -219,7 +220,7 @@ export const InputNewOfferComponent = (props) => {
                   onPress={() => {
                     setProductVisible(false);
                   }}
-                ></Button>
+                />
               </Layout>
             </Layout>
             <Input

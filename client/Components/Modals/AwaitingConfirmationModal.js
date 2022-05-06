@@ -1,7 +1,8 @@
-import { Modal, Text, Layout, Button, Card } from "@ui-kitten/components";
-import { View, StyleSheet, Image } from "react-native";
-import tw from "twrnc";
+import { Button, Card, Layout, Modal, Text } from "@ui-kitten/components";
+import { Image, StyleSheet, View } from "react-native";
+
 import moment from "moment";
+import tw from "twrnc";
 
 export const AwaitingConfirmationModal = (props) => {
   const item = props.item;

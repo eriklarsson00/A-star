@@ -1,27 +1,22 @@
-import React from "react";
-import { StyleSheet, Image, TouchableOpacity } from "react-native";
 import {
-  Text,
-  Layout,
   Button,
-  Input,
-  Icon,
-  useTheme,
-  Modal,
   Card,
+  Icon,
+  Input,
+  Layout,
+  Modal,
   Select,
   SelectItem,
+  useTheme,
 } from "@ui-kitten/components";
-import tw from "twrnc";
-import ImagePickerComp from "../Components/ImagePickerComponent";
 import {
-  ShowCommunityIds,
-  MyCommunitysInfo,
-  UserInfo,
   GoogleInfo,
+  MyCommunitysInfo,
+  ShowCommunityIds,
+  UserInfo,
   UserLoggedIn,
 } from "../assets/AppContext";
-import { defaultProfileImage } from "../assets/Images";
+import { Image, StyleSheet, TouchableOpacity } from "react-native";
 import {
   addProfile,
   editProfile,
@@ -29,20 +24,23 @@ import {
   pushImagesToServer,
 } from "../Services/ServerCommunication";
 
+import ImagePickerComp from "../Components/ImagePickerComponent";
+import React from "react";
+import { defaultProfileImage } from "../assets/Images";
+import tw from "twrnc";
+
 async function getAllCommunities() {
-  let communities = await getCommunities();
+  const communities = await getCommunities();
   return communities.filter((community) => community.private == 0);
 }
 
 export const CreateUserScreen = () => {
   // CONTEXT
-  const { googleInfo, setGoogleInfo } = React.useContext(GoogleInfo);
-  const { userInfo, setUserInfo } = React.useContext(UserInfo);
-  const { userLoggedIn, setLoggedIn } = React.useContext(UserLoggedIn);
-  const { showCommunityIds, setShowCommunityIds } =
-    React.useContext(ShowCommunityIds);
-  const { myCommunitysInfo, setMyCommunitysInfo } =
-    React.useContext(MyCommunitysInfo);
+  const { googleInfo } = React.useContext(GoogleInfo);
+  const { setUserInfo } = React.useContext(UserInfo);
+  const { setLoggedIn } = React.useContext(UserLoggedIn);
+  const { setShowCommunityIds } = React.useContext(ShowCommunityIds);
+  const { setMyCommunitysInfo } = React.useContext(MyCommunitysInfo);
 
   // STATE
   const [phoneNumber, setPhoneNumber] = React.useState("");
@@ -110,16 +108,14 @@ export const CreateUserScreen = () => {
     <Icon style={styles.lockStyle} fill="#8F9BB3" name="plus-circle-outline" />
   );
   const StarIcon = (url) => (
-    <>
-      <Image
-        style={tw`rounded-full`}
-        source={{
-          uri: url,
-          height: 40,
-          width: 40,
-        }}
-      />
-    </>
+    <Image
+      style={tw`rounded-full`}
+      source={{
+        uri: url,
+        height: 40,
+        width: 40,
+      }}
+    />
   );
 
   const ChoseImageModal = () => {

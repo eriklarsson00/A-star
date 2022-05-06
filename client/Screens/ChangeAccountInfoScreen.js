@@ -1,26 +1,26 @@
-import React from "react";
-import { StyleSheet, Image, TouchableOpacity } from "react-native";
 import {
-  Layout,
   Button,
-  Input,
-  Icon,
-  useTheme,
-  Modal,
   Card,
+  Icon,
+  Input,
+  Layout,
+  Modal,
+  useTheme,
 } from "@ui-kitten/components";
-import tw from "twrnc";
-import ImagePickerComp from "../Components/ImagePickerComponent";
-import { UserInfo, GoogleInfo } from "../assets/AppContext";
+import { Image, StyleSheet, TouchableOpacity } from "react-native";
 import {
   editProfile,
   pushImagesToServer,
 } from "../Services/ServerCommunication";
 
+import ImagePickerComp from "../Components/ImagePickerComponent";
+import React from "react";
+import { UserInfo } from "../assets/AppContext";
+import tw from "twrnc";
+
 export const ChangeAccountInfoScreen = ({ navigation }) => {
   // CONTEXT
-  const { googleInfo, setGoogleInfo } = React.useContext(GoogleInfo);
-  const { userInfo, setUserInfo } = React.useContext(UserInfo);
+  const { userInfo } = React.useContext(UserInfo);
 
   // STATE
   const [phoneNumber, setPhoneNumber] = React.useState(userInfo.number);
@@ -38,16 +38,6 @@ export const ChangeAccountInfoScreen = ({ navigation }) => {
 
   const AddIcon = () => (
     <Icon style={styles.lockStyle} fill="#8F9BB3" name="plus-circle-outline" />
-  );
-  const StarIcon = (url) => (
-    <Image
-      style={tw`rounded-full`}
-      source={{
-        uri: url,
-        height: 40,
-        width: 40,
-      }}
-    />
   );
 
   const ChoseImageModal = () => {
@@ -84,7 +74,7 @@ export const ChangeAccountInfoScreen = ({ navigation }) => {
       );
       setUpdatedProfile({ ...updatedProfile, imgurl: bucketImage });
     }
-    
+
     setProfileImage({ uri: bucketImage });
     updatedProfile.imgurl = bucketImage;
     await editProfile(updatedProfile, userInfo.id);
@@ -166,7 +156,6 @@ export const ChangeAccountInfoScreen = ({ navigation }) => {
             updateProfile();
             navigation.navigate("ProfileScreen");
           }}
-          // disabled={!updated}
           style={{
             marginTop: 30,
             backgroundColor: updated

@@ -1,6 +1,6 @@
-import { Layout, Text } from "@ui-kitten/components";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native";
+import { Text } from "@ui-kitten/components";
 
 export const BlockedDiscover = () => {
   return (

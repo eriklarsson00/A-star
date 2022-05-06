@@ -1,28 +1,27 @@
-import React from "react";
-import { Text, StyleSheet } from "react-native";
 import {
   Button,
-  useTheme,
-  Layout,
-  Icon,
-  List,
-  Modal,
   Card,
   Divider,
+  Icon,
+  Layout,
+  List,
+  Modal,
   Tooltip,
 } from "@ui-kitten/components";
-import tw from "twrnc";
-import { InputNewOfferComponent } from "../Components/InputNewOfferComponent";
-import BarCodeScannerComp from "../Components/BarCodeScannerComponent";
 import { MyCommunitysInfo, UserInfo } from "../assets/AppContext";
+import { StyleSheet, Text } from "react-native";
+import { postOffer, pushImagesToServer } from "../Services/ServerCommunication";
+
+import BarCodeScannerComp from "../Components/BarCodeScannerComponent";
+import { InputNewOfferComponent } from "../Components/InputNewOfferComponent";
 import { NewItemCommunityComponent } from "../Components/NewItemCommunityComponent";
-import { pushImagesToServer, postOffer } from "../Services/ServerCommunication";
+import React from "react";
+import tw from "twrnc";
 
 const CreateNewOfferScreen = ({ navigation }) => {
   //CONTEXT
-  const { myCommunitysInfo, setMyCommunitysInfo } =
-    React.useContext(MyCommunitysInfo);
-  const { userInfo, setUserInfo } = React.useContext(UserInfo);
+  const { myCommunitysInfo } = React.useContext(MyCommunitysInfo);
+  const { userInfo } = React.useContext(UserInfo);
 
   // STATES
   const [deleted, setDeleted] = React.useState([]);
@@ -94,7 +93,7 @@ const CreateNewOfferScreen = ({ navigation }) => {
   };
 
   // Lista av enskilda varor
-  const addComp = ({ item, index }) => {
+  const addComp = ({ item }) => {
     if (deleted.includes(item)) {
       return;
     } else {
@@ -117,10 +116,10 @@ const CreateNewOfferScreen = ({ navigation }) => {
   };
 
   // funktion som behövs för listor
-  const giveKey = ({ item, index }) => reuturn(item);
+  const giveKey = ({ item }) => reuturn(item);
 
   // Lista av mina communities
-  const printMyCommunities = ({ item, index }) => (
+  const printMyCommunities = ({ item }) => (
     <Layout>
       <NewItemCommunityComponent community={item} addCommunity={addCommunity} />
     </Layout>
@@ -147,7 +146,7 @@ const CreateNewOfferScreen = ({ navigation }) => {
 
   // förbereder objektet för att kunna skickas till servern
   const prepareProduct = async (product, communities) => {
-    let imgurl = await pushImagesToServer(
+    const imgurl = await pushImagesToServer(
       images[product.id],
       "itemimages",
       userInfo.id
