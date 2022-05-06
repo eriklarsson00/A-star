@@ -1,15 +1,15 @@
-import { useState, useEffect, useContext } from "react";
-import { View, FlatList, StyleSheet } from "react-native";
-import { useIsFocused } from "@react-navigation/native";
-import { Text, Spinner, ListItem, Icon, Layout } from "@ui-kitten/components";
-import { UserInfo } from "../assets/AppContext";
+import { FlatList, StyleSheet, View } from "react-native";
+import { Icon, ListItem, Spinner, Text } from "@ui-kitten/components";
 import {
   getOngoingTransactionsOwner,
   ownerConfirmTransaction,
 } from "../Services/ServerCommunication";
+import { useContext, useEffect, useState } from "react";
+
 import { OwnerContactInformationModal } from "./Modals/OwnerContactInformationModal";
 import { RatingModal } from "./Modals/RatingModal";
-import tw from "twrnc";
+import { UserInfo } from "../assets/AppContext";
+import { useIsFocused } from "@react-navigation/native";
 
 const GiveAwayIcon = (props) => (
   <Icon {...props} fill={"red"} name="arrow-circle-up" />
@@ -21,7 +21,7 @@ const ReceiveIcon = (props) => (
 
 export const MyListingsTransactions = () => {
   // CONTEXT
-  const { userInfo, setUserInfo } = useContext(UserInfo);
+  const { userInfo } = useContext(UserInfo);
 
   // STATE
   const [ownerTransactions, setOwnerTransactions] = useState([]);
@@ -33,7 +33,7 @@ export const MyListingsTransactions = () => {
 
   const fetchTransactions = async () => {
     setLoading(true);
-    let otransactions = await getOngoingTransactionsOwner(uid);
+    const otransactions = await getOngoingTransactionsOwner(uid);
     setOwnerTransactions(otransactions);
     setLoading(false);
   };
@@ -87,7 +87,15 @@ export const MyListingsTransactions = () => {
   const renderGiveOrTake = (offer_product_name, request_product_name) => {
     if (offer_product_name) {
       return (
-        <View style={{ flexDirection: "row", marginBottom: 5, width: "100%" }}>
+        <View
+          style={{
+            flexDirection: "row",
+            marginBottom: 5,
+            width: "100%",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           <Text>
             <Text category={"s1"}>{offer_product_name} ska </Text>
             <Text category={"s1"} style={{ textDecorationLine: "underline" }}>
@@ -99,7 +107,15 @@ export const MyListingsTransactions = () => {
       );
     } else {
       return (
-        <View style={{ flexDirection: "row", marginBottom: 5, witdh: "100%" }}>
+        <View
+          style={{
+            flexDirection: "row",
+            marginBottom: 5,
+            witdh: "100%",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           <Text>
             <Text category={"s1"}>{request_product_name} ska </Text>
             <Text category={"s1"} style={{ textDecorationLine: "underline" }}>
@@ -176,7 +192,7 @@ export const MyListingsTransactions = () => {
       data={ownerTransactions}
       renderItem={renderAcceptedTransactions}
       ListHeaderComponent={flatListHeader}
-    ></FlatList>
+    />
   );
 
   return loading ? <LoadingView /> : <LoadedView />;

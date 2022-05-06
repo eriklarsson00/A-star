@@ -1,8 +1,9 @@
-import { Modal, Text, Button, Card, useTheme } from "@ui-kitten/components";
-import { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { Button, Card, Modal, Text, useTheme } from "@ui-kitten/components";
+import { StyleSheet, View } from "react-native";
+
 import StarRating from "react-native-star-rating";
 import { updateRating } from "../../Services/ServerCommunication";
+import { useState } from "react";
 
 export const RatingModal = (props) => {
   //STATE

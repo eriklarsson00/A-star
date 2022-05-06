@@ -1,19 +1,20 @@
-import React from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { StyleSheet, Image, Alert, ScrollView } from "react-native";
-import { Button, Text, Layout, Card, Divider } from "@ui-kitten/components";
+import { Alert, Image, ScrollView, StyleSheet } from "react-native";
+import { Button, Card, Divider, Layout, Text } from "@ui-kitten/components";
 import {
-  UserInfo,
   GoogleInfo,
-  UserLoggedIn,
   ShowCommunityIds,
+  UserInfo,
+  UserLoggedIn,
 } from "../assets/AppContext";
-import tw from "twrnc";
-import { useIsFocused } from "@react-navigation/native";
 import {
   deleteProfile,
   getUserProfileById,
 } from "../Services/ServerCommunication";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React from "react";
+import tw from "twrnc";
+import { useIsFocused } from "@react-navigation/native";
 
 export const ProfileScreen = ({ navigation }) => {
   // CONTEXT
@@ -42,7 +43,7 @@ export const ProfileScreen = ({ navigation }) => {
   };
 
   React.useEffect(async () => {
-    let userData = await getUserProfileById(userInfo.id);
+    const userData = await getUserProfileById(userInfo.id);
     setUserInfo(userData[0]);
   }, [isFocused]);
 

@@ -1,12 +1,12 @@
-import { useState, useEffect, useContext } from "react";
-import { View, FlatList, StyleSheet } from "react-native";
-import { useIsFocused } from "@react-navigation/native";
-import { Text, Spinner, ListItem, Icon } from "@ui-kitten/components";
-import { UserInfo } from "../assets/AppContext";
+import { FlatList, StyleSheet, View } from "react-native";
+import { Icon, ListItem, Spinner, Text } from "@ui-kitten/components";
+import { useContext, useEffect, useState } from "react";
+
 import { HistoryInfoModal } from "../Components/Modals/HistoryInfoModal";
+import { UserInfo } from "../assets/AppContext";
 import { getCompletedTransactions } from "../Services/ServerCommunication";
 import moment from "moment";
-import tw from "twrnc";
+import { useIsFocused } from "@react-navigation/native";
 
 const GiveAwayIcon = (props) => (
   <Icon {...props} fill={"red"} name="arrow-circle-up" />
@@ -18,7 +18,7 @@ const ReceiveIcon = (props) => (
 
 export const HistoryScreen = () => {
   // CONTEXT
-  const { userInfo, setUserInfo } = useContext(UserInfo);
+  const { userInfo } = useContext(UserInfo);
 
   // STATE
   const [historyTransactions, setHistoryTransactions] = useState([]);
@@ -158,7 +158,7 @@ export const HistoryScreen = () => {
       data={historyTransactions}
       renderItem={renderAcceptedTransactions}
       ListHeaderComponent={flatListHeader}
-    ></FlatList>
+    />
   );
 
   return loading ? <LoadingView /> : <LoadedView />;

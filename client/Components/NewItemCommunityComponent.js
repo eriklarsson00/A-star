@@ -1,7 +1,7 @@
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
+
 import React from "react";
-import { SafeAreaView, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { TopNavigation, Button, useTheme, Layout } from "@ui-kitten/components";
-import tw from "twrnc";
+import { useTheme } from "@ui-kitten/components";
 
 export const NewItemCommunityComponent = (props) => {
   const [checked, setChecked] = React.useState(false);

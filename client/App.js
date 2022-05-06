@@ -1,32 +1,25 @@
-import {
-  React,
-  createContext,
-  useState,
-  useMemo,
-  Component,
-  useEffect,
-  Text,
-} from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { StatusBar } from "react-native";
 import * as eva from "@eva-design/eva";
+
 import { ApplicationProvider, IconRegistry } from "@ui-kitten/components";
-import { EvaIconsPack } from "@ui-kitten/eva-icons";
-import { AppNavigator } from "./Navigation/NavbarNavigation";
-import { LoginNavigation } from "./Navigation/LoginNavigation";
-import { default as theme } from "./assets/custom-theme.json";
 import {
-  getUserProfileById,
-  getUserCommunities,
-} from "./Services/ServerCommunication";
-import {
-  UserInfo,
+  GoogleInfo,
   MyCommunitysInfo,
   ShowCommunityIds,
+  UserInfo,
   UserLoggedIn,
-  GoogleInfo,
-  ItemImagePath,
 } from "./assets/AppContext";
+import { React, useEffect, useMemo, useState } from "react";
+import {
+  getUserCommunities,
+  getUserProfileById,
+} from "./Services/ServerCommunication";
+
+import { AppNavigator } from "./Navigation/NavbarNavigation";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { EvaIconsPack } from "@ui-kitten/eva-icons";
+import { LoginNavigation } from "./Navigation/LoginNavigation";
+import { StatusBar } from "react-native";
+import { default as theme } from "./assets/custom-theme.json";
 
 export default () => {
   const [userLoggedIn, setLoggedIn] = useState(null);
@@ -42,15 +35,6 @@ export default () => {
   const FirstGooglevalue = useMemo(
     () => ({ googleInfo, setGoogleInfo }),
     [googleInfo]
-  );
-
-  const [itemImagePath, setItemImagePath] = useState(
-    "https://www.mcicon.com/wp-content/uploads/2021/02/Technology_Camera_1-copy-18.jpg"
-  );
-
-  const FirstIconImagePath = useMemo(
-    () => ({ itemImagePath, setItemImagePath }),
-    [itemImagePath]
   );
 
   const [myCommunitysInfo, setMyCommunitysInfo] = useState([]);

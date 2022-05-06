@@ -1,5 +1,5 @@
-import { createRequire } from "module";
 import S3 from "aws-sdk/clients/s3.js";
+import { createRequire } from "module";
 
 const require = createRequire(import.meta.url);
 

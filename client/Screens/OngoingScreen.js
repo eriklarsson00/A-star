@@ -1,26 +1,18 @@
-import React from "react";
-import { SafeAreaView, View } from "react-native";
-import { TopNavigation, useTheme, Text, Layout } from "@ui-kitten/components";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { ShowCommunityIds } from "../assets/AppContext";
-import tw from "twrnc";
+import { Layout, TopNavigation, useTheme } from "@ui-kitten/components";
 
-import { MyListingsTransactions } from "../Components/MyListingsTransactions";
 import { AnsweredListingsTransactions } from "../Components/AnsweredListingsTransactions";
+import { MyListingsTransactions } from "../Components/MyListingsTransactions";
+import React from "react";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 
 const TopTabs = createMaterialTopTabNavigator();
 
 export const OngoingScreen = () => {
-  const { showCommunityIds, setShowCommunityIds } =
-    React.useContext(ShowCommunityIds);
   const theme = useTheme();
 
   return (
     <Layout style={{ flex: 1, paddingTop: 50 }}>
-      <TopNavigation
-        alignment="center"
-        title={"Pågående utbyten"}
-      ></TopNavigation>
+      <TopNavigation alignment="center" title={"Pågående utbyten"} />
       <TopTabs.Navigator
         screenOptions={{
           tabBarIndicatorStyle: {

@@ -1,18 +1,18 @@
-import { useState, useEffect, useContext, useRef } from "react";
-import { View, FlatList, StyleSheet } from "react-native";
-import { useIsFocused } from "@react-navigation/native";
-import { Text, Spinner, ListItem, List, Icon } from "@ui-kitten/components";
-import { UserInfo } from "../assets/AppContext";
+import { FlatList, StyleSheet, View } from "react-native";
+import { Icon, List, ListItem, Spinner, Text } from "@ui-kitten/components";
 import {
   getOngoingTransactionsResponder,
   responderConfirmTransaction,
 } from "../Services/ServerCommunication";
-import { OwnerContactInformationModal } from "./Modals/OwnerContactInformationModal";
+import { useContext, useEffect, useRef, useState } from "react";
+
 import { AwaitingConfirmationModal } from "./Modals/AwaitingConfirmationModal";
+import { OwnerContactInformationModal } from "./Modals/OwnerContactInformationModal";
 import { RatingModal } from "./Modals/RatingModal";
+import { UserInfo } from "../assets/AppContext";
 import { host } from "../Services/ServerHost";
 import io from "socket.io-client";
-import tw from "twrnc";
+import { useIsFocused } from "@react-navigation/native";
 
 const GiveAwayIcon = (props) => (
   <Icon {...props} fill={"red"} name="arrow-circle-up" />
@@ -23,7 +23,7 @@ const ReceiveIcon = (props) => (
 );
 
 export const AnsweredListingsTransactions = () => {
-  const { userInfo, setUserInfo } = useContext(UserInfo);
+  const { userInfo } = useContext(UserInfo);
   const [responderTransactions, setResponderTransactions] = useState([]);
   const [pendingTransactions, setPendingTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -58,7 +58,7 @@ export const AnsweredListingsTransactions = () => {
   };
 
   const getTransaction = (id) => {
-    return pendingTransactions.find((transaction) => (transaction.id == id));
+    return pendingTransactions.find((transaction) => transaction.id == id);
   };
 
   const fetchTransactions = async () => {
@@ -129,7 +129,15 @@ export const AnsweredListingsTransactions = () => {
   const renderGiveOrTake = (offer_product_name, request_product_name) => {
     if (!offer_product_name) {
       return (
-        <View style={{ flexDirection: "row", marginBottom: 5, width: "100%" }}>
+        <View
+          style={{
+            flexDirection: "row",
+            marginBottom: 5,
+            width: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <Text>
             <Text category={"s1"}>{request_product_name} ska </Text>
             <Text category={"s1"} style={{ textDecorationLine: "underline" }}>
@@ -145,6 +153,8 @@ export const AnsweredListingsTransactions = () => {
           style={{
             marginBottom: 5,
             width: "100%",
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
           <Text>
@@ -261,7 +271,7 @@ export const AnsweredListingsTransactions = () => {
       renderItem={renderAcceptedTransactions}
       ListHeaderComponent={flatListHeader}
       ListFooterComponent={flatListFooter}
-    ></FlatList>
+    />
   );
 
   return loading ? <LoadingView /> : <LoadedView />;

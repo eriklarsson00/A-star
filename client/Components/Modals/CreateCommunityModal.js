@@ -1,30 +1,31 @@
-import React from "react";
 import {
-  StyleSheet,
-  View,
+  Button,
+  Card,
+  CheckBox,
+  Divider,
+  Icon,
+  Input,
+  Modal,
+  Text,
+  Tooltip,
+  useTheme,
+} from "@ui-kitten/components";
+import {
   Image,
   ScrollView,
+  StyleSheet,
   TouchableOpacity,
+  View,
 } from "react-native";
-import {
-  Text,
-  Modal,
-  Card,
-  Button,
-  Icon,
-  Divider,
-  Input,
-  useTheme,
-  Tooltip,
-  CheckBox,
-} from "@ui-kitten/components";
-import tw from "twrnc";
-import ImagePicker from "../ImagePickerComponent";
 import {
   addCommunity,
   pushImagesToServer,
 } from "../../Services/ServerCommunication";
+
+import ImagePicker from "../ImagePickerComponent";
+import React from "react";
 import { defaultCommunityImage } from "../../assets/Images";
+import tw from "twrnc";
 
 export const CreateCommunityModal = (props) => {
   const theme = useTheme();
@@ -56,23 +57,16 @@ export const CreateCommunityModal = (props) => {
 
   function addMissingField(field, name) {
     let object = false;
-    if (name == "Bild") {
-      if (field.uri == "") {
-        object = true;
-      }
+    if (name == "Bild" && field.uri == "") {
+      object = true;
     }
+
     if (field == "" || !field || object) {
       if (!missingFields.includes(name)) {
         setMissingFields((missingFields) => [...missingFields, name]);
       }
-    } else {
-      if (missingFields.includes(name)) {
-        setMissingFields(
-          missingFields.filter((field) => {
-            return field != name;
-          })
-        );
-      }
+    } else if (missingFields.includes(name)) {
+      setMissingFields(missingFields.filter((field) => field != name));
     }
   }
 
@@ -86,10 +80,8 @@ export const CreateCommunityModal = (props) => {
   }
 
   const PrintMissingInformation = () => {
-    let row = missingFields.map((field) => {
-      return field + ", ";
-    });
-    for (var i = row.length - 1; i < row.length; i++) {
+    let row = missingFields.map((field) => field + ", ");
+    for (let i = row.length - 1; i < row.length; i++) {
       row[i] = row[i].replace(/,/g, ""); //tar bort sista kommatecknet
     }
     return row;
@@ -139,6 +131,7 @@ export const CreateCommunityModal = (props) => {
       Skapa grannskap
     </Button>
   );
+
   const ChoseImageModal = () => {
     return (
       <Modal
@@ -177,14 +170,8 @@ export const CreateCommunityModal = (props) => {
 
   const onCheckedChange = (isChecked) => {
     setCommunityPrivate(isChecked);
-    {
-      if (missingFields.includes("Lösenord")) {
-        setMissingFields(
-          missingFields.filter((field) => {
-            return field != "Lösenord";
-          })
-        );
-      }
+    if (missingFields.includes("Lösenord")) {
+      setMissingFields(missingFields.filter((field) => field != "Lösenord"));
     }
   };
 

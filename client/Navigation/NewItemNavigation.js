@@ -1,14 +1,12 @@
-import React from "react";
-import { NavigationContainer, useTheme } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
 import AddNewItemScreen from "../Screens/AddNewItemScreen";
 import CreateNewOfferScreen from "../Screens/CreateNewOfferScreen";
 import CreateNewRequestScreen from "../Screens/CreateNewRequestScreen";
+import React from "react";
+import { createStackNavigator } from "@react-navigation/stack";
 
 const Stack = createStackNavigator();
 
-const NewItemNavigation = () => {
-  const theme = useTheme();
+export const NewItemNavigation = () => {
   return (
     <Stack.Navigator screenOptions={{ headerTintColor: "#FEA655" }}>
       <Stack.Screen
@@ -29,5 +27,3 @@ const NewItemNavigation = () => {
     </Stack.Navigator>
   );
 };
-
-export { NewItemNavigation };

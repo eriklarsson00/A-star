@@ -1,8 +1,8 @@
-import { Modal, Text, Layout, Button, Card } from "@ui-kitten/components";
-import { View, StyleSheet, Image } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import { Button, Card, Layout, Modal, Text } from "@ui-kitten/components";
+import { StyleSheet, View } from "react-native";
+
 import moment from "moment";
-import tw from "twrnc";
+
 export const OwnerContactInformationModal = (props) => {
   const item = props.item;
 
@@ -14,16 +14,47 @@ export const OwnerContactInformationModal = (props) => {
   const Info = () => {
     return (
       <View>
-        <Text category={"h3"} style={{ marginTop: 40, marginBottom: 25 }}>
+        <Text
+          category={"h3"}
+          style={{ marginTop: 5, marginBottom: 15, textAlign: "center" }}
+        >
           Kontaktinfo
         </Text>
         {props.text}
-        <Text style={styles.space_between}>
-          {item.firstname} {item.lastname}{" "}
+        <View
+          style={[
+            styles.image,
+            { alignItems: "center", justifyContent: "center" },
+          ]}
+        >
+          <Layout style={tw`py-8`}>
+            <Image
+              style={[tw`rounded-full`, styles.image, { marginTop: -18 }]}
+              source={{
+                uri: item.imgurl,
+                height: 100,
+                width: 100,
+              }}
+            />
+          </Layout>
+        </View>
+        <Text
+          style={[
+            styles.space_between,
+            {
+              textAlign: "center",
+              fontWeight: "bold",
+              fontSize: 20,
+              marginTop: -15,
+              marginBottom: 40,
+            },
+          ]}
+        >
+          {item.firstname} {item.lastname}
         </Text>
         <Text style={styles.space_between}>Telefonnummer: {item.number}</Text>
         <Text style={styles.space_between}>Email: {item.email}</Text>
-        <Layout style={{ flexDirection: "row", marginTop: 40 }}>
+        <Layout style={{ flexDirection: "row", marginTop: 10 }}>
           <Text category={"s1"}>Bestämt utbyte: </Text>
           <Text>
             {moment(item.time_of_expiration).format("dddd Do MMM hh:mm")}
@@ -33,12 +64,12 @@ export const OwnerContactInformationModal = (props) => {
           style={{
             flexDirection: "row",
             justifyContent: "space-between",
-            marginTop: 10,
+            marginTop: 0,
           }}
         >
           <Button
             onPress={() => completedTransaction()}
-            style={{ marginTop: 70, flex: 1 }}
+            style={{ marginTop: 20, flex: 1 }}
           >
             <Text>Bytet är genomfört</Text>
           </Button>

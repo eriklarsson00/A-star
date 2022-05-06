@@ -1,10 +1,10 @@
 import { communityTests } from "./communities.js";
-import { userTests } from "./users.js";
-import { server } from "../server.js";
 import { createRequire } from "module";
 import { offerTests } from "./offers.js";
 import { requestTests } from "./requests.js";
+import { server } from "../server.js";
 import { transactionTests } from "./transactions.js";
+import { userTests } from "./users.js";
 const require = createRequire(import.meta.url);
 
 const knex = require("knex")({

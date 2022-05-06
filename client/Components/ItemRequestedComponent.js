@@ -1,37 +1,34 @@
+import "moment/locale/sv";
+
+import { Icon, ListItem, Spinner, Text } from "@ui-kitten/components";
 import React, { useEffect } from "react";
 import { StyleSheet, View, ScrollView, Image } from "react-native";
 import { Text, ListItem, Spinner, Icon } from "@ui-kitten/components";
 import { myRequestImage, requestedImage } from "../assets/Images";
 import { useIsFocused } from "@react-navigation/native";
-import {
-  MyCommunitysInfo,
-  ShowCommunityIds,
-  UserInfo,
-} from "../assets/AppContext";
+import { ShowCommunityIds, UserInfo } from "../assets/AppContext";
 import { io } from "socket.io-client";
 import {
-  getRequests,
-  getMyActiveRequests,
   addTransaction,
+  getMyActiveRequests,
   getPendingTransactions,
+  getRequests,
 } from "../Services/ServerCommunication";
-import { host } from "../Services/ServerHost";
-import { RequestedInfoModal } from "./Modals/RequestedInfoModal";
+
 import { GiveProductModal } from "./Modals/GiveProductModal";
 import { RequestTransactionInfoModal } from "./Modals/RequestTransactionModal";
+import { RequestedInfoModal } from "./Modals/RequestedInfoModal";
+import { host } from "../Services/ServerHost";
+import { io } from "socket.io-client";
 import moment from "moment";
 import "moment/locale/sv";
-import tw from "twrnc";
 
 export const ItemRequestedComponent = () => {
-  const { userInfo, setUserInfo } = React.useContext(UserInfo);
-  const { myCommunitysInfo, setMyCommunitysInfo } =
-    React.useContext(MyCommunitysInfo);
+  const { userInfo } = React.useContext(UserInfo);
   const { showCommunityIds } = React.useContext(ShowCommunityIds);
   const [myRequests, setMyRequests] = React.useState([]);
   const [requests, setRequests] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
-  const { community } = React.useContext(MyCommunitysInfo);
   const isFocused = useIsFocused();
   const [date, setDate] = React.useState(new Date());
   const [takeProduct, setTakeProduct] = React.useState(false);
@@ -80,12 +77,12 @@ export const ItemRequestedComponent = () => {
 
   const fetchItems = async () => {
     setLoading(true);
-    let myItems = await getMyActiveRequests(userId);
-    let otherItems = await getRequests(userId, communityIds);
+    const myItems = await getMyActiveRequests(userId);
+    const otherItems = await getRequests(userId, communityIds);
     setMyRequests(myItems);
     setRequests(otherItems);
-    let transactions = await getPendingTransactions(userId);
-    setTransactions(transactions);
+    const newTransactions = await getPendingTransactions(userId);
+    setTransactions(newTransactions);
     setLoading(false);
   };
 

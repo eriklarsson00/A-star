@@ -1,18 +1,19 @@
-import React from "react";
-import { StyleSheet, View } from "react-native";
 import {
   Button,
-  useTheme,
+  Icon,
   Input,
   Layout,
-  Icon,
-  Text,
   Select,
   SelectItem,
+  Text,
   Tooltip,
+  useTheme,
 } from "@ui-kitten/components";
-import tw from "twrnc";
+import { StyleSheet, View } from "react-native";
+
 import DateTimePicker from "@react-native-community/datetimepicker";
+import React from "react";
+import tw from "twrnc";
 
 export const InputNewRequestComponent = (props) => {
   const [productInfo, setProductInfo] = React.useState({
@@ -75,7 +76,7 @@ export const InputNewRequestComponent = (props) => {
   //printar ut units i drop down menu
   const printUnits = (title) => <SelectItem key={title} title={title} />;
 
-  const handelDelete = () => {
+  const handleDelete = () => {
     // TODO: ska ta bort den skapade varan!
   };
 
@@ -102,7 +103,7 @@ export const InputNewRequestComponent = (props) => {
               onPress={() => {
                 setProductVisible(false);
               }}
-            ></Button>
+            />
           </Layout>
           <Input
             style={tw`pb-2 pl-5 pr-5`}

@@ -1,16 +1,8 @@
-import React from "react";
-import { StyleSheet, View, Image, ScrollView, FlatList } from "react-native";
-import {
-  Text,
-  List,
-  ListItem,
-  Modal,
-  Card,
-  Button,
-  Layout,
-  Spinner,
-} from "@ui-kitten/components";
+import { Button, Card, Layout, Modal, Text } from "@ui-kitten/components";
+import { Image, View } from "react-native";
+
 import DateTimePicker from "@react-native-community/datetimepicker";
+import React from "react";
 import tw from "twrnc";
 
 const TakeProductModal = (props) => {

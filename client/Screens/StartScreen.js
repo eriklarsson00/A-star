@@ -1,17 +1,19 @@
-import React from "react";
-import { Text, Button, Icon } from "@ui-kitten/components";
-import { View, Image, StyleSheet } from "react-native";
-import { UserInfo, UserLoggedIn, GoogleInfo } from "../assets/AppContext";
 import * as Google from "expo-auth-session/providers/google";
 import * as WebBrowser from "expo-web-browser";
-import { getUserProfileByEmail } from "../Services/ServerCommunication";
+
+import { Button, Icon, Text } from "@ui-kitten/components";
+import { GoogleInfo, UserInfo, UserLoggedIn } from "../assets/AppContext";
+import { Image, StyleSheet, View } from "react-native";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import React from "react";
+import { getUserProfileByEmail } from "../Services/ServerCommunication";
 
 WebBrowser.maybeCompleteAuthSession();
 
 export const StartScreen = ({ navigation }) => {
-  const { userLoggedIn, setLoggedIn } = React.useContext(UserLoggedIn);
-  const { userInfo, setUserInfo } = React.useContext(UserInfo);
+  const { setLoggedIn } = React.useContext(UserLoggedIn);
+  const { setUserInfo } = React.useContext(UserInfo);
   const { googleInfo, setGoogleInfo } = React.useContext(GoogleInfo);
   const [accessToken, setAccessToken] = React.useState();
 
@@ -22,7 +24,7 @@ export const StartScreen = ({ navigation }) => {
 
   React.useEffect(async () => {
     if (googleInfo != null && googleInfo != undefined) {
-      let users = await getUserProfileByEmail(googleInfo.email);
+      const users = await getUserProfileByEmail(googleInfo.email);
 
       if (users.length !== 0) {
         try {
@@ -50,7 +52,7 @@ export const StartScreen = ({ navigation }) => {
   }, [response, accessToken, googleInfo]);
 
   async function getUserData() {
-    let userInfoResponse = await fetch(
+    const userInfoResponse = await fetch(
       "https://www.googleapis.com/userinfo/v2/me",
       {
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -62,7 +64,7 @@ export const StartScreen = ({ navigation }) => {
   }
 
   const easySignIn = async () => {
-    let users = await getUserProfileByEmail("anja.pärsson@icloud.com");
+    const users = await getUserProfileByEmail("anja.pärsson@icloud.com");
 
     if (users.length !== 0) {
       try {
@@ -99,7 +101,7 @@ export const StartScreen = ({ navigation }) => {
           marginBottom: 200,
           zIndex: 100,
         }}
-      ></Image>
+      />
       <Button
         accessoryLeft={GoogleIcon}
         onPress={() => {

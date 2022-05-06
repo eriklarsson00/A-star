@@ -1,42 +1,31 @@
-import React from "react";
-import { StyleSheet, View, FlatList, Image, ScrollView } from "react-native";
+import "moment/locale/sv";
+
+import { Icon, ListItem, Spinner, Text } from "@ui-kitten/components";
+import { Image, ScrollView, StyleSheet, View } from "react-native";
+import { ShowCommunityIds, UserInfo } from "../assets/AppContext";
 import {
-  Text,
-  List,
-  ListItem,
-  Modal,
-  Card,
-  Spinner,
-  Icon,
-} from "@ui-kitten/components";
-import { useIsFocused } from "@react-navigation/native";
-import {
-  MyCommunitysInfo,
-  ShowCommunityIds,
-  UserInfo,
-} from "../assets/AppContext";
-import {
-  getOffers,
-  getMyActiveOffers,
   addTransaction,
+  getMyActiveOffers,
+  getOffers,
   getPendingTransactions,
 } from "../Services/ServerCommunication.js";
-import moment from "moment";
-import "moment/locale/sv";
-import io from "socket.io-client";
+
 import ProductInfoModal from "./Modals/ProductInfoModal";
+import React from "react";
 import TakeProductModal from "./Modals/TakeProductModal";
 import TransactionInfoModal from "./Modals/TransactionInfoModal";
 import { host } from "../Services/ServerHost";
+import io from "socket.io-client";
+import moment from "moment";
 import tw from "twrnc";
+import { useIsFocused } from "@react-navigation/native";
+
 const TransactionIcon = (props) => (
   <Icon {...props} fill="red" name="info-outline" />
 );
 
 export const ItemAvailableComponent = () => {
-  const { userInfo, setUserInfo } = React.useContext(UserInfo);
-  const { myCommunitysInfo, setMyCommunitysInfo } =
-    React.useContext(MyCommunitysInfo);
+  const { userInfo } = React.useContext(UserInfo);
   const { showCommunityIds } = React.useContext(ShowCommunityIds);
   const [takeProduct, setTakeProduct] = React.useState(false);
   const [offers, setOffers] = React.useState([]);
@@ -52,11 +41,11 @@ export const ItemAvailableComponent = () => {
   //fetch items on focus
   const fetchItems = async () => {
     setLoading(true);
-    let myItems = await getMyActiveOffers(userId);
-    let otherItems = await getOffers(userId, communityIds);
-    let transactions = await getPendingTransactions(userId);
+    const myItems = await getMyActiveOffers(userId);
+    const otherItems = await getOffers(userId, communityIds);
+    const newTransactions = await getPendingTransactions(userId);
 
-    setTransactions(transactions);
+    setTransactions(newTransactions);
     setMyOffers(myItems);
     setOffers(otherItems);
     setLoading(false);
@@ -252,7 +241,7 @@ export const ItemAvailableComponent = () => {
         accessoryRight={offerHasTransaction(item) ? TransactionIcon : null}
         title={`${item.product_text} | ${item.quantity} ${item.unit ?? ""}`}
         description={`${item.description}`}
-      ></ListItem>
+      />
       <TransactionInfoModal
         text={"vill hämta din vara"}
         item={item}
