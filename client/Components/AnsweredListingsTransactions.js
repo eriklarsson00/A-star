@@ -58,7 +58,7 @@ export const AnsweredListingsTransactions = () => {
   };
 
   const getTransaction = (id) => {
-    return pendingTransactions.find((transaction) => (transaction.id == id));
+    return pendingTransactions.find((transaction) => transaction.id == id);
   };
 
   const fetchTransactions = async () => {
@@ -129,7 +129,15 @@ export const AnsweredListingsTransactions = () => {
   const renderGiveOrTake = (offer_product_name, request_product_name) => {
     if (!offer_product_name) {
       return (
-        <View style={{ flexDirection: "row", marginBottom: 5, width: "100%" }}>
+        <View
+          style={{
+            flexDirection: "row",
+            marginBottom: 5,
+            width: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <Text>
             <Text category={"s1"}>{request_product_name} ska </Text>
             <Text category={"s1"} style={{ textDecorationLine: "underline" }}>
@@ -145,6 +153,8 @@ export const AnsweredListingsTransactions = () => {
           style={{
             marginBottom: 5,
             width: "100%",
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
           <Text>
