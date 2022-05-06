@@ -9,4 +9,16 @@ const barCodeIcon =
 
 const defaultProfileImage =
   "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
-export { defaultCommunityImage, cameraIcon, barCodeIcon, defaultProfileImage };
+
+const requestedImage =
+  "https://cdn-icons-png.flaticon.com/128/3081/3081098.png";
+const myRequestImage =
+  "https://cdn-icons-png.flaticon.com/512/3080/3080950.png";
+export {
+  defaultCommunityImage,
+  cameraIcon,
+  barCodeIcon,
+  defaultProfileImage,
+  requestedImage,
+  myRequestImage,
+};

@@ -9,11 +9,13 @@ import {
   Divider,
   TabView,
   Tab,
+  useTheme,
 } from "@ui-kitten/components";
 import { getUserProfileById } from "../../Services/ServerCommunication";
 import tw from "twrnc";
 import moment from "moment";
 import "moment/locale/sv";
+import { requestedImage } from "../../assets/Images";
 
 export const RequestedInfoModal = (props) => {
   const item = props.item;
@@ -28,6 +30,18 @@ export const RequestedInfoModal = (props) => {
   const getResponder = async () => {
     let responder = await getUserProfileById(item.user_id);
     setResponder(responder[0]);
+  };
+
+  const ItemDescriptiom = () => {
+    if (item.description) {
+      return (
+        <Text category={"p1"} style={styles.textStyleBorder}>
+          {item.description}
+        </Text>
+      );
+    } else {
+      return <View></View>;
+    }
   };
 
   React.useEffect(() => {
@@ -82,21 +96,35 @@ export const RequestedInfoModal = (props) => {
   const RenderProductInfo = () => {
     return (
       <View>
-        <Text style={tw`mt-2 text-base font-bold`}>
-          Efterfrågas av:<Text style={tw``}> {responder.firstname}</Text>
-        </Text>
-        <Text style={tw`text-lg mt-5 mb-2`}>
-          {item.product_text}, {item.quantity} {item.unit}
-        </Text>
-        <Divider style={styles.divider} />
-        <Text style={tw`text-base mt-2 mb-2`}>{item.description}</Text>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Text style={tw`font-bold`}>
+        <View style={styles.imgContainer}>
+          <Layout style={tw`py-8`}>
+            <Image
+              style={{ marginBottom: -40, marginTop: -10 }}
+              source={{
+                uri: requestedImage,
+                height: 90,
+                width: 90,
+              }}
+            />
+          </Layout>
+        </View>
+        <View>
+          <View style={styles.units}>
+            <Text category={"h4"}>
+              {item.product_text} {item.quantity} {item.unit}
+            </Text>
+          </View>
+          <Divider style={styles.divider}></Divider>
+          <Text category={"s1"} style={styles.textStyle}>
+            Efterfrågas av: <Text category={"p1"}> {responder.firstname}</Text>
+          </Text>
+          <Text category={"s1"} style={styles.textStyle}>
             Behövs senast:{" "}
-            <Text style={tw`text-base mt-2 mr-2`}>
-              {moment(item.time_of_expiration).format("Do MMM YYYY")}
+            <Text category={"p1"}>
+              {moment(item.time_of_expiration).format("dddd Do MMM")}
             </Text>
           </Text>
+          <ItemDescriptiom />
         </View>
       </View>
     );
@@ -109,11 +137,6 @@ export const RequestedInfoModal = (props) => {
       onBackdropPress={() => props.toggleModal(item)}
     >
       <Card disabled={true} style={{ width: 320, flex: 1 }}>
-        <View style={styles.units}>
-          <Text category={"h3"}>
-            {item.product_text} {item.quantity} {item.unit}
-          </Text>
-        </View>
         <TabView
           selectedIndex={selectedIndex}
           onSelect={(index) => setSelectedIndex(index)}
@@ -146,7 +169,6 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     alignItems: "center",
-    marginBottom: 20,
   },
   container: {
     paddingTop: 10,
@@ -164,9 +186,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     borderBottomWidth: 0.8,
-  },
-  text: {
-    fontSize: 12,
+    //  marginBottom: 10,
   },
   icon: {
     width: 20,
@@ -174,14 +194,32 @@ const styles = StyleSheet.create({
     top: 5,
     left: 5,
   },
-  units: {
-    flex: 1,
-    flexDirection: "row",
-    padding: 30,
-  },
   image: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+  },
+  text: {
+    fontSize: 12,
+  },
+  textStyle: {
+    marginBottom: 10,
+    marginTop: 10,
+  },
+  textStyleBorder: {
+    marginBottom: 10,
+    marginTop: 10,
+    borderColor: "grey",
+    borderWidth: 0.7,
+    borderRadius: 3,
+    padding: 5,
+  },
+  units: {
+    flex: 1,
+    flexDirection: "row",
+    paddingTop: 20,
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingBottom: 10,
   },
 });

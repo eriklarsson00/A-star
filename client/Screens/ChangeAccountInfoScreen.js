@@ -83,10 +83,10 @@ export const ChangeAccountInfoScreen = ({ navigation }) => {
         userInfo.id
       );
       setUpdatedProfile({ ...updatedProfile, imgurl: bucketImage });
+      setProfileImage({ uri: bucketImage });
+      updatedProfile.imgurl = bucketImage;
     }
-    
-    setProfileImage({ uri: bucketImage });
-    updatedProfile.imgurl = bucketImage;
+
     await editProfile(updatedProfile, userInfo.id);
   }
 
@@ -166,7 +166,7 @@ export const ChangeAccountInfoScreen = ({ navigation }) => {
             updateProfile();
             navigation.navigate("ProfileScreen");
           }}
-          // disabled={!updated}
+          disabled={!updated}
           style={{
             marginTop: 30,
             backgroundColor: updated

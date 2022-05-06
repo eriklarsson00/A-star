@@ -1,28 +1,21 @@
 import React from "react";
-import { StyleSheet, View, Image, ScrollView, FlatList } from "react-native";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { NavigationContainer } from "@react-navigation/native";
+import { StyleSheet, View, Image } from "react-native";
 import {
   Text,
-  List,
-  ListItem,
   Modal,
   Card,
   Button,
   Layout,
-  Spinner,
   Tab,
   Icon,
+  TabView,
   Divider,
-  useTheme,
-  TabView
 } from "@ui-kitten/components";
 import { getUserProfileById } from "../../Services/ServerCommunication";
 import moment from "moment";
 import "moment/locale/sv";
 import tw from "twrnc";
 
-const TopTabs = createMaterialTopTabNavigator();
 export const ProductInfoModal = (props) => {
   const item = props.item;
   const [responder, setResponder] = React.useState({});
@@ -87,9 +80,21 @@ export const ProductInfoModal = (props) => {
     );
   };
 
+  const ItemDescriptiom = () => {
+    if (item.description) {
+      return (
+        <Text category={"p1"} style={styles.textStyleBorder}>
+          {item.description}
+        </Text>
+      );
+    } else {
+      return <View></View>;
+    }
+  };
+
   const RenderProductInfo = () => {
     return (
-      <View >
+      <View>
         <View style={styles.image}>
           <Layout style={tw`py-8`}>
             <Image
@@ -108,16 +113,13 @@ export const ProductInfoModal = (props) => {
               {item.product_text} {item.quantity} {item.unit}
             </Text>
           </View>
-          <Divider style={styles.divider}></Divider>
+          <Divider style={styles.divider} />
           <Text category={"s1"} style={styles.textStyle}>
-            Utångsdag:{" "}
+            Utångsdatum:{" "}
             <Text category={"p1"}>
-              {moment(item.time_of_expiration).format("dddd Do MMM hh:mm")}
-              {"\n"}
-              {moment(item.time_of_expiration).fromNow()}
+              {moment(item.time_of_expiration).format("dddd Do MMM")}
             </Text>
           </Text>
-          <Divider style={{ borderBottomWidth: 0.2 }} />
           <Text category={"s1"} style={styles.textStyle}>
             Bruten förpackning:{" "}
             {item.broken_pkg ? (
@@ -126,10 +128,7 @@ export const ProductInfoModal = (props) => {
               <Icon style={styles.icon} fill="red" name="close-outline" />
             )}
           </Text>
-          <Divider style={{ borderBottomWidth: 0.2 }} />
-          <Text category={"p1"} style={styles.textStyle}>
-            {item.description}
-          </Text>
+          <ItemDescriptiom />
         </View>
       </View>
     );
@@ -144,20 +143,21 @@ export const ProductInfoModal = (props) => {
       onBackdropPress={() => props.toggleModal(item)}
     >
       <Card disabled={true} style={{ width: 320, flex: 1 }}>
-       <TabView
-      selectedIndex={selectedIndex}
-      onSelect={index => setSelectedIndex(index)}>
-      <Tab title='ProduktInfo'>
-        <Layout style={styles.tabContainer}>
-          <RenderProductInfo/>
-        </Layout>
-      </Tab>
-      <Tab title='AnvändarInfo'>
-        <Layout style={styles.tabContainer}>
-          <RenderProfileInfo/>
-        </Layout>
-      </Tab>
-    </TabView>
+        <TabView
+          selectedIndex={selectedIndex}
+          onSelect={(index) => setSelectedIndex(index)}
+        >
+          <Tab title="ProduktInfo">
+            <Layout style={styles.tabContainer}>
+              <RenderProductInfo />
+            </Layout>
+          </Tab>
+          <Tab title="AnvändarInfo">
+            <Layout style={styles.tabContainer}>
+              <RenderProfileInfo />
+            </Layout>
+          </Tab>
+        </TabView>
         <Button onPress={() => props.toggleTake()}>Ta vara</Button>
       </Card>
     </Modal>
@@ -185,6 +185,12 @@ const styles = StyleSheet.create({
     margin: 5,
     width: "100%",
   },
+  divider: {
+    alignSelf: "stretch",
+    //borderBottomWidth: 0.8,
+    marginBottom: 5,
+    backgroundColor: "rgba(0,0,0, .3)",
+  },
   text: {
     fontSize: 12,
   },
@@ -210,13 +216,16 @@ const styles = StyleSheet.create({
   header: {
     marginTop: -10,
   },
-  divider: {
-    borderBottomWidth: 0.8,
-    padding: 2,
-  },
   textStyle: {
-    marginBottom: 10,
     marginTop: 10,
+  },
+  textStyleBorder: {
+    marginBottom: 15,
+    marginTop: 15,
+    borderColor: "rgba(0,0,0, .3)",
+    borderWidth: 0.7,
+    borderRadius: 3,
+    padding: 5,
   },
 });
 

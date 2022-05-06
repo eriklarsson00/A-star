@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Image, ScrollView, FlatList } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Image,
+  ScrollView,
+  FlatList,
+  Alert,
+} from "react-native";
 import {
   Text,
   List,
@@ -19,6 +26,7 @@ import {
   getUserProfileById,
   acceptTransaction,
   deleteTransaction,
+  deleteOffer,
 } from "../../Services/ServerCommunication";
 
 export const TransactionInfoModal = (props) => {
@@ -53,6 +61,20 @@ export const TransactionInfoModal = (props) => {
     props.toggleModal(item);
   };
 
+  const AlertRemove = () =>
+    Alert.alert("Ta bort vara", "Är du säker att du vill ta bort din vara?", [
+      {
+        text: "Avbryt",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel",
+      },
+      { text: "Ja", onPress: () => RemoveOffer() },
+    ]);
+
+  const RemoveOffer = () => {
+    deleteOffer(item.id);
+    props.toggleModal(item);
+  };
   const Info = () => {
     if (transaction) {
       return (
@@ -193,6 +215,10 @@ export const TransactionInfoModal = (props) => {
 
           <Text style={{ marginBottom: 10 }}>Din vara</Text>
           <Text style={{ marginBottom: 10 }}>{item.description}</Text>
+
+          <Button style={{ width: "100%" }} onPress={() => AlertRemove()}>
+            <Text> Ta Bort vara</Text>
+          </Button>
         </View>
       );
     }
