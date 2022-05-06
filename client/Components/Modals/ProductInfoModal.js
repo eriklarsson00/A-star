@@ -187,7 +187,6 @@ const styles = StyleSheet.create({
   },
   divider: {
     alignSelf: "stretch",
-    //borderBottomWidth: 0.8,
     marginBottom: 5,
     backgroundColor: "rgba(0,0,0, .3)",
   },
