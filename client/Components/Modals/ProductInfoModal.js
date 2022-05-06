@@ -88,7 +88,7 @@ export const ProductInfoModal = (props) => {
         </Text>
       );
     } else {
-      return <View></View>;
+      return <View />;
     }
   };
 
