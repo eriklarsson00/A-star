@@ -231,7 +231,6 @@ const styles = StyleSheet.create({
   },
   divider: {
     borderBottomWidth: 0.8,
-    //  marginBottom: 10,
   },
   image: {
     flex: 1,
