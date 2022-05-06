@@ -40,7 +40,7 @@ export const RequestedInfoModal = (props) => {
         </Text>
       );
     } else {
-      return <View></View>;
+      return <View />;
     }
   };
 
