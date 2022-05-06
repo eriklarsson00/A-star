@@ -9,13 +9,12 @@ import {
   Modal,
   Text,
 } from "@ui-kitten/components";
-import { Image, StyleSheet, View } from "react-native";
-import React, { useEffect, useState } from "react";
 import {
   acceptTransaction,
   deleteTransaction,
   deleteOffer,
 } from "../../Services/ServerCommunication";
+import { getUserProfileById } from "../../Services/ServerCommunication";
 
 import moment from "moment";
 import tw from "twrnc";

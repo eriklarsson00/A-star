@@ -3,7 +3,6 @@ import "moment/locale/sv";
 import { Icon, ListItem, Spinner, Text } from "@ui-kitten/components";
 import React, { useEffect } from "react";
 import { StyleSheet, View, ScrollView, Image } from "react-native";
-import { Text, ListItem, Spinner, Icon } from "@ui-kitten/components";
 import { myRequestImage, requestedImage } from "../assets/Images";
 import { useIsFocused } from "@react-navigation/native";
 import { ShowCommunityIds, UserInfo } from "../assets/AppContext";
@@ -19,7 +18,6 @@ import { GiveProductModal } from "./Modals/GiveProductModal";
 import { RequestTransactionInfoModal } from "./Modals/RequestTransactionModal";
 import { RequestedInfoModal } from "./Modals/RequestedInfoModal";
 import { host } from "../Services/ServerHost";
-import { io } from "socket.io-client";
 import moment from "moment";
 import "moment/locale/sv";
 
