@@ -1,6 +1,6 @@
-import { transactionChecker } from "./modelchecker.js";
 import { createRequire } from "module";
 import { stdErrorHandler } from "./common.js";
+import { transactionChecker } from "./modelchecker.js";
 const require = createRequire(import.meta.url);
 
 const knex = require("knex")({

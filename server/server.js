@@ -263,7 +263,7 @@ app.post("/communityimages", upload.single("image"), (req, res) => {
   }
 });
 
-//*************************SERVER*************************
+//*************************SERVER*************************//
 
 let msg;
 let port;
