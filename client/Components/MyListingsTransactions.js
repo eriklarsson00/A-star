@@ -1,15 +1,15 @@
-import { useState, useEffect, useContext } from "react";
-import { View, FlatList, StyleSheet } from "react-native";
-import { useIsFocused } from "@react-navigation/native";
-import { Text, Spinner, ListItem, Icon, Layout } from "@ui-kitten/components";
-import { UserInfo } from "../assets/AppContext";
+import { FlatList, StyleSheet, View } from "react-native";
+import { Icon, ListItem, Spinner, Text } from "@ui-kitten/components";
 import {
   getOngoingTransactionsOwner,
   ownerConfirmTransaction,
 } from "../Services/ServerCommunication";
+import { useContext, useEffect, useState } from "react";
+
 import { OwnerContactInformationModal } from "./Modals/OwnerContactInformationModal";
 import { RatingModal } from "./Modals/RatingModal";
-import tw from "twrnc";
+import { UserInfo } from "../assets/AppContext";
+import { useIsFocused } from "@react-navigation/native";
 
 const GiveAwayIcon = (props) => (
   <Icon {...props} fill={"red"} name="arrow-circle-up" />
@@ -21,7 +21,7 @@ const ReceiveIcon = (props) => (
 
 export const MyListingsTransactions = () => {
   // CONTEXT
-  const { userInfo, setUserInfo } = useContext(UserInfo);
+  const { userInfo } = useContext(UserInfo);
 
   // STATE
   const [ownerTransactions, setOwnerTransactions] = useState([]);
@@ -33,7 +33,7 @@ export const MyListingsTransactions = () => {
 
   const fetchTransactions = async () => {
     setLoading(true);
-    let otransactions = await getOngoingTransactionsOwner(uid);
+    const otransactions = await getOngoingTransactionsOwner(uid);
     setOwnerTransactions(otransactions);
     setLoading(false);
   };
@@ -176,7 +176,7 @@ export const MyListingsTransactions = () => {
       data={ownerTransactions}
       renderItem={renderAcceptedTransactions}
       ListHeaderComponent={flatListHeader}
-    ></FlatList>
+    />
   );
 
   return loading ? <LoadingView /> : <LoadedView />;

@@ -1,5 +1,17 @@
 import "dotenv/config";
+
+import * as ci from "./routes/ci.js";
+import * as communities from "./routes/communities.js";
+import * as offers from "./routes/offers.js";
+import * as products from "./routes/products.js";
+import * as requests from "./routes/requests.js";
+import * as transactions from "./routes/transactions.js";
+import * as users from "./routes/users.js";
+
+import { upload, uploadImageOnS3 } from "./routes/upload.js";
+
 import { createRequire } from "module";
+
 const require = createRequire(import.meta.url);
 
 /*
@@ -56,21 +68,6 @@ io.on("connection", (socket) => {
     );
   });
 });
-
-/*
-*************************
-    REST API ROUTES
-*************************
-*/
-
-import * as users from "./routes/users.js";
-import * as communities from "./routes/communities.js";
-import * as offers from "./routes/offers.js";
-import * as requests from "./routes/requests.js";
-import * as transactions from "./routes/transactions.js";
-import * as products from "./routes/products.js";
-import * as ci from "./routes/ci.js";
-import { upload, uploadImageOnS3 } from "./routes/upload.js";
 
 //*************************CI*************************
 

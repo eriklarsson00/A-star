@@ -1,5 +1,6 @@
-import { Modal, Text, Layout, Button, Card } from "@ui-kitten/components";
-import { View, StyleSheet } from "react-native";
+import { Button, Card, Layout, Modal, Text } from "@ui-kitten/components";
+import { StyleSheet, View } from "react-native";
+
 import moment from "moment";
 
 export const AwaitingConfirmationModal = (props) => {

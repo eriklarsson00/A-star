@@ -1,9 +1,8 @@
-import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { StyleSheet } from "react-native";
-import { createStackNavigator } from "@react-navigation/stack";
-import { StartScreen } from "../Screens/StartScreen";
 import { CreateUserScreen } from "../Screens/CreateUserScreen";
+import { NavigationContainer } from "@react-navigation/native";
+import React from "react";
+import { StartScreen } from "../Screens/StartScreen";
+import { createStackNavigator } from "@react-navigation/stack";
 
 const Stack = createStackNavigator();
 

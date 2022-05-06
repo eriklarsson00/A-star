@@ -1,10 +1,9 @@
+import { Button, Layout } from "@ui-kitten/components";
+
 import React from "react";
 import { StyleSheet } from "react-native";
-import { Button, useTheme, Layout } from "@ui-kitten/components";
-import tw from "twrnc";
 
 const AddNewItemScreen = ({ navigation }) => {
-  const theme = useTheme();
   return (
     <Layout style={styles.container}>
       <Button

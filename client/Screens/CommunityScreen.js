@@ -1,30 +1,27 @@
-import React from "react";
-import { StyleSheet, TouchableOpacity, View, Image } from "react-native";
-import { useIsFocused } from "@react-navigation/native";
 import {
-  Text,
-  Layout,
-  Divider,
   Button,
-  Modal,
   Card,
-  Input,
+  Divider,
   Icon,
+  Input,
+  Layout,
   List,
+  Modal,
+  Text,
   useTheme,
 } from "@ui-kitten/components";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import { MyCommunitysInfo, UserInfo } from "../assets/AppContext";
+import {
+  addToCommunity,
+  getCommunities,
+} from "../Services/ServerCommunication";
+
 import CommunityComponent from "../Components/CommunityComponent";
 import CreateCommunityModal from "../Components/Modals/CreateCommunityModal";
+import React from "react";
 import tw from "twrnc";
-import {
-  UserInfo,
-  MyCommunitysInfo,
-  ShowCommunityIds,
-} from "../assets/AppContext";
-import {
-  getCommunities,
-  addToCommunity,
-} from "../Services/ServerCommunication";
+import { useIsFocused } from "@react-navigation/native";
 
 async function getAllCommunities() {
   let communities = await getCommunities();
@@ -35,9 +32,7 @@ export const CommunityScreen = () => {
   //CONTEXT
   const { myCommunitysInfo, setMyCommunitysInfo } =
     React.useContext(MyCommunitysInfo);
-  const { showCommunityIds, setShowCommunityIds } =
-    React.useContext(ShowCommunityIds);
-  const { userInfo, setUserInfo } = React.useContext(UserInfo);
+  const { userInfo } = React.useContext(UserInfo);
 
   //STATE
   const [addCommunityVisible, setAddCommunityVisible] = React.useState(false);
@@ -83,7 +78,7 @@ export const CommunityScreen = () => {
   };
 
   const printExistingCommunities = (
-    { item, index } //DETTA ÄR VAD SOM RENDERAS FÖR VARJE ITEM I LÄGG TILL GRANNSKAP
+    { item } //DETTA ÄR VAD SOM RENDERAS FÖR VARJE ITEM I LÄGG TILL GRANNSKAP
   ) => (
     <TouchableOpacity
       style={[
@@ -127,7 +122,7 @@ export const CommunityScreen = () => {
             />
             <View style={styles.communityDescription}>
               <Text style={tw`mb-2 mt-1`}>{item.description}</Text>
-              <View style={styles.communityImageJoin}></View>
+              <View style={styles.communityImageJoin} />
             </View>
           </View>
           {item.private === 1 && (
@@ -152,7 +147,7 @@ export const CommunityScreen = () => {
 
   //FUNKTIONER ÖVRIGA
 
-  const giveKey = ({ item, index }) => reuturn(item);
+  const giveKey = ({ item }) => reuturn(item);
 
   function closeAddCommunity() {
     setAddCommunityVisible(false);
@@ -223,7 +218,6 @@ export const CommunityScreen = () => {
         data={myCommunitysInfo}
         renderItem={printCommunity}
         key={giveKey}
-        // containerStyle={styles.list_style}
       />
       <Layout style={styles.buttonCont}>
         <Button
