@@ -1,22 +1,14 @@
-import React from "react";
-import { StyleSheet, View, Image, ScrollView, FlatList } from "react-native";
-import {
-  Text,
-  List,
-  ListItem,
-  Modal,
-  Card,
-  Button,
-  Layout,
-  Spinner,
-} from "@ui-kitten/components";
+import { Button, Card, Modal, Text } from "@ui-kitten/components";
+
 import DateTimePicker from "@react-native-community/datetimepicker";
-import tw from "twrnc";
+import React from "react";
+import { View } from "react-native";
 
 export const GiveProductModal = (props) => {
   const item = props.item;
   const date = props.date;
   const newDate = new Date();
+
   return (
     <Modal //Modal for setting time & offering an offer
       visible={item.visible}
@@ -58,11 +50,14 @@ export const GiveProductModal = (props) => {
           onChange={(event, date) => props.updateDate(date)}
           display={"inline"}
         />
-        <Button onPress={() => {
-          props.makeTransaction(item);
-        }}>Ge vara</Button>
+        <Button
+          onPress={() => {
+            props.makeTransaction(item);
+          }}
+        >
+          Ge vara
+        </Button>
       </Card>
     </Modal>
   );
 };
-

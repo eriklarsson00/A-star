@@ -1,15 +1,11 @@
-import React, { useState, useContext } from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { ProfileImagePath, UserInfo } from "../assets/AppContext";
-import { pushToServer } from "../Services/ServerCommunication";
 import * as ImageManipulator from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";
+
 import { Button, Divider } from "@ui-kitten/components";
+import { StyleSheet, View } from "react-native";
 
 export default function ImagePickerComp(props) {
   // The path of the picked image
-
-  const [pickedImagePath, setPickedImagePath] = useState(null);
 
   const resizeImage = async (result, resize = 0.05) => {
     const manipResult = await ImageManipulator.manipulateAsync(
@@ -44,7 +40,6 @@ export default function ImagePickerComp(props) {
 
     if (!result.cancelled) {
       const image = await resizeImage(result, props.resize);
-      setPickedImagePath(image.uri);
       if (props.context == "Profile") {
         props.updateResult(image);
       }
@@ -69,10 +64,8 @@ export default function ImagePickerComp(props) {
 
     if (!result.cancelled) {
       const image = await resizeImage(result, props.resize);
-      setPickedImagePath(image.uri);
       if (props.context == "Profile") {
         props.updateResult(image);
-        setPickedImagePath(image.uri);
       }
       if (props.context == "ItemImage" || "CommunityImage") {
         props.updateResult(image);

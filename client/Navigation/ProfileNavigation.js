@@ -1,13 +1,13 @@
+import { ChangeAccountInfoScreen } from "../Screens/ChangeAccountInfoScreen";
+import { HistoryScreen } from "../Screens/HistoryScreen";
+import { ProfileScreen } from "../Screens/ProfileScreen";
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import { ProfileScreen } from "../Screens/ProfileScreen";
-import { HistoryScreen } from "../Screens/HistoryScreen";
-import { ChangeAccountInfoScreen } from "../Screens/ChangeAccountInfoScreen";
 import { useIsFocused } from "@react-navigation/native";
 
 const Stack = createStackNavigator();
 
-function ProfileNavigation({ navigation }) {
+export function ProfileNavigation({ navigation }) {
   const isFocused = useIsFocused();
 
   React.useEffect(() => {
@@ -39,5 +39,3 @@ function ProfileNavigation({ navigation }) {
     </Stack.Navigator>
   );
 }
-
-export { ProfileNavigation };

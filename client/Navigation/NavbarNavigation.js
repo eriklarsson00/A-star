@@ -1,20 +1,18 @@
-import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { StyleSheet } from "react-native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
   BottomNavigation,
   BottomNavigationTab,
   Icon,
 } from "@ui-kitten/components";
-import { ExploreScreen } from "../Screens/ExploreScreen";
+
 import { CommunityScreen } from "../Screens/CommunityScreen";
-import { OngoingScreen } from "../Screens/OngoingScreen";
-import { ProfileScreen } from "../Screens/ProfileScreen";
-import { AddNewItemScreen } from "../Screens/AddNewItemScreen";
-import { CreateUserScreen } from "../Screens/CreateUserScreen";
+import { ExploreScreen } from "../Screens/ExploreScreen";
+import { NavigationContainer } from "@react-navigation/native";
 import { NewItemNavigation } from "./NewItemNavigation";
+import { OngoingScreen } from "../Screens/OngoingScreen";
 import { ProfileNavigation } from "./ProfileNavigation";
+import React from "react";
+import { StyleSheet } from "react-native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 const { Navigator, Screen } = createBottomTabNavigator();
 

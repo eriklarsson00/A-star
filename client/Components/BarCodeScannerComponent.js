@@ -1,13 +1,6 @@
-import React, { useState, useEffect } from "react";
-import {
-  Text,
-  View,
-  StyleSheet,
-  Button,
-  TextPropTypes,
-  ProgressViewIOSComponent,
-  Alert,
-} from "react-native";
+import { Alert, Button, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+
 import { BarCodeScanner } from "expo-barcode-scanner";
 
 export default function BarCodeScannerComp(props) {

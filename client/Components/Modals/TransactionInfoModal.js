@@ -1,25 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Image, ScrollView, FlatList } from "react-native";
+import "moment/locale/sv";
+
 import {
-  Text,
-  List,
-  ListItem,
-  Modal,
-  Card,
   Button,
-  Layout,
-  Spinner,
+  Card,
   Divider,
   Icon,
+  Layout,
+  Modal,
+  Text,
 } from "@ui-kitten/components";
-import moment from "moment";
-import "moment/locale/sv";
-import tw from "twrnc";
+import { Image, StyleSheet, View } from "react-native";
+import React, { useEffect, useState } from "react";
 import {
-  getUserProfileById,
   acceptTransaction,
   deleteTransaction,
+  getUserProfileById,
 } from "../../Services/ServerCommunication";
+
+import moment from "moment";
+import tw from "twrnc";
 
 export const TransactionInfoModal = (props) => {
   const item = props.item;

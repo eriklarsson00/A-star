@@ -1,24 +1,25 @@
-import React from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  Button,
+  Card,
+  Divider,
+  Icon,
+  Layout,
+  Modal,
+  Text,
+  useTheme,
+} from "@ui-kitten/components";
 import { Image, StyleSheet, View } from "react-native";
 import {
-  Text,
-  Layout,
-  Button,
-  useTheme,
-  Modal,
-  Card,
-  Icon,
-  Divider,
-} from "@ui-kitten/components";
-import {
-  ShowCommunityIds,
   MyCommunitysInfo,
+  ShowCommunityIds,
   UserInfo,
 } from "../assets/AppContext";
-import tw from "twrnc";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { removeUserFromCommunity } from "../Services/ServerCommunication";
+import tw from "twrnc";
 
 const CommunityComponent = (props) => {
   const theme = useTheme();

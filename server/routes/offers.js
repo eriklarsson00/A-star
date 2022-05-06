@@ -1,5 +1,5 @@
-import { offerChecker } from "./modelchecker.js";
 import { createRequire } from "module";
+import { offerChecker } from "./modelchecker.js";
 import { stdErrorHandler } from "./common.js";
 const require = createRequire(import.meta.url);
 
