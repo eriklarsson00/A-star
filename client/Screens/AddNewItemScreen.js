@@ -1,8 +1,7 @@
 import { Button, Layout } from "@ui-kitten/components";
+import { StyleSheet, View } from "react-native";
 
 import React from "react";
-import { StyleSheet, View } from "react-native";
-import { Button, Layout } from "@ui-kitten/components";
 
 const AddNewItemScreen = ({ navigation }) => {
   return (
