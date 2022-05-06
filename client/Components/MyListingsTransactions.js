@@ -87,7 +87,15 @@ export const MyListingsTransactions = () => {
   const renderGiveOrTake = (offer_product_name, request_product_name) => {
     if (offer_product_name) {
       return (
-        <View style={{ flexDirection: "row", marginBottom: 5, width: "100%" }}>
+        <View
+          style={{
+            flexDirection: "row",
+            marginBottom: 5,
+            width: "100%",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           <Text>
             <Text category={"s1"}>{offer_product_name} ska </Text>
             <Text category={"s1"} style={{ textDecorationLine: "underline" }}>
@@ -99,7 +107,15 @@ export const MyListingsTransactions = () => {
       );
     } else {
       return (
-        <View style={{ flexDirection: "row", marginBottom: 5, witdh: "100%" }}>
+        <View
+          style={{
+            flexDirection: "row",
+            marginBottom: 5,
+            witdh: "100%",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           <Text>
             <Text category={"s1"}>{request_product_name} ska </Text>
             <Text category={"s1"} style={{ textDecorationLine: "underline" }}>
