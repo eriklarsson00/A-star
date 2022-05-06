@@ -213,6 +213,13 @@ const addCommunity = async (community) => {
   return await request("POST", "/communities", community);
 };
 
+const deleteOffer = async (id) => {
+  return await request("DELETE", `/offers/${id}`);
+};
+
+const deleteRequest = async (id) => {
+  return await request("DELETE", `/requests/${id}`);
+};
 export {
   getMyActiveOffers,
   getOffers,
@@ -241,4 +248,6 @@ export {
   postRequest,
   addCommunity,
   editProfile,
+  deleteRequest,
+  deleteOffer,
 };

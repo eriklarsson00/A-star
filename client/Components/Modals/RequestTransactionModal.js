@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Image, ScrollView, FlatList } from "react-native";
+import { StyleSheet, View, Image, Alert } from "react-native";
 import {
   Text,
-  List,
-  ListItem,
   Modal,
   Card,
   Button,
   Layout,
-  Spinner,
   Divider,
 } from "@ui-kitten/components";
 import moment from "moment";
@@ -18,7 +15,9 @@ import {
   getUserProfileById,
   acceptTransaction,
   deleteTransaction,
+  deleteRequest,
 } from "../../Services/ServerCommunication";
+import { myRequestImage, requestedImage } from "../../assets/Images";
 
 export const RequestTransactionInfoModal = (props) => {
   const item = props.item;
@@ -31,12 +30,12 @@ export const RequestTransactionInfoModal = (props) => {
   const getResponder = async () => {
     if (!transaction) return;
     let responder = await getUserProfileById(transaction.responder_id);
-    
+
     setResponder(responder[0]);
   };
 
   useEffect(() => {
-    if(item.visible) return getResponder();
+    if (item.visible) return getResponder();
   }, [item.visible]);
 
   const accept = () => {
@@ -46,52 +45,91 @@ export const RequestTransactionInfoModal = (props) => {
     props.toggleModal(item);
   };
 
+  const ItemDescriptiom = () => {
+    if (item.description) {
+      return (
+        <Text category={"p1"} style={styles.textStyleBorder}>
+          {item.description}
+        </Text>
+      );
+    } else {
+      return <View />;
+    }
+  };
+
+  const AlertRemove = () =>
+    Alert.alert("Ta bort vara", "Är du säker att du vill ta bort din vara?", [
+      {
+        text: "Avbryt",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel",
+      },
+      { text: "Ja", onPress: () => RemoveRequest() },
+    ]);
+
+  const RemoveRequest = () => {
+    deleteRequest(item.id);
+    props.toggleModal(item);
+  };
   const decline = () => {
     deleteTransaction(transaction.id);
-    props.removeTransaction(transaction.id)
+    props.removeTransaction(transaction.id);
     props.toggleModal(item);
   };
 
   const Info = () => {
     if (transaction) {
       return (
-       <View>
+        <View>
           <View style={styles.imgContainer}>
-           <Layout style={tw`py-10`}>
-        <Image
-          style={[tw`rounded-full`, {marginBottom: -40, marginTop: -10}]}
-          source={{
-            uri: responder.imgurl,
-            height: 150,
-            width: 150,
-          }}
-        />
-      </Layout>
-      <Layout style={styles.container}>
-        <Card style={styles.card}>
-          <Text style={[tw`text-center`, styles.text]}>{responder.given}</Text>
-          <Divider />
-          <Text style={[tw`text-center`, styles.text]}>Givet</Text>
-        </Card>
+            <Layout style={tw`py-10`}>
+              <Image
+                style={[
+                  tw`rounded-full`,
+                  { marginBottom: -40, marginTop: -10 },
+                ]}
+                source={{
+                  uri: responder.imgurl,
+                  height: 150,
+                  width: 150,
+                }}
+              />
+            </Layout>
+            <Layout style={styles.container}>
+              <Card style={styles.card}>
+                <Text style={[tw`text-center`, styles.text]}>
+                  {responder.given}
+                </Text>
+                <Divider />
+                <Text style={[tw`text-center`, styles.text]}>Givet</Text>
+              </Card>
 
-        <Card style={styles.card}>
-          <Text style={[tw`text-center`, styles.text]}>{responder.taken}</Text>
-          <Divider />
-          <Text style={[tw`text-center`, styles.text]}>Tagit</Text>
-        </Card>
+              <Card style={styles.card}>
+                <Text style={[tw`text-center`, styles.text]}>
+                  {responder.taken}
+                </Text>
+                <Divider />
+                <Text style={[tw`text-center`, styles.text]}>Tagit</Text>
+              </Card>
 
-        <Card style={styles.card}>
-          <Text style={[tw`text-center`, styles.text]}>{rating}</Text>
-          <Divider />
-          <Text style={[tw`text-center`, {fontSize: 10}]}>Betyg</Text>
-        </Card>
-      </Layout>
-            <Text style={{marginBottom: 5} }category={"s1"}>{responder.firstname} {props.text} </Text>
-          <Text style={{marginBottom: 5} } category={"s1"}>
-            {moment(transaction.time_of_expiration).format("dddd Do MMM hh:mm")}
-          </Text>
-            <Text  style={{marginBottom: 5} }category={"s1"}>{moment(transaction.time_of_expiration).fromNow()}</Text>
-            </View>
+              <Card style={styles.card}>
+                <Text style={[tw`text-center`, styles.text]}>{rating}</Text>
+                <Divider />
+                <Text style={[tw`text-center`, { fontSize: 10 }]}>Betyg</Text>
+              </Card>
+            </Layout>
+            <Text style={{ marginBottom: 5 }} category={"s1"}>
+              {responder.firstname} {props.text}{" "}
+            </Text>
+            <Text style={{ marginBottom: 5 }} category={"s1"}>
+              {moment(transaction.time_of_expiration).format(
+                "dddd Do MMM HH:mm"
+              )}
+            </Text>
+            <Text style={{ marginBottom: 5 }} category={"s1"}>
+              {moment(transaction.time_of_expiration).fromNow()}
+            </Text>
+          </View>
           <Layout
             style={{
               flexDirection: "row",
@@ -99,10 +137,18 @@ export const RequestTransactionInfoModal = (props) => {
               marginTop: 10,
             }}
           >
-            <Button style={{marginLeft: 10, width: 120}} onPress={() => accept()} status={"success"}>
+            <Button
+              style={{ marginLeft: 10, width: 120 }}
+              onPress={() => accept()}
+              status={"success"}
+            >
               <Text>Acceptera</Text>
             </Button>
-            <Button style={{marginRight: 10, width: 120} }onPress={() => decline()} status={"danger"}>
+            <Button
+              style={{ marginRight: 10, width: 120 }}
+              onPress={() => decline()}
+              status={"danger"}
+            >
               <Text>Neka</Text>
             </Button>
           </Layout>
@@ -111,31 +157,39 @@ export const RequestTransactionInfoModal = (props) => {
     } else {
       return (
         <View>
-          <View
-          style={{
-            flexDirection: "column",
-            flex: 1,
-            justifyContent: "space-between",
-            alignItems: "left",
-          }}
-          >
-          <Text category={"h6"} style={{ marginLeft: 20}}>Vara</Text>
-          <Text category={"s1"} style={{ marginLeft: 20, borderBottomWidth: 1, }}>
-            {item.product_text}
+          <View style={styles.imgContainer}>
+            <Layout style={tw`py-8`}>
+              <Image
+                style={{ marginBottom: -40, marginTop: -10 }}
+                source={{
+                  uri: myRequestImage,
+                  height: 90,
+                  width: 90,
+                }}
+              />
+            </Layout>
+          </View>
+          <View>
+            <View style={styles.units}>
+              <Text category={"h4"}>
+                {item.product_text} {item.quantity} {item.unit}
+              </Text>
+            </View>
+            <Divider style={styles.divider}></Divider>
+            <Text category={"s1"} style={styles.textStyle}>
+              Efterfrågas av: <Text category={"p1"}> mig</Text>
             </Text>
-          <Text category={"h6"} style={{ marginLeft: 20, marginTop: 10 }}>Antal</Text>
-          <Text category={"s1"} style={{ marginLeft: 20 }}>
-            {item.quantity}
+            <Text category={"s1"} style={styles.textStyle}>
+              Skapades:{" "}
+              <Text category={"p1"}>
+                {moment(item.time_of_creation).format("dddd Do MMM")}
+              </Text>
             </Text>
-            <Text category={"h5"} style={{ marginLeft: 20, marginTop: 10 }}>Senast Inom</Text>
-          <Text category={"s1"} style={{ marginLeft: 20 }}>
-            {item.time_of_expiration}
-            </Text>
-        </View>
-        
-          <Text category={"h5"} style={{ marginBottom: 10, marginLeft: 20, marginTop: 10 }}>Beskrivning</Text>
-          <Text category={"s1"} style={{ marginBottom: 10 }}>{item.description}</Text>
-          
+            <ItemDescriptiom />
+            <Button style={{ width: "100%" }} onPress={() => AlertRemove()}>
+              <Text> Ta Bort vara</Text>
+            </Button>
+          </View>
         </View>
       );
     }
@@ -175,8 +229,35 @@ const styles = StyleSheet.create({
     margin: 5,
     width: "100%",
   },
+  divider: {
+    borderBottomWidth: 0.8,
+  },
+  image: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   text: {
     fontSize: 12,
-  
-  }
-})
+  },
+  textStyle: {
+    marginBottom: 10,
+    marginTop: 10,
+  },
+  textStyleBorder: {
+    marginBottom: 10,
+    marginTop: 10,
+    borderColor: "grey",
+    borderWidth: 0.7,
+    borderRadius: 3,
+    padding: 5,
+  },
+  units: {
+    flex: 1,
+    flexDirection: "row",
+    paddingTop: 20,
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingBottom: 10,
+  },
+});

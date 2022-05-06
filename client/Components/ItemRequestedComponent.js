@@ -2,8 +2,11 @@ import "moment/locale/sv";
 
 import { Icon, ListItem, Spinner, Text } from "@ui-kitten/components";
 import React, { useEffect } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { StyleSheet, View, ScrollView, Image } from "react-native";
+import { myRequestImage, requestedImage } from "../assets/Images";
+import { useIsFocused } from "@react-navigation/native";
 import { ShowCommunityIds, UserInfo } from "../assets/AppContext";
+import { io } from "socket.io-client";
 import {
   addTransaction,
   getMyActiveRequests,
@@ -15,9 +18,8 @@ import { GiveProductModal } from "./Modals/GiveProductModal";
 import { RequestTransactionInfoModal } from "./Modals/RequestTransactionModal";
 import { RequestedInfoModal } from "./Modals/RequestedInfoModal";
 import { host } from "../Services/ServerHost";
-import { io } from "socket.io-client";
 import moment from "moment";
-import { useIsFocused } from "@react-navigation/native";
+import "moment/locale/sv";
 
 export const ItemRequestedComponent = () => {
   const { userInfo } = React.useContext(UserInfo);
@@ -31,6 +33,7 @@ export const ItemRequestedComponent = () => {
   const [transactions, setTransactions] = React.useState([]);
   const userId = userInfo.id;
   const communityIds = showCommunityIds;
+  const [responder, setResponder] = React.useState({});
 
   const TransactionIcon = (props) => (
     <Icon {...props} fill="red" name="info-outline" />
@@ -148,28 +151,42 @@ export const ItemRequestedComponent = () => {
   };
 
   const renderMyItems = (
-    { item } //Used for rendering my items
-  ) => (
-    <View key={item.id}>
-      <ListItem
-        style={styles.container}
-        title={`${item.product_text} | ${item.quantity} ${item.unit ?? ""}`}
-        accessoryRight={requestHasTransaction(item) ? TransactionIcon : null}
-        description={`${item.description}`}
-        onPress={() => {
-          toggleModal(item);
-        }}
-      />
-      <RequestTransactionInfoModal
-        item={item}
-        text={"vill ge dig denna vara"}
-        toggleModal={toggleModal}
-        transaction={getTransaction(item)}
-        removeTransaction={removeTransaction}
-        removeMyRequest={removeMyRequest}
-      />
-    </View>
-  );
+    { item } //Used for rendering my item
+  ) => {
+    return (
+      <View key={item.id}>
+        <ListItem
+          accessoryLeft={() => {
+            return (
+              <Image
+                source={{
+                  uri: myRequestImage,
+                  height: 50,
+                  width: 50,
+                  marginRight: 10,
+                }}
+              />
+            );
+          }}
+          style={styles.container}
+          title={`${item.product_text} | ${item.quantity} ${item.unit ?? ""}`}
+          accessoryRight={requestHasTransaction(item) ? TransactionIcon : null}
+          description={`${item.description}`}
+          onPress={() => {
+            toggleModal(item);
+          }}
+        />
+        <RequestTransactionInfoModal
+          item={item}
+          text={"vill ge dig denna vara"}
+          toggleModal={toggleModal}
+          transaction={getTransaction(item)}
+          removeTransaction={removeTransaction}
+          removeMyRequest={removeMyRequest}
+        />
+      </View>
+    );
+  };
   const updateDate = (date) => {
     setDate(date);
   };
@@ -197,7 +214,6 @@ export const ItemRequestedComponent = () => {
     );
 
     let modal = !takeProduct ? infoModal : giveProductModal;
-
     return (
       <View key={item.id}>
         <ListItem
@@ -208,6 +224,18 @@ export const ItemRequestedComponent = () => {
                 {" "}
                 {moment(item.time_of_creation).fromNow()}
               </Text>
+            );
+          }}
+          accessoryLeft={() => {
+            return (
+              <Image
+                source={{
+                  uri: requestedImage,
+                  height: 50,
+                  width: 50,
+                  marginRight: 10,
+                }}
+              />
             );
           }}
           title={`${item.product_text} | ${item.quantity} ${item.unit ?? ""}`}

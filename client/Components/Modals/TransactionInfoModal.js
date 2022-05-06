@@ -1,5 +1,5 @@
-import "moment/locale/sv";
-
+import React, { useEffect, useState } from "react";
+import { StyleSheet, View, Image, Alert } from "react-native";
 import {
   Button,
   Card,
@@ -9,13 +9,12 @@ import {
   Modal,
   Text,
 } from "@ui-kitten/components";
-import { Image, StyleSheet, View } from "react-native";
-import React, { useEffect, useState } from "react";
 import {
   acceptTransaction,
   deleteTransaction,
-  getUserProfileById,
+  deleteOffer,
 } from "../../Services/ServerCommunication";
+import { getUserProfileById } from "../../Services/ServerCommunication";
 
 import moment from "moment";
 import tw from "twrnc";
@@ -52,6 +51,20 @@ export const TransactionInfoModal = (props) => {
     props.toggleModal(item);
   };
 
+  const AlertRemove = () =>
+    Alert.alert("Ta bort vara", "Är du säker att du vill ta bort din vara?", [
+      {
+        text: "Avbryt",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel",
+      },
+      { text: "Ja", onPress: () => RemoveOffer() },
+    ]);
+
+  const RemoveOffer = () => {
+    deleteOffer(item.id);
+    props.toggleModal(item);
+  };
   const Info = () => {
     if (transaction) {
       return (
@@ -192,6 +205,10 @@ export const TransactionInfoModal = (props) => {
 
           <Text style={{ marginBottom: 10 }}>Din vara</Text>
           <Text style={{ marginBottom: 10 }}>{item.description}</Text>
+
+          <Button style={{ width: "100%" }} onPress={() => AlertRemove()}>
+            <Text> Ta Bort vara</Text>
+          </Button>
         </View>
       );
     }
