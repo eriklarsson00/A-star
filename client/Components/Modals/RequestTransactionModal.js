@@ -53,7 +53,7 @@ export const RequestTransactionInfoModal = (props) => {
         </Text>
       );
     } else {
-      return <View></View>;
+      return <View />;
     }
   };
 
