@@ -112,9 +112,6 @@ export const StartScreen = ({ navigation }) => {
       >
         <Text>Continue with Google</Text>
       </Button>
-      <Button appearance={"ghost"} status={"info"} onPress={easySignIn}>
-        Enkel inloggning
-      </Button>
     </View>
   );
 };
