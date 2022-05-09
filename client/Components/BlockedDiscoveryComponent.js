@@ -5,10 +5,8 @@ import { Text } from "@ui-kitten/components";
 export const BlockedDiscover = () => {
   return (
     <SafeAreaView>
-      <Text style={styles.header}> Du har inte valt några communities!</Text>
-      <Text style={styles.footer}>
-        Gå till grannskaps sidan och välj några!
-      </Text>
+      <Text style={styles.header}> Du har inte valt några grannskap!</Text>
+      <Text style={styles.footer}>Gå till grannskap-sidan och välj några!</Text>
     </SafeAreaView>
   );
 };

@@ -76,23 +76,25 @@ export const HistoryScreen = () => {
     if (offer_product_name) {
       return (
         <View style={{ flexDirection: "row", marginBottom: 5 }}>
-          <Text category={"s1"}>{offer_product_name} har</Text>
-          <Text category={"s1"} style={{ textDecorationLine: "underline" }}>
-            {" "}
-            getts bort{" "}
+          <Text>
+            <Text category={"s1"}>{offer_product_name} har </Text>
+            <Text category={"s1"} style={{ textDecorationLine: "underline" }}>
+              getts bort
+            </Text>
+            <Text category={"s1"}> till</Text>
           </Text>
-          <Text category={"s1"}>till</Text>
         </View>
       );
     } else {
       return (
         <View style={{ flexDirection: "row", marginBottom: 5 }}>
-          <Text category={"s1"}>{request_product_name} har</Text>
-          <Text category={"s1"} style={{ textDecorationLine: "underline" }}>
-            {" "}
-            tagits emot{" "}
+          <Text>
+            <Text category={"s1"}>{request_product_name} har </Text>
+            <Text category={"s1"} style={{ textDecorationLine: "underline" }}>
+              tagits emot
+            </Text>
+            <Text category={"s1"}> från</Text>
           </Text>
-          <Text category={"s1"}>från</Text>
         </View>
       );
     }
