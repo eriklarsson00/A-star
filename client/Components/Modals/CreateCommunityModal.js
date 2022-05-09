@@ -147,6 +147,9 @@ export const CreateCommunityModal = (props) => {
             updateResult={(result) => {
               setImage(result);
             }}
+            hideTakePicture={() => {
+              setChooseImageVisible(false);
+            }}
           />
           <Button
             style={tw`mt-2 w-50`}
