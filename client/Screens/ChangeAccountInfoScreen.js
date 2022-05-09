@@ -74,7 +74,6 @@ export const ChangeAccountInfoScreen = ({ navigation }) => {
       );
       setUpdatedProfile({ ...updatedProfile, imgurl: bucketImage });
       setProfileImage({ uri: bucketImage });
-      updatedProfile.imgurl = bucketImage;
     }
 
     await editProfile(updatedProfile, userInfo.id);
