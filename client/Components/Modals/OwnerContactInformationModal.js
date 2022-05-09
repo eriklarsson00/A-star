@@ -1,6 +1,6 @@
 import { Button, Card, Layout, Modal, Text } from "@ui-kitten/components";
-import { StyleSheet, View } from "react-native";
-
+import { StyleSheet, View, Image } from "react-native";
+import tw from "twrnc";
 import moment from "moment";
 
 export const OwnerContactInformationModal = (props) => {
