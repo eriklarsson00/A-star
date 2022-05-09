@@ -2,6 +2,7 @@ import { Alert, Button, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 
 import { BarCodeScanner } from "expo-barcode-scanner";
+import { host } from "../Services/ServerHost";
 
 export default function BarCodeScannerComp(props) {
   const [hasPermission, setHasPermission] = useState(null);
@@ -39,7 +40,7 @@ export default function BarCodeScannerComp(props) {
 
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
-    fetch(`http://ec2-3-215-18-23.compute-1.amazonaws.com/products/${data}`)
+    fetch(`${host}/${data}`)
       .then((response) => response.json())
       .then((product) => {
         setProductName(product.brandName + " " + product.functionalName);
