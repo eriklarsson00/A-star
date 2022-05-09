@@ -18,7 +18,7 @@ export const HistoryInfoModal = (props) => {
         </Text>
         <Layout style={{ flexDirection: "row", marginTop: 60 }}>
           <Text category={"s1"}>Utbyted gjordes: </Text>
-          <Text>{moment(item.time_of_update).format("dddd Do MMM hh:mm")}</Text>
+          <Text>{moment(item.time_of_update).format("dddd Do MMM HH:mm")}</Text>
         </Layout>
         <Layout
           style={{
