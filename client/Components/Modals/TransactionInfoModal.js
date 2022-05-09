@@ -111,7 +111,7 @@ export const TransactionInfoModal = (props) => {
             </Text>
             <Text style={{ marginBottom: 5 }} category={"s1"}>
               {moment(transaction.time_of_expiration).format(
-                "dddd Do MMM hh:mm"
+                "dddd Do MMM HH:mm"
               )}
             </Text>
             <Text style={{ marginBottom: 5 }} category={"s1"}>
