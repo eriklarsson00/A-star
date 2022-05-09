@@ -57,7 +57,7 @@ export const OwnerContactInformationModal = (props) => {
         <Layout style={{ flexDirection: "row", marginTop: 10 }}>
           <Text category={"s1"}>Bestämt utbyte: </Text>
           <Text>
-            {moment(item.time_of_expiration).format("dddd Do MMM hh:mm")}
+            {moment(item.time_of_expiration).format("dddd Do MMM HH:mm")}
           </Text>
         </Layout>
         <Layout
