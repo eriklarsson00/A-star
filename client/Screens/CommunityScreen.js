@@ -128,8 +128,7 @@ export const CommunityScreen = () => {
           {item.private === 1 && (
             <Text style={tw`font-semibold`}>Privat grannskap</Text>
           )}
-          <Text>Antal medlemmar {item.members}</Text>
-          <Text>Plats: {item.location}</Text>
+          <Text>Antal medlemmar: {item.members}</Text>
           <Button
             style={{ margin: 5 }}
             onPress={() =>
