@@ -40,7 +40,7 @@ export default function BarCodeScannerComp(props) {
 
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
-    fetch(`${host}/${data}`)
+    fetch(`${host}/products/${data}`)
       .then((response) => response.json())
       .then((product) => {
         setProductName(product.brandName + " " + product.functionalName);
