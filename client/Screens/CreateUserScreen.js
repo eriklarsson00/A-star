@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   backdrop: {
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.25)",
   },
   input: {
     marginBottom: 8,

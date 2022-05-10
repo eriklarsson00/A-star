@@ -9,6 +9,7 @@ import {
   Modal,
   Text,
   useTheme,
+  TopNavigation,
 } from "@ui-kitten/components";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import { MyCommunitysInfo, UserInfo } from "../assets/AppContext";
@@ -193,9 +194,8 @@ export const CommunityScreen = () => {
 
   return (
     <Layout style={[styles.container]}>
-      <Layout style={tw`pt-5 pb-2`}>
-        <Text style={tw`text-lg text-center`}>Grannskap </Text>
-      </Layout>
+      <TopNavigation alignment="center" title={"Grannskap"} />
+
       <View
         style={{
           paddingTop: 5,
@@ -339,6 +339,7 @@ const styles = StyleSheet.create({
     height: 200,
   },
   buttonCont: {
+    backgroundColor: null,
     alignItems: "center",
     justifyContent: "center",
     position: "absolute",
@@ -347,9 +348,11 @@ const styles = StyleSheet.create({
   },
   button: {
     width: 200,
+    borderRadius: 10,
+    borderColor: "white",
   },
   backdrop: {
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.25)",
   },
   communityContainer: {
     flex: 1,

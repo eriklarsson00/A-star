@@ -413,7 +413,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   backdrop: {
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.25)",
   },
   createdItem: {
     height: 70,

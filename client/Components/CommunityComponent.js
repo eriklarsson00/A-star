@@ -161,7 +161,7 @@ const CommunityComponent = (props) => {
 
 const styles = StyleSheet.create({
   backdrop: {
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.25)",
   },
   container: {
     flex: 1,
