@@ -64,12 +64,12 @@ export const HistoryScreen = () => {
     }
   };
 
-  const renderTransactionIcon = (offer) => {
-    if (offer) {
-      return GiveAwayIcon;
-    } else {
-      return ReceiveIcon;
-    }
+  const renderTransactionIcon = (item) => {
+    const shouldGive =
+      (item.offer_id && item.owner_id == userInfo.id) ||
+      (item.request_id && item.owner_id != userInfo.id);
+
+    return shouldGive ? GiveAwayIcon : ReceiveIcon;
   };
 
   const renderGiveOrTake = (offer_product_name, request_product_name) => {
@@ -114,7 +114,7 @@ export const HistoryScreen = () => {
         <ListItem
           style={styles.container}
           onPress={() => toggleModal(item)}
-          accessoryLeft={renderTransactionIcon(item.offer_product)}
+          accessoryLeft={renderTransactionIcon(item)}
           accessoryRight={() => {
             return (
               <Text style={{ top: 38, fontSize: 10 }}>

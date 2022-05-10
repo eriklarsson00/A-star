@@ -73,7 +73,7 @@ export const AwaitingConfirmationModal = (props) => {
   return (
     <Modal
       visible={item.visible}
-      backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.2)" }}
+      backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.25)" }}
       onBackdropPress={() => props.toggleModal(item)}
     >
       <Card disabled={true} style={styles.card}>

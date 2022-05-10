@@ -180,7 +180,7 @@ export const CreateCommunityModal = (props) => {
 
   async function createCommunity() {
     setMissingInformation(false);
-    if (communityName == "" || communityDescription == "" || image == "") {
+    if (communityName == "" || communityDescription == "" || image.uri == "") {
       setMissingFieldsFunc();
       setMissingInformation(true);
     } else {
@@ -205,7 +205,7 @@ export const CreateCommunityModal = (props) => {
   return (
     <Modal
       visible={props.visible}
-      backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}
+      backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.25)" }}
       onBackdropPress={quitCreateCommunity}
     >
       <Card disabled={true}>
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   backdrop: {
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.25)",
   },
   cameraStyle: {
     width: 60,

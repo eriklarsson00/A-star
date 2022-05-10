@@ -257,14 +257,14 @@ export const ItemRequestedComponent = () => {
 
   const LoadedView = () => (
     <View>
-      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-        Mina Efterfrågningar
+      <Text category={"h6"} style={{ marginTop: 20, marginLeft: 11 }}>
+        Alla mina efterfrågningar
       </Text>
       {myRequests.map((request) => {
         return renderMyItems({ item: request });
       })}
-      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-        Efterfrågade Varor
+      <Text category={"h6"} style={{ marginTop: 20, marginLeft: 11 }}>
+        Efterfrågade varor i valda grannskap
       </Text>
       {requests.map((request) => {
         return renderRequestedItem({ item: request });
