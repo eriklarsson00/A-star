@@ -180,7 +180,7 @@ export const CreateCommunityModal = (props) => {
 
   async function createCommunity() {
     setMissingInformation(false);
-    if (communityName == "" || communityDescription == "" || image == "") {
+    if (communityName == "" || communityDescription == "" || image.uri == "") {
       setMissingFieldsFunc();
       setMissingInformation(true);
     } else {
