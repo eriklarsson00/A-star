@@ -349,7 +349,7 @@ const styles = StyleSheet.create({
     width: 200,
   },
   backdrop: {
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.25)",
   },
   communityContainer: {
     flex: 1,

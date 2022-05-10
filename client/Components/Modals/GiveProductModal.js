@@ -12,7 +12,7 @@ export const GiveProductModal = (props) => {
   return (
     <Modal //Modal for setting time & offering an offer
       visible={item.visible}
-      backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0)" }}
+      backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.25)" }}
       onBackdropPress={() => {
         props.toggleModal(item);
       }}

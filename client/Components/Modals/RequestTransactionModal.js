@@ -198,7 +198,7 @@ export const RequestTransactionInfoModal = (props) => {
   return (
     <Modal //Modal for additional information about a product
       visible={item.visible}
-      backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.025)" }}
+      backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.25)" }}
       onBackdropPress={() => props.toggleModal(item)}
     >
       <Card disabled={true} style={{ width: 320, flex: 1 }}>
