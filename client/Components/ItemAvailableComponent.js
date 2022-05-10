@@ -261,14 +261,14 @@ export const ItemAvailableComponent = () => {
 
   const LoadedView = () => (
     <View>
-      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-        Mina varor
+      <Text category={"h6"} style={{ marginTop: 20, marginLeft: 11 }}>
+        Alla mina varor
       </Text>
       {myOffers.map((offer) => {
         return renderMyItems({ item: offer });
       })}
-      <Text category={"h5"} style={{ marginTop: 20, marginLeft: 11 }}>
-        Tillgängliga varor
+      <Text category={"h6"} style={{ marginTop: 20, marginLeft: 11 }}>
+        Tillgängliga varor i valda grannskap 
       </Text>
       {offers.map((offer) => {
         return renderAvailableItems({ item: offer });
