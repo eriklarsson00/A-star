@@ -1,11 +1,15 @@
 import { Button, Card, Modal, Text, useTheme } from "@ui-kitten/components";
 import { StyleSheet, View } from "react-native";
+import { useContext, useState } from "react";
 
 import StarRating from "react-native-star-rating";
+import { UserInfo } from "../../assets/AppContext";
 import { updateRating } from "../../Services/ServerCommunication";
-import { useState } from "react";
 
 export const RatingModal = (props) => {
+  // CONTEXT
+  const { userInfo } = useContext(UserInfo);
+
   //STATE
   const [starRating, setStarRating] = useState(3);
 
@@ -13,7 +17,10 @@ export const RatingModal = (props) => {
   const theme = useTheme();
 
   const ratingComplete = async () => {
-    await updateRating(item.responder_id, starRating);
+    const idToUpdate =
+      userInfo.id == item.responder_id ? item.owner_id : item.responder_id;
+    console.log(item);
+    await updateRating(idToUpdate, starRating);
     props.ratingCompleted();
   };
 
