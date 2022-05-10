@@ -1,18 +1,21 @@
 import { Button, Card, Layout, Modal, Text } from "@ui-kitten/components";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Image } from "react-native";
 
 import moment from "moment";
-
+import tw from "twrnc";
 export const HistoryInfoModal = (props) => {
   const item = props.item;
-
+  console.log(item);
   const Info = () => {
     return (
       <View>
-        <Text category={"h3"} style={{ marginTop: 30, marginBottom: 40 }}>
+        <View style={{flex: 1, alignItems: "center"}}>
+        <Text category={"h3"} style={{ marginTop: 20, marginBottom: 20}}>
           Utbytesinfo
         </Text>
-        {props.text}
+       
+        </View>
+        <Text>{props.text} </Text>
         <Text style={styles.space_between}>
           {item.firstname} {item.lastname}{" "}
         </Text>
@@ -32,7 +35,7 @@ export const HistoryInfoModal = (props) => {
           >
             <Text>Stäng</Text>
           </Button>
-        </Layout>
+          </Layout>
       </View>
     );
   };
