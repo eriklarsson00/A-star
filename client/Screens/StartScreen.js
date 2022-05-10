@@ -1,13 +1,14 @@
 import * as Google from "expo-auth-session/providers/google";
 import * as WebBrowser from "expo-web-browser";
 
-import { Button, Icon, Text } from "@ui-kitten/components";
+import { Icon, Text, Button } from "@ui-kitten/components";
 import { GoogleInfo, UserInfo, UserLoggedIn } from "../assets/AppContext";
-import { Image, StyleSheet, View } from "react-native";
+import { Image, StyleSheet, View, TouchableOpacity } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
 import { getUserProfileByEmail } from "../Services/ServerCommunication";
+import tw from "twrnc";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -92,26 +93,44 @@ export const StartScreen = ({ navigation }) => {
       <View style={styles.middle} />
       <View style={styles.bottom} />
       <Image
-        source={require("../assets/icon.png")}
+        source={require("../assets/IconMS.png")}
         style={{
-          marginTop: 125,
+          marginTop: 190,
           width: 200,
           height: 200,
           resizeMode: "stretch",
-          marginBottom: 200,
+          marginBottom: 140,
           zIndex: 100,
         }}
       />
-      <Button
-        accessoryLeft={GoogleIcon}
+      <TouchableOpacity
         onPress={() => {
           promptAsync({ showInRecents: true });
         }}
-        style={{ marginBottom: 14 }}
-        status={"danger"}
+        style={{
+          backgroundColor: "white",
+          width: 250,
+          height: 55,
+          borderRadius: 4,
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "row",
+          borderColor: "gray",
+          borderWidth: 0.4,
+        }}
       >
-        <Text>Continue with Google</Text>
-      </Button>
+        <Image
+          source={{
+            uri: "https://freesvg.org/img/1534129544.png",
+            height: 30,
+            width: 30,
+          }}
+          style={{ marginRight: 15 }}
+        />
+        <Text style={[tw`text-lg`, { color: "gray" }]}>
+          Continue with google
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -123,7 +142,7 @@ const styles = StyleSheet.create({
     height: 500,
     position: "absolute",
     top: 200,
-    backgroundColor: "rgba(255,100,100,0.3)",
+    backgroundColor: "rgba(254,166,85,0.3)",
     transform: [{ rotateZ: "-15deg" }, { rotateX: "-5deg" }],
   },
   middle: {
@@ -133,7 +152,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 500,
     borderRadius: 500,
-    backgroundColor: "rgba(255,100,100,0.2)",
+    backgroundColor: "rgba(254,166,85,0.2)",
     transform: [{ rotateY: "30deg" }],
   },
   bottom: {
@@ -143,7 +162,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 500,
     borderRadius: 500,
-    backgroundColor: "rgba(255,100,100,0.2)",
+    backgroundColor: "rgba(254,166,85,0.2)",
     transform: [{ rotateY: "30deg" }],
   },
 });
