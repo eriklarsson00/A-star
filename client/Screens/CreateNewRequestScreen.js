@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
     paddingLeft: 30,
   },
   backdrop: {
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.25)",
   },
   container: {
     height: "100%",

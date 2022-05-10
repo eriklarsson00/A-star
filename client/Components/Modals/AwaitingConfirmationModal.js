@@ -47,7 +47,9 @@ export const AwaitingConfirmationModal = (props) => {
         >
           {item.firstname} {item.lastname}{" "}
         </Text>
-        <Layout style={{ flexDirection: "row", marginTop: 20 }}>
+        <Layout
+          style={{ flexDirection: "row", marginTop: 20, marginBottom: -25 }}
+        >
           <Text category={"s1"}>Föreslaget utbyte: </Text>
           <Text>
             {moment(item.time_of_expiration).format("dddd Do MMM HH:mm")}
@@ -55,7 +57,12 @@ export const AwaitingConfirmationModal = (props) => {
         </Layout>
         <Button
           onPress={() => props.toggleModal(item)}
-          style={{ width: 120, marginTop: 50, alignSelf: "center" }}
+          style={{
+            width: 120,
+            marginTop: 50,
+            marginBottom: 10,
+            alignSelf: "center",
+          }}
         >
           <Text>Stäng</Text>
         </Button>
@@ -66,7 +73,7 @@ export const AwaitingConfirmationModal = (props) => {
   return (
     <Modal
       visible={item.visible}
-      backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.2)" }}
+      backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.25)" }}
       onBackdropPress={() => props.toggleModal(item)}
     >
       <Card disabled={true} style={styles.card}>

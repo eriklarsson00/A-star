@@ -133,7 +133,7 @@ export const RequestedInfoModal = (props) => {
   return (
     <Modal
       visible={item.visible}
-      backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}
+      backdropStyle={{ backgroundColor: "rgba(0, 0, 0, 0.25)" }}
       onBackdropPress={() => props.toggleModal(item)}
     >
       <Card disabled={true} style={{ width: 320, flex: 1 }}>
